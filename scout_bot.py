@@ -1,35 +1,50 @@
 import asyncio
 import aiohttp
 import urllib.parse
+import json
 from aiogram import Bot, Dispatcher, types, F
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import CommandStart
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.storage.memory import MemoryStorage
 
 TOKEN = "8614199367:AAGVfOkdcceDaa58ufWPB1C1XD5v2OeAqmc"
-YANDEX_KEY = "42c18755-11ca-49ba-9326-0fd8e077f428"
-NIKITA_ID = None  # заполнится при первом /start
 
 bot = Bot(token=TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
-NICHES = {
-    "salon": "салон красоты Кисловодск",
-    "cafe": "кафе ресторан Кисловодск",
-    "hotel": "гостевой дом отель Кисловодск",
-    "master": "частный мастер услуги Кисловодск",
-    "med": "стоматология клиника Кисловодск",
-    "fitness": "фитнес спортзал йога Кисловодск",
-}
+# Кисловодск bbox: south,west,north,east
+BBOX = "43.85,42.65,43.97,42.82"
 
-NICHE_NAMES = {
-    "salon": "💅 Салоны красоты",
-    "cafe": "☕ Кафе и рестораны",
-    "hotel": "🏠 Гостевые дома",
-    "master": "🔧 Частные мастера",
-    "med": "🦷 Медицина",
-    "fitness": "💪 Фитнес",
+NICHES = {
+    "salon": {
+        "name": "💅 Салоны красоты",
+        "query": '["amenity"="hairdresser"]',
+    },
+    "beauty": {
+        "name": "💄 Салоны красоты (beauty)",
+        "query": '["shop"="beauty"]',
+    },
+    "cafe": {
+        "name": "☕ Кафе и рестораны",
+        "query": '["amenity"~"cafe|restaurant|bar|fast_food"]',
+    },
+    "hotel": {
+        "name": "🏠 Гостиницы и гостевые дома",
+        "query": '["tourism"~"hotel|guest_house|hostel"]',
+    },
+    "fitness": {
+        "name": "💪 Фитнес и спорт",
+        "query": '["leisure"~"fitness_centre|sports_centre"]',
+    },
+    "med": {
+        "name": "🦷 Медицина",
+        "query": '["amenity"~"dentist|clinic|doctors"]',
+    },
+    "shop": {
+        "name": "🛍️ Магазины",
+        "query": '["shop"]',
+    },
 }
 
 def main_menu():
@@ -40,8 +55,8 @@ def main_menu():
 
 def niche_menu():
     buttons = []
-    for key, name in NICHE_NAMES.items():
-        buttons.append([InlineKeyboardButton(text=name, callback_data=f"niche_{key}")])
+    for key, info in NICHES.items():
+        buttons.append([InlineKeyboardButton(text=info["name"], callback_data=f"niche_{key}")])
     buttons.append([InlineKeyboardButton(text="⬅️ Назад", callback_data="back_main")])
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -51,52 +66,52 @@ def back_btn():
         [InlineKeyboardButton(text="🏠 Главное меню", callback_data="back_main")],
     ])
 
-async def search_organizations(query: str, results: int = 20):
-    """Ищет организации через Яндекс API"""
-    encoded = urllib.parse.quote(query)
-    url = (
-        f"https://search-maps.yandex.ru/v1/"
-        f"?text={encoded}&type=biz&lang=ru_RU&results={results}&apikey={YANDEX_KEY}"
-    )
-    headers = {"User-Agent": "Mozilla/5.0"}
-    
+async def search_overpass(osm_filter: str):
+    """Ищет организации через Overpass API (OpenStreetMap)"""
+    query = f"""
+[out:json][timeout:30];
+(
+  node{osm_filter}({BBOX});
+  way{osm_filter}({BBOX});
+);
+out body;
+"""
+    url = "https://overpass-api.de/api/interpreter"
+    headers = {"User-Agent": "WebForge Scout Bot 1.0 (webforge.ai)"}
+
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as r:
-            if r.status == 403:
-                return None, "limit"
+        async with session.post(
+            url,
+            data={"data": query},
+            headers=headers,
+            timeout=aiohttp.ClientTimeout(total=35)
+        ) as r:
             if r.status != 200:
                 return None, f"error_{r.status}"
-            data = await r.json()
-            return data.get("features", []), "ok"
+            data = await r.json(content_type=None)
+            return data.get("elements", []), "ok"
 
-def parse_org(feature):
-    """Разбирает одну организацию из ответа Яндекса"""
-    props = feature.get("properties", {})
-    meta = props.get("CompanyMetaData", {})
-    
-    name = props.get("name", "Без названия")
-    address = props.get("description", "адрес не указан")
-    
-    phones = meta.get("Phones", [])
-    phone = phones[0].get("formatted", "нет") if phones else "нет"
-    
-    site = meta.get("url", "")
-    
+def parse_element(el):
+    tags = el.get("tags", {})
+    name = tags.get("name", "Без названия")
+    phone = tags.get("phone", tags.get("contact:phone", "нет"))
+    site = tags.get("website", tags.get("contact:website", ""))
+    addr = tags.get("addr:street", "")
+    if tags.get("addr:housenumber"):
+        addr += f", {tags.get('addr:housenumber')}"
     return {
         "name": name,
-        "address": address,
         "phone": phone,
         "site": site,
+        "addr": addr or "адрес не указан",
         "has_site": bool(site),
     }
 
 @dp.message(CommandStart())
 async def start(msg: types.Message):
-    global NIKITA_ID
-    NIKITA_ID = msg.from_user.id
     await msg.answer(
-        "👋 Привет! Это бот-разведчик WebForge.\n\n"
-        "Я нахожу бизнесы в Кисловодске у которых **нет сайта** — "
+        "👋 Привет! Это *WebForge Scout* — бот-разведчик.\n\n"
+        "Я нахожу бизнесы в Кисловодске у которых *нет сайта* — "
         "это твои потенциальные клиенты.\n\n"
         "Выбери что делаем:",
         reply_markup=main_menu(),
@@ -106,7 +121,7 @@ async def start(msg: types.Message):
 @dp.callback_query(F.data == "back_main")
 async def back_main(call: types.CallbackQuery):
     await call.message.edit_text(
-        "👋 Главное меню — выбери действие:",
+        "👋 Главное меню:",
         reply_markup=main_menu()
     )
 
@@ -114,11 +129,11 @@ async def back_main(call: types.CallbackQuery):
 async def howto(call: types.CallbackQuery):
     await call.message.edit_text(
         "ℹ️ *Как это работает:*\n\n"
-        "1. Выбираешь нишу (салоны, кафе, гостиницы и т.д.)\n"
-        "2. Бот ищет все такие бизнесы в Кисловодске через Яндекс\n"
-        "3. Отфильтровывает тех у кого *нет сайта*\n"
-        "4. Выдаёт список с телефонами — это твои клиенты\n\n"
-        "Люда звонит или пишет — предлагает сайт за 5000 руб 🎯",
+        "1. Выбираешь нишу\n"
+        "2. Бот ищет все такие бизнесы в Кисловодске через OpenStreetMap\n"
+        "3. Показывает у кого *нет сайта* — это твои клиенты\n"
+        "4. Выдаёт список с телефонами для Люды\n\n"
+        "Данные из OpenStreetMap — бесплатно и без ограничений 🎯",
         reply_markup=back_btn(),
         parse_mode="Markdown"
     )
@@ -133,69 +148,66 @@ async def search_menu(call: types.CallbackQuery):
 @dp.callback_query(F.data.startswith("niche_"))
 async def search_niche(call: types.CallbackQuery):
     niche_key = call.data.replace("niche_", "")
-    query = NICHES.get(niche_key)
-    niche_name = NICHE_NAMES.get(niche_key, "")
-    
-    if not query:
+    niche = NICHES.get(niche_key)
+
+    if not niche:
         await call.answer("Неизвестная ниша")
         return
-    
-    await call.message.edit_text(f"🔍 Ищу {niche_name} в Кисловодске...\nПодожди 10-15 секунд ⏳")
-    
-    features, status = await search_organizations(query, results=50)
-    
-    if status == "limit":
+
+    await call.message.edit_text(
+        f"🔍 Ищу {niche['name']} в Кисловодске...\n⏳ Подожди 15-20 секунд"
+    )
+
+    elements, status = await search_overpass(niche["query"])
+
+    if status != "ok" or elements is None:
         await call.message.edit_text(
-            "⚠️ Яндекс API исчерпал суточный лимит (500 запросов/день).\n\n"
-            "Попробуй завтра — лимит сбрасывается в полночь по МСК.",
+            f"❌ Ошибка запроса: {status}\nПопробуй ещё раз.",
             reply_markup=back_btn()
         )
         return
-    
-    if status != "ok" or features is None:
-        await call.message.edit_text(
-            f"❌ Ошибка при запросе к Яндексу: {status}\n\nПопробуй позже.",
-            reply_markup=back_btn()
-        )
-        return
-    
-    # Парсим и фильтруем
-    all_orgs = [parse_org(f) for f in features]
-    no_site = [o for o in all_orgs if not o["has_site"]]
-    with_site = [o for o in all_orgs if o["has_site"]]
-    
-    # Формируем сообщение
+
+    all_orgs = [parse_element(el) for el in elements]
+    # Убираем дубли по имени
+    seen = set()
+    unique = []
+    for o in all_orgs:
+        if o["name"] not in seen:
+            seen.add(o["name"])
+            unique.append(o)
+
+    no_site = [o for o in unique if not o["has_site"]]
+    with_site = [o for o in unique if o["has_site"]]
+
     lines = [
-        f"📊 *{niche_name} — результаты:*\n",
-        f"Всего найдено: {len(all_orgs)}",
-        f"✅ Без сайта (потенциальные клиенты): {len(no_site)}",
+        f"📊 *{niche['name']} — результаты:*\n",
+        f"Всего найдено: {len(unique)}",
+        f"✅ Без сайта (твои клиенты): {len(no_site)}",
         f"❌ Уже есть сайт: {len(with_site)}\n",
-        "─" * 25,
-        "\n🎯 *БЕЗ САЙТА — твои клиенты:*\n",
     ]
-    
+
     if no_site:
-        for i, org in enumerate(no_site[:15], 1):
+        lines.append("🎯 *БЕЗ САЙТА:*\n")
+        for i, org in enumerate(no_site[:20], 1):
+            phone_str = f"📞 {org['phone']}" if org['phone'] != 'нет' else "📞 нет телефона"
             lines.append(
                 f"{i}. *{org['name']}*\n"
-                f"   📍 {org['address']}\n"
-                f"   📞 {org['phone']}\n"
+                f"   📍 {org['addr']}\n"
+                f"   {phone_str}\n"
             )
-        if len(no_site) > 15:
-            lines.append(f"... и ещё {len(no_site) - 15} организаций")
+        if len(no_site) > 20:
+            lines.append(f"... и ещё {len(no_site) - 20}")
     else:
-        lines.append("Не найдено организаций без сайта в этой нише.")
-    
-    result_text = "\n".join(lines)
-    
-    # Телеграм ограничивает 4096 символов
-    if len(result_text) > 4000:
-        result_text = result_text[:4000] + "\n\n... (список обрезан)"
-    
-    await call.message.edit_text(result_text, reply_markup=back_btn(), parse_mode="Markdown")
+        lines.append("В этой нише все бизнесы уже имеют сайт, или данных нет в OpenStreetMap.")
+
+    result = "\n".join(lines)
+    if len(result) > 4000:
+        result = result[:4000] + "\n\n...(обрезано)"
+
+    await call.message.edit_text(result, reply_markup=back_btn(), parse_mode="Markdown")
 
 async def main():
-    print("Бот-разведчик запущен")
+    print("WebForge Scout запущен (OpenStreetMap)")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
