@@ -222,9 +222,21 @@ async def order_budget(call: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
     budget = bgt_map.get(call.data, call.data)
     await state.clear()
-    summary = "\u041d\u043e\u0432\u0430\u044f \u0437\u0430\u044f\u0432\u043a\u0430!\n\n\u0418\u043c\u044f: " + str(data.get("name")) + "\n\u0423\u0441\u043b\u0443\u0433\u0430: " + str(data.get("service")) + "\n\u0411\u044e\u0434\u0436\u0435\u0442: " + budget
+
+    user = call.from_user
+    username = f"@{user.username}" if user.username else "\u0431\u0435\u0437 \u044e\u0437\u0435\u0440\u043d\u0435\u0439\u043c\u0430"
+    user_link = f'<a href="tg://user?id={user.id}">{user.first_name}</a>'
+
+    summary = (
+        "\U0001f4e9 \u041d\u043e\u0432\u0430\u044f \u0437\u0430\u044f\u0432\u043a\u0430!\n\n"
+        f"\u0418\u043c\u044f: {data.get('name')}\n"
+        f"\u0423\u0441\u043b\u0443\u0433\u0430: {data.get('service')}\n"
+        f"\u0411\u044e\u0434\u0436\u0435\u0442: {budget}\n\n"
+        f"\U0001f464 Telegram: {username}\n"
+        f"\U0001f517 \u041d\u0430\u043f\u0438\u0441\u0430\u0442\u044c: {user_link}"
+    )
     try:
-        await bot.send_message(LYUDA_ID, summary)
+        await bot.send_message(LYUDA_ID, summary, parse_mode="HTML")
     except Exception:
         pass
     await call.message.answer(
