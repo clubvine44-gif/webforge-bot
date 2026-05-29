@@ -6,7 +6,7 @@ from aiogram.filters import CommandStart, Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.storage.memory import MemoryStorage
 
-TOKEN = "8678852008:AAGZeO7cKJWT1vNugKy8wkuII-wotKDZe70"
+TOKEN = "8614199367:AAGVfOkdcceDaa58ufWPB1C1XD5v2OeAqmc"
 YANDEX_KEY = "42c18755-11ca-49ba-9326-0fd8e077f428"
 NIKITA_ID = None  # заполнится при первом /start
 
