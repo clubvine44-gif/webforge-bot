@@ -10,7 +10,7 @@ import os
 
 TOKEN = os.environ.get("BOT_TOKEN", "8678852008:AAGZeO7cKJWT1vNugKy8wkuII-wotKDZe70")
 GROQ_KEY = os.environ.get("GROQ_KEY", "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")
-MODEL = "llama-3.1-8b-instant"
+MODEL = "llama-3.3-70b-versatile"
 LYUDA_ID = 5679074450
 
 bot = Bot(token=TOKEN)
@@ -67,7 +67,8 @@ SYSTEM_PROMPT = (
     "4. НИКОГДА не придумывай услуги которых нет в списке выше\n"
     "5. Если клиент интересуется — предлагай оставить заявку или связаться с @LyudmilaVadimovna1\n"
     "6. Если не знаешь ответа — направь к менеджеру @LyudmilaVadimovna1\n"
-    "7. Отвечай коротко — максимум 5-6 предложений"
+    "7. Отвечай коротко — максимум 5-6 предложений\n"
+    "8. ТОЛЬКО русский язык. Никаких английских слов, иероглифов, странных символов. Пиши как живой человек, просто и тепло"
 )
 
 async def call_ai(user_id: int, question: str) -> str:
