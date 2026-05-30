@@ -63,6 +63,7 @@ height:100dvh;height:100vh;}
 .msg-wrap.bot{align-items:flex-start}
 .msg{max-width:82%;padding:.65rem .9rem;border-radius:20px;font-size:.9rem;line-height:1.5;word-break:break-word;animation:pop .22s cubic-bezier(.34,1.56,.64,1) both}
 @keyframes pop{from{opacity:0;transform:scale(.85) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 .msg.bot{background:var(--s);color:var(--t);border-bottom-left-radius:5px;border-top-left-radius:20px}
 .msg.user{background:linear-gradient(135deg,var(--a),#8b85ff);color:#fff;border-bottom-right-radius:5px;border-top-right-radius:20px}
 .msg-time{font-size:.62rem;color:var(--m);padding:0 .25rem;margin-top:1px}
@@ -96,6 +97,9 @@ height:100dvh;height:100vh;}
 .qb:active{border-color:var(--a);color:var(--a)}
 
 .cf-inp-area{padding:.6rem .75rem;padding-bottom:calc(.6rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--b);background:var(--s);display:flex;gap:.5rem;flex-shrink:0;align-items:flex-end}
+/* Когда фокус на инпуте — прячем быстрые кнопки для экономии места */
+#CF.kb-open .cf-quick{display:none}
+#CF.kb-open .tz-progress{padding:.25rem .875rem}
 #cfInp{flex:1;background:rgba(255,255,255,.06);border:1.5px solid var(--b);border-radius:22px;padding:.6rem 1rem;color:var(--t);font-size:1rem;outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;transition:border-color .2s;resize:none;max-height:100px;min-height:44px;line-height:1.4;-webkit-user-select:text;user-select:text}
 #cfInp:focus{border-color:var(--a);background:rgba(108,99,255,.08)}
 #cfInp::placeholder{color:var(--m)}
@@ -206,7 +210,10 @@ footer{border-top:1px solid var(--b);padding:1.5rem 1.25rem;text-align:center;co
     <button class="qb" onclick="openForm()">📝 Заявка</button>
   </div>
   <div class="cf-inp-area">
-    <textarea id="cfInp" placeholder="Написать сообщение..." rows="1" maxlength="500"></textarea>
+    <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+      <div id="cfHint" style="font-size:.7rem;color:var(--a);padding:0 .5rem;display:none;animation:fadeIn .2s"></div>
+      <textarea id="cfInp" placeholder="Написать сообщение..." rows="1" maxlength="500"></textarea>
+    </div>
     <button class="send-btn" onclick="sendMsg()"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
   </div>
 </div>
@@ -340,12 +347,19 @@ function showTyping(){
 function hideTyping(){document.getElementById('TY')?.remove();}
 
 function keepFocus(){
-  // Держим фокус и скроллим — несколько раз для надёжности
   inp.focus();
   setTimeout(()=>{inp.focus();scrollBot();},50);
   setTimeout(()=>{inp.focus();scrollBot();},200);
   setTimeout(scrollBot,500);
 }
+
+inp.addEventListener('focus',()=>CF.classList.add('kb-open'));
+inp.addEventListener('blur',()=>{
+  // Не убираем kb-open если потеряли фокус из-за нажатия кнопки
+  setTimeout(()=>{
+    if(document.activeElement!==inp) CF.classList.remove('kb-open');
+  },150);
+});
 
 // ===== ЧАТ =====
 function openChat(){
@@ -401,8 +415,13 @@ document.addEventListener('mousedown',e=>{
   }
 },true);
 function closeChat(){
+  // Сначала убираем фокус чтобы клавиатура закрылась
+  inp.blur();
   CF.classList.remove('open');
+  CF.style.height='';
   document.body.style.overflow='';
+  // Сбрасываем placeholder
+  inp.placeholder='Написать сообщение...';
 }
 
 async function askAI(text){
@@ -549,12 +568,22 @@ function tzAsk(){
 
   if(q.type==='text'){
     addMsg(q.q,'bot');
-    const hints={'business':'Например: Салон красоты "Люкс", г. Кисловодск, стрижки и окрашивание',
-      'functions':'Перечислите через запятую всё что нужно',
-      'examples':'Вставьте ссылки на сайты или опишите стиль',
-      'contacts':'Например: +7 928 123-45-67 или @username',
-      'extra':'Любые особенности или пожелания к проекту'};
-    inp.placeholder=hints[q.k]||'Напишите ваш ответ...';
+    const hints={
+      'business':'💡 Пример: Салон красоты "Люкс", Кисловодск',
+      'functions':'💡 Или напишите свой вариант через запятую',
+      'examples':'💡 Вставьте ссылки или опишите стиль (минимализм, яркий, строгий)',
+      'contacts':'💡 Пример: +7 928 123-45-67 или @username',
+      'extra':'💡 Любые пожелания, особенности или вопросы'
+    };
+    const hintEl=document.getElementById('cfHint');
+    const hint=hints[q.k];
+    if(hint){
+      hintEl.textContent=hint;
+      hintEl.style.display='block';
+    } else {
+      hintEl.style.display='none';
+    }
+    inp.placeholder='Написать ответ...';
     tzWait=true;
     keepFocus();
   } else {
@@ -591,6 +620,8 @@ function tzHandleText(text){
   if(!tzWait)return;
   tzWait=false;
   inp.placeholder='Написать сообщение...';
+  const hintEl=document.getElementById('cfHint');
+  if(hintEl) hintEl.style.display='none';
   addMsg(text,'user');
   tzData[TZ[tzStep].k]=text;
   tzStep++;
