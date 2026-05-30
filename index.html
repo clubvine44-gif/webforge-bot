@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>WebForge AI — Сайты и боты для бизнеса</title>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -101,6 +101,7 @@ nav {
   height: 480px;
   box-shadow: 0 0 60px rgba(108,99,255,0.12);
   margin-bottom: 3rem;
+  position: relative;
 }
 .chat-header {
   padding: 0.875rem 1rem;
@@ -349,6 +350,14 @@ footer {
   .form-overlay { align-items: center; padding: 1rem; }
   .form-box { border-radius: 16px; }
   @keyframes slideUp { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+}
+
+@media (max-width: 767px) {
+  .chat-widget {
+    height: 420px;
+    border-radius: 12px;
+  }
+  .chat-messages { padding: 0.75rem; }
 }
 </style>
 </head>
@@ -852,6 +861,14 @@ async function submitForm() {
   document.getElementById('formContent').style.display = 'none';
   document.getElementById('formSuccess').style.display = 'block';
 }
+
+// Фикс клавиатуры на мобильных — скроллим к полю ввода
+inputEl.addEventListener('focus', () => {
+  setTimeout(() => {
+    inputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }, 350);
+});
 
 // Стартовое сообщение
 setTimeout(() => {
