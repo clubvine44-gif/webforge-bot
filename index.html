@@ -6,226 +6,139 @@
 <title>WebForge AI — Сайты и боты для бизнеса</title>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0a0a0f;
-  --surface: #13131a;
-  --border: #1e1e2e;
-  --accent: #6c63ff;
-  --accent2: #ff6b9d;
-  --text: #f0f0f5;
-  --muted: #6b6b80;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html { scroll-behavior: smooth; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+:root{--bg:#0a0a0f;--s:#13131a;--b:#1e1e2e;--a:#6c63ff;--a2:#ff6b9d;--t:#f0f0f5;--m:#6b6b80}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);overflow-x:hidden}
 
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-  padding: 0.875rem 1.25rem;
-  display: flex; align-items: center; justify-content: space-between;
-  background: rgba(10,10,15,0.92); backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-}
-.logo {
-  font-family: 'Unbounded', sans-serif; font-size: 1rem; font-weight: 700;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.nav-cta {
-  font-size: 0.8rem; font-weight: 500;
-  background: var(--accent); color: #fff;
-  padding: 0.5rem 1rem; border-radius: 8px; border: none; cursor: pointer;
-  font-family: 'Inter', sans-serif;
-}
+nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:.875rem 1.25rem;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--b)}
+.logo{font-family:'Unbounded',sans-serif;font-size:1rem;font-weight:700;background:linear-gradient(135deg,var(--a),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-cta{font-size:.8rem;font-weight:500;background:var(--a);color:#fff;padding:.5rem 1rem;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif}
 
-.hero { padding: 5rem 1.25rem 2rem; max-width: 1100px; margin: 0 auto; }
-.hero-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
-.badge { font-size: 0.7rem; padding: 0.3rem 0.65rem; border: 1px solid var(--border); border-radius: 100px; color: var(--muted); }
-.hero h1 {
-  font-family: 'Unbounded', sans-serif;
-  font-size: clamp(1.6rem, 6vw, 3rem); font-weight: 700; line-height: 1.15; margin-bottom: 1rem;
-}
-.hero h1 span {
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.hero p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1.5rem; }
-.hero-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem; }
-.btn-primary {
-  display: inline-flex; align-items: center;
-  background: var(--accent); color: #fff; font-size: 0.875rem; font-weight: 500;
-  padding: 0.75rem 1.5rem; border-radius: 10px; border: none; cursor: pointer;
-  font-family: 'Inter', sans-serif; text-decoration: none;
-}
-.btn-outline {
-  display: inline-flex; align-items: center;
-  background: transparent; color: var(--text); font-size: 0.875rem;
-  padding: 0.75rem 1.5rem; border-radius: 10px;
-  border: 1px solid var(--border); text-decoration: none;
-}
+.hero{padding:5rem 1.25rem 2rem;max-width:1100px;margin:0 auto}
+.hero-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.badge{font-size:.7rem;padding:.3rem .65rem;border:1px solid var(--b);border-radius:100px;color:var(--m)}
+.hero h1{font-family:'Unbounded',sans-serif;font-size:clamp(1.6rem,6vw,3rem);font-weight:700;line-height:1.15;margin-bottom:1rem}
+.hero h1 span{background:linear-gradient(135deg,var(--a),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--m);font-size:.9rem;line-height:1.7;margin-bottom:1.5rem}
+.hero-btns{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:2rem}
+.btn-p{display:inline-flex;align-items:center;background:var(--a);color:#fff;font-size:.875rem;font-weight:500;padding:.75rem 1.5rem;border-radius:10px;border:none;cursor:pointer;font-family:'Inter',sans-serif;text-decoration:none}
+.btn-o{display:inline-flex;align-items:center;background:transparent;color:var(--t);font-size:.875rem;padding:.75rem 1.5rem;border-radius:10px;border:1px solid var(--b);text-decoration:none}
 
-/* ПРЕВЬЮ ЧАТА НА САЙТЕ */
-.chat-preview {
-  background: #0f0f18; border: 1px solid var(--border);
-  border-radius: 16px; overflow: hidden; cursor: pointer;
-  margin-bottom: 3rem; transition: border-color 0.2s, box-shadow 0.2s;
-  box-shadow: 0 0 40px rgba(108,99,255,0.08);
-}
-.chat-preview:hover { border-color: var(--accent); box-shadow: 0 0 40px rgba(108,99,255,0.15); }
-.preview-header {
-  padding: 0.875rem 1rem; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 0.75rem; background: var(--surface);
-}
-.chat-avatar {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.9rem; flex-shrink: 0;
-}
-.chat-title { font-size: 0.8rem; font-weight: 500; }
-.chat-status { font-size: 0.65rem; color: #4ade80; display: flex; align-items: center; gap: 0.25rem; }
-.chat-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #4ade80; }
-.preview-msgs { padding: 0.875rem; display: flex; flex-direction: column; gap: 0.5rem; min-height: 100px; }
-.preview-input-bar {
-  padding: 0.65rem; border-top: 1px solid var(--border);
-  background: var(--surface); display: flex; align-items: center; gap: 0.5rem;
-}
-.preview-input-bar span {
-  flex: 1; font-size: 0.82rem; color: var(--muted);
-  padding: 0.55rem 0.85rem; background: var(--bg);
-  border: 1px solid var(--border); border-radius: 8px;
-}
-.send-btn {
-  width: 36px; height: 36px; border-radius: 8px; background: var(--accent);
-  border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.send-btn svg { width: 15px; height: 15px; fill: #fff; }
+/* ПРЕВЬЮ */
+.chat-preview{background:#0c0c14;border:1px solid var(--b);border-radius:16px;overflow:hidden;cursor:pointer;margin-bottom:3rem;transition:border-color .2s,box-shadow .2s;box-shadow:0 0 40px rgba(108,99,255,.08)}
+.chat-preview:hover{border-color:var(--a);box-shadow:0 0 40px rgba(108,99,255,.15)}
+.prev-header{padding:.875rem 1rem;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:.75rem;background:var(--s)}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.ct{font-size:.8rem;font-weight:500}
+.cs{font-size:.65rem;color:#4ade80;display:flex;align-items:center;gap:.25rem}
+.cs::before{content:'';width:5px;height:5px;border-radius:50%;background:#4ade80}
+.prev-msgs{padding:.875rem;display:flex;flex-direction:column;gap:.5rem;min-height:90px}
+.prev-bar{padding:.65rem;border-top:1px solid var(--b);background:var(--s);display:flex;align-items:center;gap:.5rem}
+.prev-bar span{flex:1;font-size:.82rem;color:var(--m);padding:.55rem .85rem;background:var(--bg);border:1px solid var(--b);border-radius:8px}
+.sb{width:36px;height:36px;border-radius:8px;background:var(--a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb svg{width:15px;height:15px;fill:#fff}
 
 /* ПОЛНОЭКРАННЫЙ ЧАТ */
-#chatFull {
-  position: fixed; inset: 0; z-index: 200;
-  background: #0a0a0f; display: flex; flex-direction: column;
-  transform: translateY(100%);
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
-}
-#chatFull.open { transform: translateY(0); }
-.cf-header {
-  padding: 0.875rem 1rem;
-  padding-top: calc(0.875rem + env(safe-area-inset-top, 0px));
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 0.75rem;
-  background: var(--surface); flex-shrink: 0;
-}
-.cf-back {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: rgba(255,255,255,0.08); border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text); font-size: 1.1rem; flex-shrink: 0;
-}
-#cfMessages {
-  flex: 1; overflow-y: auto; padding: 1rem;
-  display: flex; flex-direction: column; gap: 0.6rem;
-  -webkit-overflow-scrolling: touch;
-}
-#cfMessages::-webkit-scrollbar { width: 3px; }
-#cfMessages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-.msg {
-  max-width: 85%; padding: 0.6rem 0.85rem;
-  border-radius: 12px; font-size: 0.875rem; line-height: 1.55;
-  word-break: break-word;
-}
-.msg.bot { background: var(--surface); color: var(--text); border-bottom-left-radius: 4px; align-self: flex-start; }
-.msg.user { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
-.msg-buttons { display: flex; flex-wrap: wrap; gap: 0.35rem; align-self: flex-start; max-width: 95%; }
-.msg-btn {
-  font-size: 0.75rem; padding: 0.4rem 0.8rem;
-  border: 1px solid var(--border); border-radius: 100px;
-  background: transparent; color: var(--muted); cursor: pointer;
-  font-family: 'Inter', sans-serif; transition: all 0.15s; white-space: nowrap;
-}
-.msg-btn:active, .msg-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(108,99,255,0.1); }
-.msg-btn:disabled { opacity: 0.35; pointer-events: none; }
-.typing { display: flex; gap: 4px; padding: 0.6rem 0.85rem; background: var(--surface); border-radius: 12px; border-bottom-left-radius: 4px; align-self: flex-start; }
-.typing span { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); animation: bounce 1.2s infinite; }
-.typing span:nth-child(2) { animation-delay: 0.2s; }
-.typing span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
-.cf-quick {
-  padding: 0.5rem 0.875rem; border-top: 1px solid var(--border);
-  display: flex; gap: 0.35rem; overflow-x: auto; flex-shrink: 0;
-  background: var(--surface); -webkit-overflow-scrolling: touch;
-}
-.cf-quick::-webkit-scrollbar { display: none; }
-.quick-btn {
-  font-size: 0.72rem; padding: 0.38rem 0.75rem;
-  border: 1px solid var(--border); border-radius: 100px;
-  background: transparent; color: var(--muted); cursor: pointer;
-  font-family: 'Inter', sans-serif; white-space: nowrap; flex-shrink: 0;
-}
-.quick-btn:active { border-color: var(--accent); color: var(--accent); }
-.cf-input-area {
-  padding: 0.65rem;
-  padding-bottom: calc(0.65rem + env(safe-area-inset-bottom, 0px));
-  border-top: 1px solid var(--border); background: var(--surface);
-  display: flex; gap: 0.5rem; flex-shrink: 0;
-}
-#cfInput {
-  flex: 1; background: var(--bg); border: 1px solid var(--border);
-  border-radius: 10px; padding: 0.65rem 0.9rem; color: var(--text);
-  font-size: 1rem; outline: none; font-family: 'Inter', sans-serif;
-  -webkit-appearance: none; transition: border-color 0.2s;
-}
-#cfInput:focus { border-color: var(--accent); }
-#cfInput::placeholder { color: var(--muted); }
+#CF{position:fixed;inset:0;z-index:200;background:#0a0a0f;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.4,0,.2,1);will-change:transform}
+#CF.open{transform:translateY(0)}
+
+.cf-header{padding:.875rem 1rem;padding-top:calc(.875rem + env(safe-area-inset-top,0px));border-bottom:1px solid var(--b);display:flex;align-items:center;gap:.75rem;background:var(--s);flex-shrink:0}
+/* КНОПКА НАЗАД — современная */
+.cf-back{display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:.4rem .75rem .4rem .5rem;color:var(--t);font-size:.78rem;font-weight:500;cursor:pointer;flex-shrink:0;transition:background .2s}
+.cf-back:active{background:rgba(255,255,255,.12)}
+.cf-back svg{width:16px;height:16px;fill:none;stroke:var(--t);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+#cfMsgs{flex:1;overflow-y:auto;padding:1rem .875rem;display:flex;flex-direction:column;gap:.5rem;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
+#cfMsgs::-webkit-scrollbar{width:3px}
+#cfMsgs::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
+
+/* СООБЩЕНИЯ — стиль мессенджера */
+.msg{max-width:82%;padding:.65rem .9rem;border-radius:18px;font-size:.9rem;line-height:1.5;word-break:break-word;animation:pop .2s ease}
+@keyframes pop{from{opacity:0;transform:scale(.95) translateY(4px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.msg.bot{background:var(--s);color:var(--t);border-bottom-left-radius:4px;align-self:flex-start}
+.msg.user{background:var(--a);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.msg-time{font-size:.65rem;opacity:.5;margin-top:.25rem;text-align:right}
+
+/* КНОПКИ ОТВЕТОВ */
+.reply-btns{display:flex;flex-wrap:wrap;gap:.4rem;align-self:flex-start;max-width:95%;margin-top:.1rem}
+.rb{font-size:.8rem;padding:.45rem .9rem;border:1.5px solid rgba(108,99,255,.4);border-radius:20px;background:rgba(108,99,255,.08);color:var(--a);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap}
+.rb:active,.rb:hover{background:var(--a);color:#fff;border-color:var(--a)}
+.rb:disabled{opacity:.3;pointer-events:none}
+
+.typing{display:flex;gap:4px;padding:.65rem .9rem;background:var(--s);border-radius:18px;border-bottom-left-radius:4px;align-self:flex-start}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--m);animation:bounce 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+/* ПРОГРЕСС ТЗ */
+.tz-progress{padding:.5rem .875rem;background:var(--s);border-bottom:1px solid var(--b);flex-shrink:0;display:none}
+.tz-progress.show{display:block}
+.tz-bar-wrap{background:var(--b);border-radius:4px;height:4px;overflow:hidden;margin-bottom:.3rem}
+.tz-bar{height:100%;background:linear-gradient(90deg,var(--a),var(--a2));border-radius:4px;transition:width .3s}
+.tz-label{font-size:.7rem;color:var(--m)}
+
+.cf-quick{padding:.45rem .75rem;border-top:1px solid var(--b);display:flex;gap:.35rem;overflow-x:auto;flex-shrink:0;background:var(--s);-webkit-overflow-scrolling:touch}
+.cf-quick::-webkit-scrollbar{display:none}
+.qb{font-size:.72rem;padding:.35rem .7rem;border:1px solid var(--b);border-radius:100px;background:transparent;color:var(--m);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.qb:active{border-color:var(--a);color:var(--a)}
+
+.cf-inp-area{padding:.6rem .75rem;padding-bottom:calc(.6rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--b);background:var(--s);display:flex;gap:.5rem;flex-shrink:0;align-items:flex-end}
+#cfInp{flex:1;background:rgba(255,255,255,.06);border:1.5px solid var(--b);border-radius:22px;padding:.6rem 1rem;color:var(--t);font-size:.95rem;outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;transition:border-color .2s;resize:none;max-height:80px;min-height:42px;line-height:1.4}
+#cfInp:focus{border-color:var(--a)}
+#cfInp::placeholder{color:var(--m)}
+.send-btn{width:42px;height:42px;border-radius:50%;background:var(--a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s,opacity .15s}
+.send-btn:active{transform:scale(.9)}
+.send-btn svg{width:16px;height:16px;fill:#fff;margin-left:2px}
 
 /* СЕКЦИИ */
-section { padding: 3.5rem 1.25rem; max-width: 1100px; margin: 0 auto; }
-.section-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
-.section-title { font-family: 'Unbounded', sans-serif; font-size: clamp(1.3rem, 4vw, 2rem); font-weight: 600; margin-bottom: 0.75rem; }
-.section-sub { color: var(--muted); line-height: 1.7; font-size: 0.875rem; }
-.services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.875rem; margin-top: 2rem; }
-.service-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; transition: border-color 0.2s; }
-.service-card:hover { border-color: var(--accent); }
-.service-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(108,99,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 0.875rem; }
-.service-card h3 { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.4rem; }
-.service-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
-.service-price { margin-top: 0.875rem; font-size: 0.78rem; color: var(--accent); font-weight: 500; }
-.portfolio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; margin-top: 2rem; }
-.portfolio-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--text); display: block; transition: border-color 0.2s; }
-.portfolio-card:hover { border-color: var(--accent); }
-.portfolio-preview { height: 110px; background: linear-gradient(135deg, rgba(108,99,255,0.2), rgba(255,107,157,0.15)); display: flex; align-items: center; justify-content: center; font-size: 2rem; }
-.portfolio-info { padding: 0.875rem; }
-.portfolio-info h3 { font-size: 0.85rem; font-weight: 500; margin-bottom: 0.3rem; }
-.portfolio-info p { font-size: 0.75rem; color: var(--muted); }
-.portfolio-link { font-size: 0.72rem; color: var(--accent); margin-top: 0.4rem; display: block; }
-footer { border-top: 1px solid var(--border); padding: 1.5rem 1.25rem; text-align: center; color: var(--muted); font-size: 0.78rem; }
+section{padding:3.5rem 1.25rem;max-width:1100px;margin:0 auto}
+.sl{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--a);margin-bottom:.75rem}
+.st{font-family:'Unbounded',sans-serif;font-size:clamp(1.3rem,4vw,2rem);font-weight:600;margin-bottom:.75rem}
+.ss{color:var(--m);line-height:1.7;font-size:.875rem}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.875rem;margin-top:2rem}
+.sc{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:1.25rem;transition:border-color .2s}
+.sc:hover{border-color:var(--a)}
+.si{width:40px;height:40px;border-radius:10px;background:rgba(108,99,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:.875rem}
+.sc h3{font-size:.95rem;font-weight:500;margin-bottom:.4rem}
+.sc p{font-size:.82rem;color:var(--m);line-height:1.6}
+.sp{margin-top:.875rem;font-size:.78rem;color:var(--a);font-weight:500}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;margin-top:2rem}
+.pc{background:var(--s);border:1px solid var(--b);border-radius:12px;overflow:hidden;text-decoration:none;color:var(--t);display:block;transition:border-color .2s}
+.pc:hover{border-color:var(--a)}
+.pp{height:110px;background:linear-gradient(135deg,rgba(108,99,255,.2),rgba(255,107,157,.15));display:flex;align-items:center;justify-content:center;font-size:2rem}
+.pi{padding:.875rem}
+.pi h3{font-size:.85rem;font-weight:500;margin-bottom:.3rem}
+.pi p{font-size:.75rem;color:var(--m)}
+.pl{font-size:.72rem;color:var(--a);margin-top:.4rem;display:block}
+footer{border-top:1px solid var(--b);padding:1.5rem 1.25rem;text-align:center;color:var(--m);font-size:.78rem}
 
 /* ФОРМА */
-.form-overlay { display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); align-items: flex-end; justify-content: center; }
-.form-overlay.active { display: flex; }
-.form-box { background: var(--surface); border: 1px solid var(--border); border-radius: 20px 20px 0 0; padding: 1.5rem; width: 100%; max-width: 480px; animation: slideUp 0.3s ease; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); }
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.form-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border); margin: 0 auto 1.25rem; }
-.form-box h2 { font-family: 'Unbounded', sans-serif; font-size: 1rem; margin-bottom: 1.25rem; }
-.form-field { margin-bottom: 0.875rem; }
-.form-field label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.35rem; }
-.form-field input, .form-field select { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 0.9rem; color: var(--text); font-size: 0.9rem; outline: none; font-family: 'Inter', sans-serif; -webkit-appearance: none; transition: border-color 0.2s; }
-.form-field input:focus, .form-field select:focus { border-color: var(--accent); }
-.form-field select option { background: var(--surface); }
-.form-actions { display: flex; gap: 0.65rem; margin-top: 1.25rem; }
-.btn-ghost { flex: 1; padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-size: 0.875rem; font-family: 'Inter', sans-serif; }
-.btn-submit { flex: 2; padding: 0.75rem; border-radius: 10px; background: var(--accent); border: none; color: #fff; cursor: pointer; font-size: 0.875rem; font-weight: 500; font-family: 'Inter', sans-serif; }
-.form-success { text-align: center; padding: 1.5rem 0; display: none; }
-.form-success .check { font-size: 2.5rem; margin-bottom: 0.875rem; }
-.form-success p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+.fo{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center}
+.fo.active{display:flex}
+.fb{background:var(--s);border:1px solid var(--b);border-radius:20px 20px 0 0;padding:1.5rem;width:100%;max-width:480px;animation:su .3s ease;padding-bottom:calc(1.5rem + env(safe-area-inset-bottom,0px))}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.fh{width:36px;height:4px;border-radius:2px;background:var(--b);margin:0 auto 1.25rem}
+.fb h2{font-family:'Unbounded',sans-serif;font-size:1rem;margin-bottom:1.25rem}
+.ff{margin-bottom:.875rem}
+.ff label{display:block;font-size:.78rem;color:var(--m);margin-bottom:.35rem}
+.ff input,.ff select{width:100%;background:var(--bg);border:1px solid var(--b);border-radius:10px;padding:.7rem .9rem;color:var(--t);font-size:.9rem;outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;transition:border-color .2s}
+.ff input:focus,.ff select:focus{border-color:var(--a)}
+.ff select option{background:var(--s)}
+.fa{display:flex;gap:.65rem;margin-top:1.25rem}
+.bg{flex:1;padding:.75rem;border-radius:10px;border:1px solid var(--b);background:transparent;color:var(--m);cursor:pointer;font-size:.875rem;font-family:'Inter',sans-serif}
+.bs{flex:2;padding:.75rem;border-radius:10px;background:var(--a);border:none;color:#fff;cursor:pointer;font-size:.875rem;font-weight:500;font-family:'Inter',sans-serif}
+.fok{text-align:center;padding:1.5rem 0;display:none}
+.fok .ck{font-size:2.5rem;margin-bottom:.875rem}
+.fok p{color:var(--m);font-size:.85rem;line-height:1.6}
 
-@media (min-width: 768px) {
-  .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; padding-top: 6rem; }
-  .chat-preview { margin-bottom: 0; }
-  .form-overlay { align-items: center; padding: 1rem; }
-  .form-box { border-radius: 16px; }
-  @keyframes slideUp { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+@media(min-width:768px){
+  .hero{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;padding-top:6rem}
+  .chat-preview{margin-bottom:0}
+  .fo{align-items:center;padding:1rem}
+  .fb{border-radius:16px}
+  @keyframes su{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
 }
 </style>
 </head>
@@ -238,425 +151,459 @@ footer { border-top: 1px solid var(--border); padding: 1.5rem 1.25rem; text-alig
 
 <div class="hero">
   <div>
-    <div class="hero-badges">
-      <span class="badge">Кисловодск</span>
-      <span class="badge">От 3 дней</span>
-      <span class="badge">Поддержка 24/7</span>
-    </div>
+    <div class="hero-badges"><span class="badge">Кисловодск</span><span class="badge">От 3 дней</span><span class="badge">Поддержка 24/7</span></div>
     <h1>Сайты и боты<br>для вашего<br><span>бизнеса</span></h1>
     <p>Делаем продающие сайты и Telegram-ботов с ИИ для салонов, кафе, гостевых домов и мастеров.</p>
     <div class="hero-btns">
-      <button class="btn-primary" onclick="openForm()">Заказать — от 5000 ₽</button>
-      <a class="btn-outline" href="#services">Подробнее</a>
+      <button class="btn-p" onclick="openForm()">Заказать — от 5000 ₽</button>
+      <a class="btn-o" href="#services">Подробнее</a>
     </div>
   </div>
 
-  <!-- ПРЕВЬЮ ЧАТА -->
-  <div class="chat-preview" onclick="openChat()" id="chatPreview">
-    <div class="preview-header">
-      <div class="chat-avatar">🤖</div>
-      <div>
-        <div class="chat-title">ИИ-консультант WebForge</div>
-        <div class="chat-status">онлайн — нажмите чтобы открыть</div>
-      </div>
+  <div class="chat-preview" onclick="openChat()">
+    <div class="prev-header">
+      <div class="av">🤖</div>
+      <div><div class="ct">ИИ-консультант WebForge</div><div class="cs">онлайн</div></div>
     </div>
-    <div class="preview-msgs" id="previewMsgs">
-      <div class="msg bot" style="font-size:0.8rem;padding:0.5rem 0.75rem;">Привет! Помогу выбрать услугу и отвечу на любые вопросы.</div>
+    <div class="prev-msgs" id="prevMsgs">
+      <div class="msg bot" style="font-size:.8rem;padding:.5rem .75rem">Привет! Помогу выбрать услугу, отвечу на вопросы или составлю ТЗ.</div>
     </div>
-    <div class="preview-input-bar">
-      <span>Задайте вопрос или составьте ТЗ...</span>
-      <div class="send-btn"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></div>
-    </div>
+    <div class="prev-bar"><span>Нажмите чтобы открыть чат...</span><div class="sb"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></div></div>
   </div>
 </div>
 
 <!-- ПОЛНОЭКРАННЫЙ ЧАТ -->
-<div id="chatFull">
+<div id="CF">
   <div class="cf-header">
-    <button class="cf-back" onclick="closeChat()">←</button>
-    <div class="chat-avatar">🤖</div>
-    <div>
-      <div class="chat-title">ИИ-консультант WebForge</div>
-      <div class="chat-status">онлайн</div>
-    </div>
+    <button class="cf-back" onclick="closeChat()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Назад
+    </button>
+    <div class="av" style="margin-left:.25rem">🤖</div>
+    <div><div class="ct">ИИ-консультант WebForge</div><div class="cs">онлайн</div></div>
   </div>
-  <div id="cfMessages"></div>
-  <div class="cf-quick">
-    <button class="quick-btn" onclick="quickSend('Сколько стоит сайт?')">💰 Цены</button>
-    <button class="quick-btn" onclick="quickSend('Составить ТЗ')">📋 Составить ТЗ</button>
-    <button class="quick-btn" onclick="quickSend('Покажи примеры работ')">🖼 Примеры</button>
-    <button class="quick-btn" onclick="quickSend('Что такое бот с ИИ?')">🤖 Про бота</button>
-    <button class="quick-btn" onclick="openForm()">📝 Заявка</button>
+  <div class="tz-progress" id="tzProg">
+    <div class="tz-bar-wrap"><div class="tz-bar" id="tzBar" style="width:0%"></div></div>
+    <div class="tz-label" id="tzLbl">Составление ТЗ</div>
   </div>
-  <div class="cf-input-area">
-    <input id="cfInput" type="text" placeholder="Ваш вопрос..." maxlength="300" autocomplete="off">
+  <div id="cfMsgs"></div>
+  <div class="cf-quick" id="cfQuick">
+    <button class="qb" onclick="qs('Сколько стоит сайт?')">💰 Цены</button>
+    <button class="qb" onclick="startTZ()">📋 Составить ТЗ</button>
+    <button class="qb" onclick="qs('Покажи примеры работ')">🖼 Примеры</button>
+    <button class="qb" onclick="qs('Что такое бот с ИИ?')">🤖 Про бота</button>
+    <button class="qb" onclick="openForm()">📝 Заявка</button>
+  </div>
+  <div class="cf-inp-area">
+    <textarea id="cfInp" placeholder="Написать сообщение..." rows="1" maxlength="500"></textarea>
     <button class="send-btn" onclick="sendMsg()"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
   </div>
 </div>
 
 <section id="services">
-  <div class="section-label">Что мы делаем</div>
-  <div class="section-title">Услуги под ключ</div>
-  <p class="section-sub">От простого лендинга до умного Telegram-бота с ИИ — всё в одном месте.</p>
-  <div class="services-grid">
-    <div class="service-card"><div class="service-icon">🌐</div><h3>Лендинг</h3><p>Одностраничный продающий сайт под мобильные.</p><div class="service-price">от 5000 ₽ · 3 дня</div></div>
-    <div class="service-card"><div class="service-icon">📱</div><h3>Сайт-визитка</h3><p>Многостраничный сайт с услугами, ценами, галереей.</p><div class="service-price">от 5000 ₽ · 5 дней</div></div>
-    <div class="service-card"><div class="service-icon">🤖</div><h3>Telegram-бот с ИИ</h3><p>Бот отвечает на вопросы и принимает заявки 24/7.</p><div class="service-price">от 10000 ₽ · 7-10 дней</div></div>
-    <div class="service-card"><div class="service-icon">🔧</div><h3>Поддержка</h3><p>Хостинг, правки, обновления в течение суток.</p><div class="service-price">1500-2500 ₽/мес</div></div>
+  <div class="sl">Что мы делаем</div>
+  <div class="st">Услуги под ключ</div>
+  <p class="ss">От лендинга до Telegram-бота с ИИ — всё под ключ.</p>
+  <div class="sg">
+    <div class="sc"><div class="si">🌐</div><h3>Лендинг</h3><p>Одностраничный продающий сайт под мобильные.</p><div class="sp">от 5000 ₽ · 3 дня</div></div>
+    <div class="sc"><div class="si">📱</div><h3>Сайт-визитка</h3><p>Многостраничный с услугами, ценами, галереей.</p><div class="sp">от 5000 ₽ · 5 дней</div></div>
+    <div class="sc"><div class="si">🤖</div><h3>Telegram-бот с ИИ</h3><p>Отвечает на вопросы и принимает заявки 24/7.</p><div class="sp">от 10000 ₽ · 7-10 дней</div></div>
+    <div class="sc"><div class="si">🔧</div><h3>Поддержка</h3><p>Хостинг, правки, обновления в течение суток.</p><div class="sp">1500–2500 ₽/мес</div></div>
   </div>
 </section>
 
 <section id="portfolio">
-  <div class="section-label">Портфолио</div>
-  <div class="section-title">Примеры работ</div>
-  <p class="section-sub">Реальные сайты которые мы уже сделали.</p>
-  <div class="portfolio-grid">
-    <a class="portfolio-card" href="https://clubvine44-gif.github.io/demo-salon-1" target="_blank">
-      <div class="portfolio-preview">💅</div>
-      <div class="portfolio-info"><h3>Салон красоты LUMIÈRE</h3><p>Услуги, мастера, цены, запись онлайн</p><span class="portfolio-link">Открыть →</span></div>
-    </a>
-    <a class="portfolio-card" href="https://clubvine44-gif.github.io/salon-demo2/" target="_blank">
-      <div class="portfolio-preview">✨</div>
-      <div class="portfolio-info"><h3>Мастер маникюра Алина</h3><p>Прайс, график, галерея, форма записи</p><span class="portfolio-link">Открыть →</span></div>
-    </a>
+  <div class="sl">Портфолио</div>
+  <div class="st">Примеры работ</div>
+  <p class="ss">Реальные сайты которые мы уже сделали.</p>
+  <div class="pg">
+    <a class="pc" href="https://clubvine44-gif.github.io/demo-salon-1" target="_blank"><div class="pp">💅</div><div class="pi"><h3>Салон красоты LUMIÈRE</h3><p>Услуги, мастера, цены, запись</p><span class="pl">Открыть →</span></div></a>
+    <a class="pc" href="https://clubvine44-gif.github.io/salon-demo2/" target="_blank"><div class="pp">✨</div><div class="pi"><h3>Мастер маникюра Алина</h3><p>Прайс, график, галерея, форма</p><span class="pl">Открыть →</span></div></a>
   </div>
 </section>
 
-<footer>
-  <p>© 2026 WebForge AI · Кисловодск · <a href="https://t.me/LyudmilaVadimovna1" style="color:var(--accent);text-decoration:none;">Написать менеджеру</a></p>
-</footer>
+<footer><p>© 2026 WebForge AI · Кисловодск · <a href="https://t.me/LyudmilaVadimovna1" style="color:var(--a);text-decoration:none">Написать менеджеру</a></p></footer>
 
-<!-- ФОРМА -->
-<div class="form-overlay" id="formOverlay" onclick="if(event.target===this)closeForm()">
-  <div class="form-box">
-    <div class="form-handle"></div>
-    <div id="formContent">
+<div class="fo" id="FO" onclick="if(event.target===this)closeForm()">
+  <div class="fb">
+    <div class="fh"></div>
+    <div id="FC">
       <h2>Оставить заявку</h2>
-      <div class="form-field"><label>Ваше имя</label><input type="text" id="fName" placeholder="Как вас зовут?" autocomplete="name"></div>
-      <div class="form-field"><label>Телефон</label><input type="tel" id="fPhone" placeholder="+7 (___) ___-__-__" inputmode="tel"></div>
-      <div class="form-field"><label>Что нужно?</label>
-        <select id="fService">
-          <option>Сайт</option>
-          <option>Telegram-бот с ИИ</option>
-          <option>Сайт + бот</option>
-          <option>Консультация</option>
-        </select>
-      </div>
-      <div class="form-actions">
-        <button class="btn-ghost" onclick="closeForm()">Отмена</button>
-        <button class="btn-submit" onclick="submitForm()">Отправить заявку</button>
-      </div>
+      <div class="ff"><label>Ваше имя</label><input type="text" id="fN" placeholder="Как вас зовут?" autocomplete="name"></div>
+      <div class="ff"><label>Телефон</label><input type="tel" id="fP" placeholder="+7 (___) ___-__-__" inputmode="tel"></div>
+      <div class="ff"><label>Что нужно?</label><select id="fS"><option>Сайт</option><option>Telegram-бот с ИИ</option><option>Сайт + бот</option><option>Консультация</option></select></div>
+      <div class="fa"><button class="bg" onclick="closeForm()">Отмена</button><button class="bs" onclick="subForm()">Отправить заявку</button></div>
     </div>
-    <div class="form-success" id="formSuccess">
-      <div class="check">✅</div>
-      <p>Заявка принята! Менеджер Люда свяжется с вами.<br><br><a href="https://t.me/LyudmilaVadimovna1" style="color:var(--accent);">@LyudmilaVadimovna1</a></p>
-    </div>
+    <div class="fok" id="FOK"><div class="ck">✅</div><p>Заявка принята! Менеджер Люда свяжется с вами.<br><br><a href="https://t.me/LyudmilaVadimovna1" style="color:var(--a)">@LyudmilaVadimovna1</a></p></div>
   </div>
 </div>
 
 <script>
-const BOT_TOKEN = "8678852008:AAGZeO7cKJWT1vNugKy8wkuII-wotKDZe70";
-const LYUDA_ID = "5679074450";
-const GROQ_KEY = "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";
-const MODEL = "llama-3.3-70b-versatile";
+const TK='8678852008:AAGZeO7cKJWT1vNugKy8wkuII-wotKDZe70';
+const LID='5679074450';
+const GK='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';
+const MD='llama-3.3-70b-versatile';
 
-const AI_PROMPT = `Ты консультант WebForge AI из Кисловодска. Коротко и дружелюбно.
-ЧТО МЫ ДЕЛАЕМ: Лендинг от 5000 руб/3 дня, Сайт-визитка от 5000 руб, Telegram-бот с ИИ от 10000 руб/7-10 дней, Абонентка 1500-2500 руб/мес.
-ПРИМЕРЫ: https://clubvine44-gif.github.io/demo-salon-1 и https://clubvine44-gif.github.io/salon-demo2/
-ПРАВИЛА: только русский язык, без символов форматирования, не выдумывай клиентов и отзывы, максимум 3-4 предложения, если хотят заказать — скажи про кнопку Заявка внизу.`;
+const AI_SYS=`Ты консультант WebForge AI из Кисловодска. Отвечай коротко и дружелюбно — максимум 3 предложения.
+Услуги: лендинг от 5000 руб/3 дня, сайт-визитка от 5000 руб, Telegram-бот с ИИ от 10000 руб/7-10 дней, абонентка 1500-2500 руб/мес.
+Примеры: https://clubvine44-gif.github.io/demo-salon-1 и https://clubvine44-gif.github.io/salon-demo2/
+Правила: только русский язык, без форматирования, не выдумывай клиентов и отзывы, если хотят заказать — скажи про кнопку Заявка.`;
 
-const TZ_PROMPT = `Ты технический менеджер WebForge AI. Составь чёткое ТЗ по ответам клиента. Только факты, ничего не выдумывай. Если данных нет — "уточнить". Структура: 1.Бизнес 2.Что разработать 3.Цель 4.Функции 5.Материалы 6.Референсы 7.Сроки/бюджет 8.Контакт 9.Доп.пожелания. Только русский язык.`;
+const TZ_SYS=`Ты менеджер WebForge AI. На основе ответов клиента составь профессиональное ТЗ.
+Оформи чётко по разделам с заголовками каждого раздела на отдельной строке.
+Используй только факты из ответов. Если данных нет — пиши "уточнить у клиента".
+Только русский язык, без markdown символов.`;
 
-const msgsEl = document.getElementById('cfMessages');
-const inp = document.getElementById('cfInput');
-const chatFull = document.getElementById('chatFull');
+const msgsEl=document.getElementById('cfMsgs');
+const inp=document.getElementById('cfInp');
+const CF=document.getElementById('CF');
+const tzProg=document.getElementById('tzProg');
+const tzBar=document.getElementById('tzBar');
+const tzLbl=document.getElementById('tzLbl');
 
-let aiHistory = [];
-let isBusy = false;
+let aiHist=[];
+let busy=false;
+let tzMode=false;
+let tzStep=0;
+let tzData={};
+let tzWait=false;
 
-// ===== ЧАТ =====
-function openChat() {
-  chatFull.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  setTimeout(() => { inp.focus(); scrollBot(); }, 400);
+// ===== УТИЛИТЫ =====
+function now(){const d=new Date();return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')}
+
+function scrollBot(){
+  msgsEl.scrollTo({top:msgsEl.scrollHeight,behavior:'smooth'});
 }
-function closeChat() {
-  chatFull.classList.remove('open');
-  document.body.style.overflow = '';
-  updatePreview();
-}
 
-function scrollBot() { msgsEl.scrollTop = msgsEl.scrollHeight; }
-
-function addMsg(text, role, buttons) {
-  const el = document.createElement('div');
-  el.className = `msg ${role}`;
-  el.textContent = text;
+function addMsg(text,role,btns){
+  const el=document.createElement('div');
+  el.className=`msg ${role}`;
+  el.textContent=text;
+  const tm=document.createElement('div');
+  tm.className='msg-time';
+  tm.textContent=now();
+  el.appendChild(tm);
   msgsEl.appendChild(el);
-  if (buttons) {
-    const wrap = document.createElement('div');
-    wrap.className = 'msg-buttons';
-    buttons.forEach(b => {
-      const btn = document.createElement('button');
-      btn.className = 'msg-btn';
-      btn.textContent = b.label;
-      btn.onclick = () => {
-        wrap.querySelectorAll('.msg-btn').forEach(x => x.disabled = true);
-        if (b.cb) { b.cb(); return; }
-        if (b.val) { handleUserInput(b.label, b.val); }
+  if(btns&&btns.length){
+    const wrap=document.createElement('div');
+    wrap.className='reply-btns';
+    btns.forEach(b=>{
+      const btn=document.createElement('button');
+      btn.className='rb';
+      btn.textContent=b.label;
+      btn.onclick=()=>{
+        wrap.querySelectorAll('.rb').forEach(x=>x.disabled=true);
+        if(b.cb){b.cb();return;}
+        if(b.val){handleInput(b.label,b.val);}
       };
       wrap.appendChild(btn);
     });
     msgsEl.appendChild(wrap);
   }
-  scrollBot();
-}
-
-function showTyping() {
-  const el = document.createElement('div');
-  el.className = 'typing'; el.id = 'typing';
-  el.innerHTML = '<span></span><span></span><span></span>';
-  msgsEl.appendChild(el); scrollBot();
-}
-function hideTyping() { document.getElementById('typing')?.remove(); }
-
-async function askAI(text) {
-  aiHistory.push({ role: 'user', content: text });
-  if (aiHistory.length > 8) aiHistory = aiHistory.slice(-8);
-  try {
-    const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: MODEL, messages: [{ role: 'system', content: AI_PROMPT }, ...aiHistory], max_tokens: 200 })
-    });
-    const d = await r.json();
-    let ans = d.choices[0].message.content;
-    ['*','_','`','#'].forEach(c => ans = ans.replaceAll(c, ''));
-    aiHistory.push({ role: 'assistant', content: ans });
-    return ans.trim();
-  } catch { return 'Ошибка соединения. Напишите нам: @LyudmilaVadimovna1'; }
-}
-
-async function handleUserInput(displayText, sendText) {
-  if (isBusy) return;
-  addMsg(displayText, 'user');
-  isBusy = true; showTyping();
-  const ans = await askAI(sendText || displayText);
-  hideTyping(); isBusy = false;
-  const btns = [];
-  const low = ans.toLowerCase();
-  if (low.includes('заявк') || low.includes('заказ')) btns.push({ label: '📝 Оставить заявку', cb: openForm });
-  addMsg(ans, 'bot', btns.length ? btns : null);
+  setTimeout(scrollBot,50);
   updatePreview();
+}
+
+function showTyping(){
+  const el=document.createElement('div');
+  el.className='typing';el.id='TY';
+  el.innerHTML='<span></span><span></span><span></span>';
+  msgsEl.appendChild(el);
+  setTimeout(scrollBot,50);
+}
+function hideTyping(){document.getElementById('TY')?.remove();}
+
+function keepFocus(){
+  setTimeout(()=>{inp.focus();setTimeout(scrollBot,100);},80);
+}
+
+// ===== ЧАТ =====
+function openChat(){
+  CF.classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>{inp.focus();scrollBot();},400);
+}
+function closeChat(){
+  CF.classList.remove('open');
+  document.body.style.overflow='';
+}
+
+async function askAI(text){
+  aiHist.push({role:'user',content:text});
+  if(aiHist.length>8)aiHist=aiHist.slice(-8);
+  try{
+    const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${GK}`,'Content-Type':'application/json'},
+      body:JSON.stringify({model:MD,messages:[{role:'system',content:AI_SYS},...aiHist],max_tokens:180})
+    });
+    const d=await r.json();
+    let a=d.choices[0].message.content;
+    ['*','_','`','#'].forEach(c=>a=a.replaceAll(c,''));
+    aiHist.push({role:'assistant',content:a});
+    return a.trim();
+  }catch{return 'Ошибка соединения. Напишите нам: @LyudmilaVadimovna1';}
+}
+
+async function handleInput(show,send){
+  if(busy)return;
+  addMsg(show,'user');
+  busy=true;showTyping();
+  const ans=await askAI(send||show);
+  hideTyping();busy=false;
+  const btns=[];
+  if(ans.toLowerCase().includes('заявк')||ans.toLowerCase().includes('заказ'))
+    btns.push({label:'📝 Оставить заявку',cb:openForm});
+  addMsg(ans,'bot',btns.length?btns:null);
   keepFocus();
 }
 
-function keepFocus() {
-  setTimeout(() => { inp.focus(); scrollBot(); }, 100);
+function sendMsg(){
+  const text=inp.value.trim();
+  if(!text)return;
+  inp.value='';inp.style.height='';
+  if(tzMode&&tzWait){tzHandleText(text);return;}
+  if(tzMode)return;
+  handleInput(text);
 }
 
-function sendMsg() {
-  const text = inp.value.trim();
-  if (!text) return;
-  inp.value = '';
+inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
+inp.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px';});
 
-  // Режим ТЗ
-  if (tzMode) { tzHandleText(text); return; }
-
-  handleUserInput(text);
+function qs(t){
+  if(busy||tzMode)return;
+  handleInput(t);
 }
 
-inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendMsg(); } });
+// ===== ТЗ — 11 ВОПРОСОВ =====
+const TZ=[
+  {k:'business',q:'Расскажите о вашем бизнесе.\n\nЧем занимаетесь, как называется компания, в каком городе работаете?',type:'text'},
+  {k:'product',q:'Что нужно разработать?',type:'btns',opts:[
+    {label:'🌐 Сайт',val:'Сайт'},
+    {label:'🤖 Telegram-бот',val:'Telegram-бот'},
+    {label:'🌐🤖 Сайт + бот',val:'Сайт + Telegram-бот'},
+    {label:'🤷 Пока не знаю',val:'Не определились, нужна консультация'}
+  ]},
+  {k:'goal',q:'Какая главная цель?\n\nЧто должны делать клиенты на вашем сайте или в боте?',type:'btns',opts:[
+    {label:'📅 Записываться на услугу',val:'Онлайн-запись на услуги'},
+    {label:'📞 Узнать о компании и связаться',val:'Получить информацию о компании и связаться'},
+    {label:'🛒 Заказывать товары или услуги',val:'Оформление заказов товаров/услуг онлайн'},
+    {label:'✏️ Опишу сам',val:null}
+  ]},
+  {k:'functions',q:'Какие функции нужны?\n\nНапишите всё важное через запятую.\n\nПримеры: онлайн-запись, каталог с ценами, фотогалерея, форма обратной связи, оплата онлайн, личный кабинет.',type:'text'},
+  {k:'payment',q:'Нужна ли онлайн-оплата прямо на сайте или в боте?',type:'btns',opts:[
+    {label:'✅ Да, нужна',val:'Да, нужна онлайн-оплата'},
+    {label:'❌ Нет, только наличные',val:'Нет, оплата только наличными или переводом'},
+    {label:'🤔 Возможно, обсудим позже',val:'Возможно, нужно обсудить дополнительно'}
+  ]},
+  {k:'content',q:'Есть ли у вас готовые материалы?\n\nОтметьте что есть:',type:'btns',opts:[
+    {label:'✅ Есть всё — тексты, фото, логотип',val:'Есть готовые тексты, фотографии и логотип'},
+    {label:'📷 Только фото',val:'Есть только фотографии, тексты нужно разработать'},
+    {label:'📝 Только тексты',val:'Есть тексты, фотографии нужны'},
+    {label:'❌ Ничего нет, всё с нуля',val:'Материалов нет, всё нужно разработать с нуля'}
+  ]},
+  {k:'examples',q:'Есть ли примеры сайтов которые вам нравятся?\n\nЕсли есть — вставьте ссылки или опишите стиль (минимализм, яркий, строгий). Если нет — нажмите кнопку.',type:'btns',opts:[
+    {label:'🔗 Вставлю ссылки — напишу сам',val:null},
+    {label:'⬜ Минимализм, чисто, просто',val:'Минималистичный стиль — чисто и просто'},
+    {label:'🎨 Яркий, современный',val:'Яркий современный дизайн'},
+    {label:'🏛 Строгий, деловой',val:'Строгий деловой стиль'},
+    {label:'💡 Нет предпочтений',val:'Нет предпочтений по дизайну, доверяем вам'}
+  ]},
+  {k:'deadline',q:'Когда нужно запустить проект?',type:'btns',opts:[
+    {label:'🔥 Как можно быстрее',val:'Как можно быстрее'},
+    {label:'📅 В течение недели',val:'В течение 1 недели'},
+    {label:'🗓 В течение месяца',val:'В течение 1 месяца'},
+    {label:'😌 Сроки гибкие',val:'Сроки гибкие, не горит'}
+  ]},
+  {k:'budget',q:'Какой бюджет на разработку?',type:'btns',opts:[
+    {label:'до 5 000 ₽',val:'До 5 000 рублей'},
+    {label:'5 000 — 10 000 ₽',val:'5 000 — 10 000 рублей'},
+    {label:'10 000 — 20 000 ₽',val:'10 000 — 20 000 рублей'},
+    {label:'более 20 000 ₽',val:'Более 20 000 рублей'},
+    {label:'💬 Обсудим',val:'Бюджет обсуждается'}
+  ]},
+  {k:'contacts',q:'Как с вами связаться?\n\nУкажите телефон или Telegram-аккаунт.',type:'text'},
+  {k:'extra',q:'Есть что-то важное что ещё не упомянули?\n\nДополнительные пожелания, особенности бизнеса или вопросы.',type:'btns',opts:[
+    {label:'✅ Всё указал, можно приступать',val:'Нет дополнений, всё указано'},
+    {label:'✏️ Есть что добавить — напишу',val:null}
+  ]},
+];
 
-function quickSend(text) {
-  if (text === 'Составить ТЗ') { startTZ(); return; }
-  if (isBusy || tzMode) return;
-  handleUserInput(text);
+function updateTZProgress(){
+  const pct=Math.round((tzStep/TZ.length)*100);
+  tzBar.style.width=pct+'%';
+  tzLbl.textContent=`Вопрос ${tzStep} из ${TZ.length} — Составление ТЗ`;
 }
 
-function updatePreview() {
-  const prev = document.getElementById('previewMsgs');
-  const msgs = msgsEl.querySelectorAll('.msg');
-  if (!msgs.length) return;
-  prev.innerHTML = '';
-  Array.from(msgs).slice(-2).forEach(m => {
-    const el = document.createElement('div');
-    el.className = m.className;
-    el.style.cssText = 'font-size:0.78rem;padding:0.45rem 0.7rem;';
-    el.textContent = m.textContent.length > 70 ? m.textContent.slice(0, 70) + '...' : m.textContent;
+function startTZ(){
+  if(busy)return;
+  tzMode=true;tzStep=0;tzData={};tzWait=false;
+  tzProg.classList.add('show');
+  updateTZProgress();
+  addMsg('Отлично! Составим техническое задание. Я задам 11 вопросов — это займёт около 3 минут. Отвечайте нажатием кнопок или текстом.','bot');
+  setTimeout(()=>{tzAsk();keepFocus();},600);
+}
+
+function tzAsk(){
+  const q=TZ[tzStep];
+  updateTZProgress();
+  const num=`Вопрос ${tzStep+1} из ${TZ.length}`;
+  // Сначала номер вопроса маленьким
+  const numEl=document.createElement('div');
+  numEl.style.cssText='font-size:.7rem;color:var(--m);margin-top:.25rem;align-self:flex-start;padding:0 .25rem';
+  numEl.textContent=num;
+  msgsEl.appendChild(numEl);
+
+  if(q.type==='text'){
+    addMsg(q.q,'bot');
+    tzWait=true;
+    keepFocus();
+  } else {
+    addMsg(q.q,'bot');
+    const wrap=document.createElement('div');
+    wrap.className='reply-btns';
+    q.opts.forEach(o=>{
+      const btn=document.createElement('button');
+      btn.className='rb';
+      btn.textContent=o.label;
+      btn.onclick=()=>{
+        wrap.querySelectorAll('.rb').forEach(x=>x.disabled=true);
+        if(o.val===null){
+          addMsg('Напишите ваш ответ:','bot');
+          tzWait=true;keepFocus();
+        } else {
+          addMsg(o.label,'user');
+          tzData[q.k]=o.val;
+          tzStep++;
+          if(tzStep>=TZ.length){tzFinish();}
+          else{setTimeout(()=>{tzAsk();keepFocus();},350);}
+        }
+      };
+      wrap.appendChild(btn);
+    });
+    msgsEl.appendChild(wrap);
+    setTimeout(scrollBot,50);
+    keepFocus();
+  }
+}
+
+function tzHandleText(text){
+  if(!tzWait)return;
+  tzWait=false;
+  addMsg(text,'user');
+  tzData[TZ[tzStep].k]=text;
+  tzStep++;
+  if(tzStep>=TZ.length){tzFinish();}
+  else{setTimeout(()=>{tzAsk();keepFocus();},350);}
+}
+
+async function tzFinish(){
+  tzMode=false;
+  tzProg.classList.remove('show');
+  tzBar.style.width='100%';
+  addMsg('Все данные собраны. Формирую техническое задание...','bot');
+  showTyping();
+
+  const labels={business:'Бизнес клиента',product:'Что нужно разработать',goal:'Цель проекта',functions:'Функциональные требования',payment:'Онлайн-оплата',content:'Готовые материалы',examples:'Референсы и стиль',deadline:'Сроки',budget:'Бюджет',contacts:'Контакт клиента',extra:'Дополнительные пожелания'};
+  let src='Ответы клиента для составления ТЗ:\n\n';
+  for(const[k,v]of Object.entries(tzData))src+=`${labels[k]||k}:\n${v}\n\n`;
+
+  try{
+    const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${GK}`,'Content-Type':'application/json'},
+      body:JSON.stringify({model:MD,messages:[{role:'system',content:TZ_SYS},{role:'user',content:src}],max_tokens:1000})
+    });
+    const d=await r.json();
+    let tz=d.choices[0].message.content;
+    ['*','_','`','#'].forEach(c=>tz=tz.replaceAll(c,''));
+    tz=tz.trim();
+    hideTyping();
+
+    // Разбиваем ТЗ на логические части по переносам строк
+    const parts=tz.split(/\n{2,}/).filter(p=>p.trim());
+    parts.forEach((p,i)=>setTimeout(()=>addMsg(p.trim(),'bot'),i*200));
+
+    setTimeout(()=>{
+      addMsg('Техническое задание готово и отправлено менеджеру Люде. Она свяжется с вами!','bot',[
+        {label:'📝 Оставить заявку',cb:openForm},
+        {label:'💬 Написать Люде',cb:()=>window.open('https://t.me/LyudmilaVadimovna1','_blank')}
+      ]);
+    },parts.length*200+300);
+
+    sendTG(`📋 Новое ТЗ с сайта!\nКонтакт: ${tzData.contacts||'не указан'}\n\n${tz}`);
+  }catch{
+    hideTyping();
+    addMsg('Не удалось сформировать ТЗ. Напишите Люде напрямую: @LyudmilaVadimovna1','bot');
+  }
+}
+
+// ===== ПРЕВЬЮ =====
+function updatePreview(){
+  const prev=document.getElementById('prevMsgs');
+  const msgs=msgsEl.querySelectorAll('.msg');
+  if(!msgs.length)return;
+  prev.innerHTML='';
+  Array.from(msgs).slice(-2).forEach(m=>{
+    const el=document.createElement('div');
+    el.className=m.className;
+    el.style.cssText='font-size:.78rem;padding:.45rem .7rem;';
+    const full=m.textContent;
+    // Убираем время из превью
+    el.textContent=full.length>65?full.slice(0,65)+'...':full;
     prev.appendChild(el);
   });
 }
 
-// ===== ТЗ =====
-const TZ_Q = [
-  { key: 'business', q: 'Расскажите о вашем бизнесе. Чем занимаетесь, как называется, в каком городе?', type: 'text' },
-  { key: 'product', q: 'Что нужно разработать?', type: 'btns', opts: ['🌐 Сайт|Сайт','🤖 Telegram-бот|Telegram-бот','🌐🤖 Сайт + бот|Сайт + бот','🤷 Пока не знаю|Не определился'] },
-  { key: 'goal', q: 'Главная цель — что должны делать клиенты?', type: 'btns', opts: ['📅 Записываться на услугу|Запись на услугу','📞 Узнать и связаться|Информация и контакт','🛒 Заказывать товары|Заказ товаров','✏️ Опишу сам|__text__'] },
-  { key: 'functions', q: 'Какие функции нужны? Напишите всё важное.\n\nПример: онлайн-запись, каталог услуг, галерея фото, форма связи, оплата онлайн.', type: 'text' },
-  { key: 'payment', q: 'Нужна онлайн-оплата прямо на сайте/в боте?', type: 'btns', opts: ['✅ Да|Да','❌ Нет|Нет','🤔 Обсудим|Обсудим'] },
-  { key: 'content', q: 'Есть готовые материалы?\n\nНапишите что есть: тексты, фото, логотип, прайс. Или что делать с нуля.', type: 'text' },
-  { key: 'examples', q: 'Есть примеры сайтов которые нравятся? Ссылки или описание стиля.\n\nЕсли нет — напишите "нет".', type: 'text' },
-  { key: 'deadline', q: 'Когда нужно запустить?', type: 'btns', opts: ['🔥 Как можно быстрее|Как можно быстрее','📅 В течение недели|В течение недели','🗓 В течение месяца|В течение месяца','😌 Сроки гибкие|Гибкие сроки'] },
-  { key: 'budget', q: 'Бюджет на разработку?', type: 'btns', opts: ['до 5000 ₽|до 5000 руб','5000–10000 ₽|5000-10000 руб','10000–20000 ₽|10000-20000 руб','более 20000 ₽|более 20000 руб','💬 Обсудим|Обсудим'] },
-  { key: 'contacts', q: 'Как с вами связаться? Телефон или Telegram.', type: 'text' },
-  { key: 'extra', q: 'Дополнительные пожелания или что-то важное?\n\nЕсли нет — напишите "нет".', type: 'text' },
-];
-
-let tzMode = false;
-let tzStep = 0;
-let tzData = {};
-let tzWaitText = false;
-
-function startTZ() {
-  if (isBusy) return;
-  tzMode = true; tzStep = 0; tzData = {}; tzWaitText = false;
-  addMsg('Отлично! Составим техническое задание вместе. Буду задавать вопросы по одному — просто отвечайте.', 'bot');
-  setTimeout(() => { tzAsk(); keepFocus(); }, 500);
-}
-
-function tzAsk() {
-  const q = TZ_Q[tzStep];
-  const num = `Вопрос ${tzStep + 1} из ${TZ_Q.length}:\n\n${q.q}`;
-  if (q.type === 'text') {
-    addMsg(num, 'bot');
-    tzWaitText = true;
-    keepFocus();
-  } else {
-    addMsg(num, 'bot');
-    const opts = q.opts.map(o => {
-      const [label, val] = o.split('|');
-      return {
-        label,
-        cb: () => {
-          if (val === '__text__') {
-            addMsg('Опишите своими словами:', 'bot');
-            tzWaitText = true;
-            keepFocus();
-          } else {
-            addMsg(label, 'user');
-            tzData[q.key] = val;
-            tzWaitText = false;
-            tzStep++;
-            if (tzStep >= TZ_Q.length) { tzFinish(); } else { setTimeout(() => { tzAsk(); keepFocus(); }, 400); }
-          }
-        }
-      };
-    });
-    const wrap = document.createElement('div');
-    wrap.className = 'msg-buttons';
-    opts.forEach(o => {
-      const btn = document.createElement('button');
-      btn.className = 'msg-btn';
-      btn.textContent = o.label;
-      btn.onclick = () => { wrap.querySelectorAll('.msg-btn').forEach(x => x.disabled = true); o.cb(); };
-      wrap.appendChild(btn);
-    });
-    msgsEl.appendChild(wrap);
-    scrollBot();
-    keepFocus();
-  }
-}
-
-function tzHandleText(text) {
-  if (!tzWaitText) return;
-  tzWaitText = false;
-  addMsg(text, 'user');
-  tzData[TZ_Q[tzStep].key] = text;
-  tzStep++;
-  if (tzStep >= TZ_Q.length) { tzFinish(); } else { setTimeout(() => { tzAsk(); keepFocus(); }, 400); }
-}
-
-async function tzFinish() {
-  tzMode = false;
-  addMsg('Отлично! Генерирую техническое задание...', 'bot');
-  showTyping();
-  const labels = { business:'Бизнес', product:'Что разработать', goal:'Цель', functions:'Функции', payment:'Оплата онлайн', content:'Материалы', examples:'Референсы', deadline:'Сроки', budget:'Бюджет', contacts:'Контакт', extra:'Доп.пожелания' };
-  let src = 'Ответы клиента:\n';
-  for (const [k,v] of Object.entries(tzData)) src += `${labels[k]||k}: ${v}\n`;
-  try {
-    const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: MODEL, messages: [{ role:'system', content:TZ_PROMPT }, { role:'user', content:src }], max_tokens: 900 })
-    });
-    const d = await r.json();
-    let tz = d.choices[0].message.content;
-    ['*','_','`','#'].forEach(c => tz = tz.replaceAll(c,''));
-    tz = tz.trim();
-    hideTyping();
-    // Показываем по частям
-    const chunks = tz.match(/[\s\S]{1,350}/g) || [tz];
-    chunks.forEach((ch, i) => setTimeout(() => addMsg(ch.trim(), 'bot'), i * 150));
-    setTimeout(() => {
-      addMsg('ТЗ готово и отправлено менеджеру Люде!', 'bot', [
-        { label: '📝 Оставить заявку', cb: openForm },
-        { label: '💬 Написать Люде', cb: () => window.open('https://t.me/LyudmilaVadimovna1','_blank') }
-      ]);
-      updatePreview();
-    }, chunks.length * 150 + 200);
-    sendTG(`📋 Новое ТЗ с сайта!\nКонтакт: ${tzData.contacts||'не указан'}\n\n${tz}`);
-  } catch {
-    hideTyping();
-    addMsg('Не удалось сформировать ТЗ. Напишите Люде: @LyudmilaVadimovna1', 'bot');
-  }
-}
-
 // ===== ФОРМА =====
-const phoneEl = document.getElementById('fPhone');
-phoneEl.addEventListener('input', function() {
-  let v = this.value.replace(/\D/g,'');
-  if (v.startsWith('8')) v = '7' + v.slice(1);
-  if (v && !v.startsWith('7')) v = '7' + v;
-  v = v.slice(0,11);
-  let f = '+7';
-  if (v.length > 1) f += ' (' + v.slice(1,4);
-  if (v.length >= 4) f += ') ' + v.slice(4,7);
-  if (v.length >= 7) f += '-' + v.slice(7,9);
-  if (v.length >= 9) f += '-' + v.slice(9,11);
-  this.value = f;
+const fP=document.getElementById('fP');
+fP.addEventListener('input',function(){
+  let v=this.value.replace(/\D/g,'');
+  if(v.startsWith('8'))v='7'+v.slice(1);
+  if(v&&!v.startsWith('7'))v='7'+v;
+  v=v.slice(0,11);
+  let f='+7';
+  if(v.length>1)f+=' ('+v.slice(1,4);
+  if(v.length>=4)f+=') '+v.slice(4,7);
+  if(v.length>=7)f+='-'+v.slice(7,9);
+  if(v.length>=9)f+='-'+v.slice(9,11);
+  this.value=f;
 });
-phoneEl.addEventListener('focus', function() { if (!this.value) this.value = '+7 ('; });
-phoneEl.addEventListener('keydown', function(e) { if (e.key === 'Backspace' && this.value === '+7 (') { e.preventDefault(); this.value = ''; } });
+fP.addEventListener('focus',function(){if(!this.value)this.value='+7 (';});
+fP.addEventListener('keydown',function(e){if(e.key==='Backspace'&&this.value==='+7 ('){e.preventDefault();this.value='';}});
 
-function openForm() {
-  document.getElementById('formOverlay').classList.add('active');
-  document.getElementById('formContent').style.display = 'block';
-  document.getElementById('formSuccess').style.display = 'none';
-  document.body.style.overflow = 'hidden';
+function openForm(){
+  document.getElementById('FO').classList.add('active');
+  document.getElementById('FC').style.display='block';
+  document.getElementById('FOK').style.display='none';
+  document.body.style.overflow='hidden';
 }
-function closeForm() {
-  document.getElementById('formOverlay').classList.remove('active');
-  document.body.style.overflow = chatFull.classList.contains('open') ? 'hidden' : '';
+function closeForm(){
+  document.getElementById('FO').classList.remove('active');
+  if(!CF.classList.contains('open'))document.body.style.overflow='';
 }
-async function submitForm() {
-  const name = document.getElementById('fName').value.trim();
-  const phone = document.getElementById('fPhone').value.trim();
-  const svc = document.getElementById('fService').value;
-  if (!name || phone.length < 5) { alert('Заполните имя и телефон'); return; }
-  await sendTG(`🌐 Новая заявка с сайта!\n\nИмя: ${name}\nТелефон: ${phone}\nУслуга: ${svc}`);
-  document.getElementById('formContent').style.display = 'none';
-  document.getElementById('formSuccess').style.display = 'block';
-}
-
-async function sendTG(text) {
-  try {
-    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: LYUDA_ID, text })
-    });
-  } catch {}
+async function subForm(){
+  const n=document.getElementById('fN').value.trim();
+  const p=document.getElementById('fP').value.trim();
+  const s=document.getElementById('fS').value;
+  if(!n||p.length<5){alert('Заполните имя и телефон');return;}
+  await sendTG(`🌐 Новая заявка с сайта!\n\nИмя: ${n}\nТелефон: ${p}\nУслуга: ${s}`);
+  document.getElementById('FC').style.display='none';
+  document.getElementById('FOK').style.display='block';
 }
 
-// Старт
-setTimeout(() => {
-  addMsg('Привет! Я помогу выбрать услугу и отвечу на любые вопросы. Что вас интересует?', 'bot', [
-    { label: '💰 Цены', val: 'Сколько стоит сайт?' },
-    { label: '🤖 Про бота', val: 'Что такое бот с ИИ?' },
-    { label: '🖼 Примеры', val: 'Покажи примеры работ' }
+async function sendTG(text){
+  try{await fetch(`https://api.telegram.org/bot${TK}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:LID,text})});}catch{}
+}
+
+// СТАРТ
+setTimeout(()=>{
+  addMsg('Привет! Я помогу выбрать услугу, отвечу на вопросы или составлю техническое задание для вашего проекта.','bot',[
+    {label:'💰 Цены',val:'Сколько стоит сайт?'},
+    {label:'🖼 Примеры работ',val:'Покажи примеры работ'},
+    {label:'📋 Составить ТЗ',cb:startTZ}
   ]);
-  updatePreview();
-}, 300);
+},300);
 </script>
 </body>
 </html>
