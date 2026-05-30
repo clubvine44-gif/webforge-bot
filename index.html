@@ -272,7 +272,9 @@ let tzWait=false;
 function now(){const d=new Date();return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')}
 
 function scrollBot(){
-  msgsEl.scrollTo({top:msgsEl.scrollHeight,behavior:'smooth'});
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+  setTimeout(()=>{msgsEl.scrollTop=msgsEl.scrollHeight;},150);
+  setTimeout(()=>{msgsEl.scrollTop=msgsEl.scrollHeight;},350);
 }
 
 function addMsg(text,role,btns){
@@ -390,7 +392,15 @@ const TZ=[
     {label:'🛒 Заказывать товары или услуги',val:'Оформление заказов товаров/услуг онлайн'},
     {label:'✏️ Опишу сам',val:null}
   ]},
-  {k:'functions',q:'Какие функции нужны?\n\nНапишите всё важное через запятую.\n\nПримеры: онлайн-запись, каталог с ценами, фотогалерея, форма обратной связи, оплата онлайн, личный кабинет.',type:'text'},
+  {k:'functions',q:'Какие функции нужны?\n\nВыберите одну или несколько (или напишите свой вариант):',type:'btns',hint:'Например: онлайн-запись, каталог услуг, галерея фото, форма связи, оплата онлайн, личный кабинет. Можно перечислить через запятую.',opts:[
+    {label:'📅 Онлайн-запись',val:'Онлайн-запись на услуги'},
+    {label:'📋 Каталог услуг с ценами',val:'Каталог услуг с ценами'},
+    {label:'🖼 Галерея фото',val:'Галерея фото'},
+    {label:'💳 Оплата онлайн',val:'Оплата онлайн'},
+    {label:'📞 Форма обратной связи',val:'Форма обратной связи'},
+    {label:'✅ Всё перечисленное',val:'Онлайн-запись, каталог услуг с ценами, галерея фото, оплата онлайн, форма обратной связи'},
+    {label:'✏️ Напишу свой вариант',val:null}
+  ]},
   {k:'payment',q:'Нужна ли онлайн-оплата прямо на сайте или в боте?',type:'btns',opts:[
     {label:'✅ Да, нужна',val:'Да, нужна онлайн-оплата'},
     {label:'❌ Нет, только наличные',val:'Нет, оплата только наличными или переводом'},
@@ -456,6 +466,12 @@ function tzAsk(){
 
   if(q.type==='text'){
     addMsg(q.q,'bot');
+    const hints={'business':'Например: Салон красоты "Люкс", г. Кисловодск, стрижки и окрашивание',
+      'functions':'Перечислите через запятую всё что нужно',
+      'examples':'Вставьте ссылки на сайты или опишите стиль',
+      'contacts':'Например: +7 928 123-45-67 или @username',
+      'extra':'Любые особенности или пожелания к проекту'};
+    inp.placeholder=hints[q.k]||'Напишите ваш ответ...';
     tzWait=true;
     keepFocus();
   } else {
@@ -490,6 +506,7 @@ function tzAsk(){
 function tzHandleText(text){
   if(!tzWait)return;
   tzWait=false;
+  inp.placeholder='Написать сообщение...';
   addMsg(text,'user');
   tzData[TZ[tzStep].k]=text;
   tzStep++;
