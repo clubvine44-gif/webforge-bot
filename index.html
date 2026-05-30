@@ -40,8 +40,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:.875rem 1.25rem;displ
 .sb svg{width:15px;height:15px;fill:#fff}
 
 /* ПОЛНОЭКРАННЫЙ ЧАТ */
-#CF{position:fixed;inset:0;z-index:200;background:#0a0a0f;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.4,0,.2,1);will-change:transform}
+#CF{position:fixed;inset:0;z-index:200;background:#0a0a0f;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.4,0,.2,1);will-change:transform;
+/* Используем dvh для корректной работы с клавиатурой */
+height:100dvh;height:100vh;}
 #CF.open{transform:translateY(0)}
+/* Когда клавиатура открыта браузер уменьшает viewport — чат адаптируется автоматически */
+@supports(height:100dvh){#CF{height:100dvh}}
 
 .cf-header{padding:.875rem 1rem;padding-top:calc(.875rem + env(safe-area-inset-top,0px));border-bottom:1px solid var(--b);display:flex;align-items:center;gap:.75rem;background:var(--s);flex-shrink:0}
 /* КНОПКА НАЗАД — современная */
@@ -54,11 +58,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:.875rem 1.25rem;displ
 #cfMsgs::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
 
 /* СООБЩЕНИЯ — стиль мессенджера */
-.msg{max-width:82%;padding:.65rem .9rem;border-radius:18px;font-size:.9rem;line-height:1.5;word-break:break-word;animation:pop .2s ease}
-@keyframes pop{from{opacity:0;transform:scale(.95) translateY(4px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.msg.bot{background:var(--s);color:var(--t);border-bottom-left-radius:4px;align-self:flex-start}
-.msg.user{background:var(--a);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
-.msg-time{font-size:.65rem;opacity:.5;margin-top:.25rem;text-align:right}
+.msg-wrap{display:flex;flex-direction:column;gap:2px}
+.msg-wrap.user{align-items:flex-end}
+.msg-wrap.bot{align-items:flex-start}
+.msg{max-width:82%;padding:.65rem .9rem;border-radius:20px;font-size:.9rem;line-height:1.5;word-break:break-word;animation:pop .22s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.85) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.msg.bot{background:var(--s);color:var(--t);border-bottom-left-radius:5px;border-top-left-radius:20px}
+.msg.user{background:linear-gradient(135deg,var(--a),#8b85ff);color:#fff;border-bottom-right-radius:5px;border-top-right-radius:20px}
+.msg-time{font-size:.62rem;color:var(--m);padding:0 .25rem;margin-top:1px}
+.msg-time.user{text-align:right}
+.msg-time.bot{text-align:left}
 
 /* КНОПКИ ОТВЕТОВ */
 .reply-btns{display:flex;flex-wrap:wrap;gap:.4rem;align-self:flex-start;max-width:95%;margin-top:.1rem}
@@ -73,11 +82,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:.875rem 1.25rem;displ
 @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 
 /* ПРОГРЕСС ТЗ */
-.tz-progress{padding:.5rem .875rem;background:var(--s);border-bottom:1px solid var(--b);flex-shrink:0;display:none}
+.tz-progress{padding:.4rem .875rem .5rem;background:var(--s);border-bottom:1px solid var(--b);flex-shrink:0;display:none}
 .tz-progress.show{display:block}
-.tz-bar-wrap{background:var(--b);border-radius:4px;height:4px;overflow:hidden;margin-bottom:.3rem}
-.tz-bar{height:100%;background:linear-gradient(90deg,var(--a),var(--a2));border-radius:4px;transition:width .3s}
+.tz-bar-wrap{background:rgba(255,255,255,.08);border-radius:6px;height:5px;overflow:hidden;margin-bottom:.35rem}
+.tz-bar{height:100%;background:linear-gradient(90deg,var(--a),var(--a2));border-radius:6px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.tz-meta{display:flex;justify-content:space-between;align-items:center}
 .tz-label{font-size:.7rem;color:var(--m)}
+.tz-pct{font-size:.7rem;color:var(--a);font-weight:500}
 
 .cf-quick{padding:.45rem .75rem;border-top:1px solid var(--b);display:flex;gap:.35rem;overflow-x:auto;flex-shrink:0;background:var(--s);-webkit-overflow-scrolling:touch}
 .cf-quick::-webkit-scrollbar{display:none}
@@ -85,8 +96,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:.875rem 1.25rem;displ
 .qb:active{border-color:var(--a);color:var(--a)}
 
 .cf-inp-area{padding:.6rem .75rem;padding-bottom:calc(.6rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--b);background:var(--s);display:flex;gap:.5rem;flex-shrink:0;align-items:flex-end}
-#cfInp{flex:1;background:rgba(255,255,255,.06);border:1.5px solid var(--b);border-radius:22px;padding:.6rem 1rem;color:var(--t);font-size:.95rem;outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;transition:border-color .2s;resize:none;max-height:80px;min-height:42px;line-height:1.4}
-#cfInp:focus{border-color:var(--a)}
+#cfInp{flex:1;background:rgba(255,255,255,.06);border:1.5px solid var(--b);border-radius:22px;padding:.6rem 1rem;color:var(--t);font-size:1rem;outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;transition:border-color .2s;resize:none;max-height:100px;min-height:44px;line-height:1.4;-webkit-user-select:text;user-select:text}
+#cfInp:focus{border-color:var(--a);background:rgba(108,99,255,.08)}
 #cfInp::placeholder{color:var(--m)}
 .send-btn{width:42px;height:42px;border-radius:50%;background:var(--a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s,opacity .15s}
 .send-btn:active{transform:scale(.9)}
@@ -184,7 +195,7 @@ footer{border-top:1px solid var(--b);padding:1.5rem 1.25rem;text-align:center;co
   </div>
   <div class="tz-progress" id="tzProg">
     <div class="tz-bar-wrap"><div class="tz-bar" id="tzBar" style="width:0%"></div></div>
-    <div class="tz-label" id="tzLbl">Составление ТЗ</div>
+    <div class="tz-meta"><div class="tz-label" id="tzLbl">Составление ТЗ</div><div class="tz-pct" id="tzPct">0%</div></div>
   </div>
   <div id="cfMsgs"></div>
   <div class="cf-quick" id="cfQuick">
@@ -278,31 +289,38 @@ function scrollBot(){
 }
 
 function addMsg(text,role,btns){
+  const wrap=document.createElement('div');
+  wrap.className=`msg-wrap ${role}`;
+
   const el=document.createElement('div');
   el.className=`msg ${role}`;
   el.textContent=text;
+  wrap.appendChild(el);
+
   const tm=document.createElement('div');
-  tm.className='msg-time';
+  tm.className=`msg-time ${role}`;
   tm.textContent=now();
-  el.appendChild(tm);
-  msgsEl.appendChild(el);
+  wrap.appendChild(tm);
+
+  msgsEl.appendChild(wrap);
+
   if(btns&&btns.length){
-    const wrap=document.createElement('div');
-    wrap.className='reply-btns';
+    const bwrap=document.createElement('div');
+    bwrap.className='reply-btns';
     btns.forEach(b=>{
       const btn=document.createElement('button');
       btn.className='rb';
       btn.textContent=b.label;
       btn.onclick=()=>{
-        wrap.querySelectorAll('.rb').forEach(x=>x.disabled=true);
+        bwrap.querySelectorAll('.rb').forEach(x=>x.disabled=true);
         if(b.cb){b.cb();return;}
         if(b.val){handleInput(b.label,b.val);}
       };
-      wrap.appendChild(btn);
+      bwrap.appendChild(btn);
     });
-    msgsEl.appendChild(wrap);
+    msgsEl.appendChild(bwrap);
   }
-  setTimeout(scrollBot,50);
+  scrollBot();
   updatePreview();
 }
 
@@ -316,15 +334,42 @@ function showTyping(){
 function hideTyping(){document.getElementById('TY')?.remove();}
 
 function keepFocus(){
-  setTimeout(()=>{inp.focus();setTimeout(scrollBot,100);},80);
+  // Держим фокус и скроллим — несколько раз для надёжности
+  inp.focus();
+  setTimeout(()=>{inp.focus();scrollBot();},50);
+  setTimeout(()=>{inp.focus();scrollBot();},200);
+  setTimeout(scrollBot,500);
 }
 
 // ===== ЧАТ =====
 function openChat(){
   CF.classList.add('open');
   document.body.style.overflow='hidden';
-  setTimeout(()=>{inp.focus();scrollBot();},400);
+  // Фокус с задержкой чтобы анимация завершилась
+  setTimeout(()=>{
+    inp.focus();
+    scrollBot();
+  },420);
 }
+
+// Когда клавиатура открывается — скроллим вниз
+window.addEventListener('resize',()=>{
+  if(CF.classList.contains('open')){
+    // Небольшая задержка чтобы браузер перерисовал
+    setTimeout(scrollBot,100);
+    setTimeout(scrollBot,300);
+  }
+});
+
+// Предотвращаем закрытие клавиатуры при нажатии на кнопки ответов
+document.addEventListener('mousedown',e=>{
+  if(CF.classList.contains('open')&&e.target!==inp){
+    // Не даём потерять фокус при нажатии на кнопки ответов
+    if(e.target.classList.contains('rb')||e.target.classList.contains('qb')||e.target.classList.contains('send-btn')||e.target.closest('.send-btn')){
+      e.preventDefault();
+    }
+  }
+},true);
 function closeChat(){
   CF.classList.remove('open');
   document.body.style.overflow='';
@@ -442,7 +487,13 @@ const TZ=[
 function updateTZProgress(){
   const pct=Math.round((tzStep/TZ.length)*100);
   tzBar.style.width=pct+'%';
-  tzLbl.textContent=`Вопрос ${tzStep} из ${TZ.length} — Составление ТЗ`;
+  if(tzStep===0){
+    tzLbl.textContent='Составление ТЗ — начинаем';
+    document.getElementById('tzPct').textContent='0%';
+  } else {
+    tzLbl.textContent=`Вопрос ${tzStep} из ${TZ.length}`;
+    document.getElementById('tzPct').textContent=pct+'%';
+  }
 }
 
 function startTZ(){
@@ -498,7 +549,8 @@ function tzAsk(){
       wrap.appendChild(btn);
     });
     msgsEl.appendChild(wrap);
-    setTimeout(scrollBot,50);
+    scrollBot();
+    setTimeout(scrollBot,150);
     keepFocus();
   }
 }
