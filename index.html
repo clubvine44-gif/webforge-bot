@@ -477,9 +477,14 @@ function addMsg(text,role,btns,instant){
 
 async function playQueue(){
   msgPlaying=true;
+  let soundPlayed=false;
   while(msgQueue.length){
     const item=msgQueue.shift();
-    // Показываем typing если это бот и не последнее в очереди
+    // Звук один раз на всю пачку сообщений
+    if(!soundPlayed){
+      playPop(item.role==='bot'?'in':'out');
+      soundPlayed=true;
+    }
     const isBot=item.role==='bot';
     if(isBot&&msgQueue.length===0&&item.text.length>30){
       // Имитируем набор текста — задержка пропорциональна длине
@@ -500,8 +505,6 @@ async function playQueue(){
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
 function _renderMsg(text,role,btns){
-  // Звук пузырька
-  playPop(role==='bot'?'in':'out');
   const wrap=document.createElement('div');
   wrap.className=`msg-wrap ${role}`;
   wrap.style.opacity='0';
