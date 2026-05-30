@@ -73,8 +73,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:.875rem 1.25rem;displ
 #screenChat{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
 
 /* ИСТОРИЯ — скроллится, размывается к низу */
-.chat-history{flex:1;overflow-y:auto;padding:.875rem .875rem 0;display:flex;flex-direction:column;gap:.5rem;-webkit-overflow-scrolling:touch;position:relative}
-.chat-history::after{content:'';position:absolute;bottom:0;left:0;right:0;height:100px;background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none}
+.chat-history{flex:1;min-height:0;overflow-y:auto;padding:.875rem .875rem 0;display:flex;flex-direction:column;gap:.5rem;-webkit-overflow-scrolling:touch;position:relative;justify-content:flex-end}
+.chat-history::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none}
 
 /* Сообщения в истории — постепенно размываются */
 .hm{transition:filter .4s,opacity .4s}
@@ -93,7 +93,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:.875rem 1.25rem;displ
 .hm-time.user{text-align:right}
 
 /* ТЕКУЩАЯ КАРТОЧКА БОТА */
-.current-card{flex-shrink:0;padding:.5rem .875rem;padding-bottom:calc(.5rem + env(safe-area-inset-bottom,0px));background:var(--bg)}
+.current-card{flex-shrink:0;padding:.5rem .875rem .25rem;background:var(--bg)}
 .cc-bubble{background:var(--s);border:1px solid rgba(108,99,255,.2);border-radius:18px;border-bottom-left-radius:5px;padding:1rem;margin-bottom:.5rem;box-shadow:0 -4px 24px rgba(108,99,255,.08);animation:cardIn .3s cubic-bezier(.34,1.4,.64,1)}
 @keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 .cc-text{font-size:.9rem;line-height:1.55;color:var(--t);margin-bottom:.5rem}
@@ -103,7 +103,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:.875rem 1.25rem;displ
 .cc-btn:active{background:var(--a);color:#fff;border-color:var(--a)}
 
 /* ПОЛЕ ВВОДА */
-.inp-area{display:flex;gap:.5rem;align-items:flex-end;padding:.5rem .875rem;padding-bottom:calc(.5rem + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid rgba(255,255,255,.04)}
+.inp-area{display:flex;gap:.5rem;align-items:flex-end;padding:.5rem .875rem;padding-bottom:calc(.75rem + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid rgba(255,255,255,.06)}
 .inp-area textarea{flex:1;background:rgba(255,255,255,.05);border:1.5px solid var(--b);border-radius:20px;padding:.6rem 1rem;color:var(--t);font-size:.95rem;outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;transition:border-color .2s;resize:none;min-height:42px;max-height:100px;line-height:1.4}
 .inp-area textarea:focus{border-color:var(--a)}
 .inp-area textarea::placeholder{color:var(--m);font-size:.85rem}
@@ -272,8 +272,8 @@ footer{border-top:1px solid var(--b);padding:1.5rem 1.25rem;text-align:center;co
 
   <!-- ЭКРАН ЧАТА -->
   <div id="screenChat" style="display:none;flex:1;flex-direction:column;overflow:hidden;position:relative">
-    <div class="chat-history" id="chatHistory"></div>
-    <div class="current-card" id="currentCard"></div>
+    <div class="chat-history" id="chatHistory" style="flex:1;min-height:0"></div>
+    <div class="current-card" id="currentCard" style="flex-shrink:0"></div>
     <div class="inp-area" id="inpArea">
       <textarea id="chatInp" placeholder="Написать..." rows="1" maxlength="500"></textarea>
       <button class="send-btn" onclick="sendFreeMsg()"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
@@ -542,28 +542,41 @@ function pushHistory(text,role){
 }
 
 function renderHistory(){
-  chatHistory.innerHTML='';
   const msgs=historyMsgs;
+  const existing=chatHistory.children;
+  const existingCount=existing.length;
+
+  // Добавляем только новые сообщения (не перерисовываем старые)
   msgs.forEach((m,i)=>{
-    const age=msgs.length-1-i; // 0=последнее
-    const wrap=document.createElement('div');
-    wrap.className='hm-wrap '+m.role;
-    const bub=document.createElement('div');
-    bub.className='hm-bubble '+m.role;
-    bub.style.whiteSpace='pre-line';
-    bub.textContent=m.text;
-    const tm=document.createElement('div');
-    tm.className='hm-time '+m.role;
-    tm.textContent=m.t;
-    wrap.appendChild(bub);
-    wrap.appendChild(tm);
-    // Размытие по возрасту
-    if(age>=4) wrap.classList.add('hm','old-4');
-    else if(age>=3) wrap.classList.add('hm','old-3');
-    else if(age>=2) wrap.classList.add('hm','old-2');
-    else if(age>=1) wrap.classList.add('hm','old-1');
-    else wrap.classList.add('hm');
-    chatHistory.appendChild(wrap);
+    if(i<existingCount){
+      // Обновляем только класс размытия без перерисовки
+      const age=msgs.length-1-i;
+      const wrap=existing[i];
+      wrap.className='hm-wrap '+m.role+' hm';
+      if(age>=4) wrap.classList.add('old-4');
+      else if(age>=3) wrap.classList.add('old-3');
+      else if(age>=2) wrap.classList.add('old-2');
+      else if(age>=1) wrap.classList.add('old-1');
+    } else {
+      // Новое сообщение — добавляем
+      const age=msgs.length-1-i;
+      const wrap=document.createElement('div');
+      wrap.className='hm-wrap '+m.role+' hm';
+      if(age>=4) wrap.classList.add('old-4');
+      else if(age>=3) wrap.classList.add('old-3');
+      else if(age>=2) wrap.classList.add('old-2');
+      else if(age>=1) wrap.classList.add('old-1');
+      const bub=document.createElement('div');
+      bub.className='hm-bubble '+m.role;
+      bub.style.whiteSpace='pre-line';
+      bub.textContent=m.text;
+      const tm=document.createElement('div');
+      tm.className='hm-time '+m.role;
+      tm.textContent=m.t;
+      wrap.appendChild(bub);
+      wrap.appendChild(tm);
+      chatHistory.appendChild(wrap);
+    }
   });
   chatHistory.scrollTop=chatHistory.scrollHeight;
 }
