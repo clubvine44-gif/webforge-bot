@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebForge AI — Презентация</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Inter',sans-serif}
+
+/* ОСНОВНОЙ КОНТЕЙНЕР */
+#stage{
+  width:100vw;height:100vh;
+  background:#050508;
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ФОНОВЫЕ ЧАСТИЦЫ */
+canvas#particles{position:absolute;inset:0;opacity:.4}
+
+/* ГРАДИЕНТНЫЕ ПЯТНА */
+.glow{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none}
+.glow-1{width:500px;height:500px;background:radial-gradient(circle,rgba(108,99,255,.35) 0%,transparent 70%);top:-100px;left:-100px;animation:drift1 8s ease-in-out infinite}
+.glow-2{width:400px;height:400px;background:radial-gradient(circle,rgba(255,107,157,.25) 0%,transparent 70%);bottom:-80px;right:-80px;animation:drift2 10s ease-in-out infinite}
+.glow-3{width:300px;height:300px;background:radial-gradient(circle,rgba(29,158,117,.2) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:drift3 12s ease-in-out infinite}
+
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-40px)}}
+@keyframes drift3{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.3)}}
+
+/* СЦЕНЫ */
+.scene{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .0s;
+}
+.scene.active{opacity:1;pointer-events:all}
+
+/* ТИПОГРАФИКА */
+.label{
+  font-size:clamp(.65rem,1.8vw,.9rem);
+  letter-spacing:.25em;text-transform:uppercase;
+  color:rgba(108,99,255,.8);
+  font-weight:400;
+  opacity:0;transform:translateY(20px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.label.show{opacity:1;transform:translateY(0)}
+
+.title{
+  font-family:'Unbounded',sans-serif;
+  font-size:clamp(2rem,7vw,5rem);
+  font-weight:700;
+  line-height:1.05;
+  text-align:center;
+  color:#fff;
+  margin:.75rem 0;
+  opacity:0;transform:translateY(30px) scale(.97);
+  transition:opacity .8s ease,transform .8s ease;
+}
+.title.show{opacity:1;transform:translateY(0) scale(1)}
+
+.title span.g{
+  background:linear-gradient(135deg,#6c63ff,#ff6b9d,#6c63ff);
+  background-size:200% 200%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:gradShift 3s ease infinite;
+}
+@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+.sub{
+  font-size:clamp(.85rem,2.5vw,1.3rem);
+  color:rgba(255,255,255,.5);
+  text-align:center;
+  font-weight:300;
+  max-width:600px;line-height:1.6;
+  opacity:0;transform:translateY(20px);
+  transition:opacity .7s ease .2s,transform .7s ease .2s;
+}
+.sub.show{opacity:1;transform:translateY(0)}
+
+.tag{
+  font-size:clamp(.7rem,2vw,1rem);
+  color:rgba(255,255,255,.35);
+  letter-spacing:.1em;
+  margin-top:2rem;
+  opacity:0;
+  transition:opacity .6s ease .4s;
+}
+.tag.show{opacity:1}
+
+/* PHONE MOCKUP */
+.phone-wrap{
+  position:relative;
+  opacity:0;transform:translateY(40px) scale(.9) rotateY(-8deg);
+  transition:opacity .9s ease,transform .9s cubic-bezier(.34,1.2,.64,1);
+}
+.phone-wrap.show{opacity:1;transform:translateY(0) scale(1) rotateY(0)}
+
+.phone{
+  width:clamp(180px,28vw,260px);
+  background:#0a0a0f;
+  border-radius:36px;
+  border:1.5px solid rgba(255,255,255,.12);
+  overflow:hidden;
+  box-shadow:
+    0 0 0 1px rgba(108,99,255,.2),
+    0 30px 80px rgba(0,0,0,.8),
+    0 0 60px rgba(108,99,255,.15),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  position:relative;
+}
+.phone::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:80px;height:6px;background:#111;border-radius:0 0 8px 8px;z-index:10;
+}
+
+.phone-screen{padding:0;height:clamp(360px,55vw,520px);overflow:hidden;position:relative}
+
+/* СОДЕРЖИМОЕ ТЕЛЕФОНА */
+.pscreen{position:absolute;inset:0;opacity:0;transition:opacity .5s ease;display:flex;flex-direction:column}
+.pscreen.on{opacity:1}
+
+.p-nav{
+  background:#13131a;padding:10px 14px 8px;
+  border-bottom:1px solid #1e1e2e;
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  padding-top:18px;
+}
+.p-av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d);display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
+.p-title{font-size:.7rem;font-weight:500;color:#f0f0f5}
+.p-status{font-size:.55rem;color:#4ade80}
+
+.p-body{flex:1;padding:10px;display:flex;flex-direction:column;gap:6px;overflow:hidden;background:#0a0a0f}
+.p-bot{background:#13131a;border-radius:12px 12px 12px 3px;padding:7px 10px;font-size:.65rem;color:#f0f0f5;max-width:85%;line-height:1.4;opacity:0;transform:translateX(-10px);transition:opacity .4s,transform .4s}
+.p-user{background:linear-gradient(135deg,#6c63ff,#8b85ff);border-radius:12px 12px 3px 12px;padding:7px 10px;font-size:.65rem;color:#fff;max-width:75%;align-self:flex-end;line-height:1.4;opacity:0;transform:translateX(10px);transition:opacity .4s,transform .4s}
+.p-bot.on,.p-user.on{opacity:1;transform:translateX(0)}
+
+.p-menu{flex:1;padding:8px;display:flex;flex-direction:column;gap:5px;background:#0a0a0f}
+.p-item{background:#13131a;border:1px solid #1e1e2e;border-radius:10px;padding:7px 9px;display:flex;align-items:center;gap:6px;font-size:.62rem;color:#f0f0f5;opacity:0;transform:translateX(-12px);transition:opacity .35s,transform .35s}
+.p-item.on{opacity:1;transform:translateX(0)}
+.p-item.accent{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.08);color:#a5a0ff}
+
+.p-card{background:#13131a;border:1px solid rgba(108,99,255,.3);border-radius:12px;padding:8px;margin:0 8px 6px;font-size:.62rem;color:#f0f0f5;line-height:1.4;opacity:0;transform:translateY(10px);transition:opacity .4s,transform .4s;box-shadow:0 -3px 12px rgba(108,99,255,.12)}
+.p-card.on{opacity:1;transform:translateY(0)}
+.p-card-btns{display:flex;gap:4px;margin-top:5px}
+.p-card-btn{font-size:.55rem;padding:3px 7px;border:1px solid rgba(108,99,255,.35);border-radius:8px;color:#6c63ff}
+
+.p-bar{height:3px;background:linear-gradient(90deg,#6c63ff,#ff6b9d);margin:6px 8px;border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .8s ease}
+.p-bar.on{transform:scaleX(1)}
+
+.p-inp{margin:0 8px 8px;display:flex;gap:5px;opacity:0;transition:opacity .4s}
+.p-inp.on{opacity:1}
+.p-inp-field{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(108,99,255,.3);border-radius:14px;padding:5px 9px;font-size:.6rem;color:#6b6b80}
+.p-inp-send{width:24px;height:24px;border-radius:50%;background:#6c63ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ФИЧИ */
+.features{display:flex;gap:1.5rem;margin-top:1.5rem;flex-wrap:wrap;justify-content:center}
+.feat{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:clamp(.7rem,1.8vw,.9rem);color:rgba(255,255,255,.6);
+  opacity:0;transform:translateY(15px);
+  transition:opacity .5s ease,transform .5s ease;
+}
+.feat.show{opacity:1;transform:translateY(0)}
+.feat-dot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d);flex-shrink:0}
+
+/* ЦЕНА */
+.price-card{
+  background:rgba(108,99,255,.08);
+  border:1px solid rgba(108,99,255,.3);
+  border-radius:20px;padding:1.5rem 2.5rem;
+  text-align:center;margin-top:1rem;
+  opacity:0;transform:scale(.9);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.price-card.show{opacity:1;transform:scale(1)}
+.price-from{font-size:.8rem;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.price-num{font-family:'Unbounded',sans-serif;font-size:clamp(2.5rem,6vw,4rem);font-weight:700;color:#fff}
+.price-unit{font-size:.9rem;color:rgba(255,255,255,.4);margin-left:.3rem}
+.price-sub{font-size:.8rem;color:rgba(108,99,255,.8);margin-top:.5rem}
+
+/* CTA */
+.cta{
+  display:inline-flex;align-items:center;gap:.6rem;
+  background:linear-gradient(135deg,#6c63ff,#8b85ff);
+  color:#fff;font-size:clamp(.8rem,2vw,1rem);font-weight:500;
+  padding:.9rem 2rem;border-radius:14px;
+  margin-top:1.5rem;letter-spacing:.02em;
+  opacity:0;transform:translateY(20px);
+  transition:opacity .6s ease .3s,transform .6s ease .3s;
+  font-family:'Inter',sans-serif;
+}
+.cta.show{opacity:1;transform:translateY(0)}
+
+/* ПРОГРЕСС */
+#progress{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  display:flex;gap:6px;z-index:100;
+}
+.pd{width:24px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);transition:all .4s}
+.pd.act{background:rgba(108,99,255,.9);width:36px}
+
+/* LOGO BADGE */
+.logo-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);
+  border-radius:100px;padding:.4rem 1rem;
+  margin-bottom:1rem;
+  opacity:0;transform:scale(.8);
+  transition:opacity .6s ease,transform .6s cubic-bezier(.34,1.4,.64,1);
+}
+.logo-badge.show{opacity:1;transform:scale(1)}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d)}
+.logo-text{font-size:.75rem;color:rgba(255,255,255,.7);letter-spacing:.08em}
+
+/* DIVIDER LINE */
+.line{
+  width:0;height:1px;background:linear-gradient(90deg,transparent,rgba(108,99,255,.6),transparent);
+  margin:1rem auto;transition:width 1s ease;
+}
+.line.show{width:200px}
+
+/* SCENE LAYOUTS */
+.scene-content{position:relative;z-index:2;text-align:center;padding:2rem;max-width:800px;width:100%}
+.scene-split{display:flex;align-items:center;gap:4rem;justify-content:center;flex-wrap:wrap}
+.scene-left{text-align:left;flex:1;min-width:280px;max-width:400px}
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <canvas id="particles"></canvas>
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+  <div class="glow glow-3"></div>
+
+  <!-- СЦЕНА 0: INTRO -->
+  <div class="scene active" id="s0">
+    <div class="scene-content">
+      <div class="logo-badge" id="s0-badge"><div class="logo-dot"></div><div class="logo-text">КИСЛОВОДСК · 2026</div></div>
+      <div class="label" id="s0-label">Представляем</div>
+      <div class="title" id="s0-title"><span class="g">WebForge AI</span></div>
+      <div class="line" id="s0-line"></div>
+      <div class="sub" id="s0-sub">Новое поколение сайтов и ботов для малого бизнеса</div>
+    </div>
+  </div>
+
+  <!-- СЦЕНА 1: ПРОБЛЕМА -->
+  <div class="scene" id="s1">
+    <div class="scene-content">
+      <div class="label" id="s1-label">Знакомо?</div>
+      <div class="title" id="s1-title">Клиенты не<br>находят <span class="g">вас</span></div>
+      <div class="sub" id="s1-sub">Нет сайта → нет в поиске → нет новых клиентов.<br>Мы это исправляем.</div>
+      <div class="features" id="s1-feats">
+        <div class="feat" id="f1"><div class="feat-dot"></div>Нет в Google</div>
+        <div class="feat" id="f2" style="transition-delay:.1s"><div class="feat-dot"></div>Нет в Яндекс картах</div>
+        <div class="feat" id="f3" style="transition-delay:.2s"><div class="feat-dot"></div>Нет онлайн-записи</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- СЦЕНА 2: РЕШЕНИЕ — МЕНЮ ЧАТ -->
+  <div class="scene" id="s2">
+    <div class="scene-split">
+      <div class="scene-left">
+        <div class="label" id="s2-label">Новая технология</div>
+        <div class="title" id="s2-title" style="font-size:clamp(1.6rem,4.5vw,3.2rem)">Меню-чат<br><span class="g">с ИИ</span></div>
+        <div class="sub" id="s2-sub" style="text-align:left">Клиент открывает сайт и сразу общается с ИИ-консультантом. Без звонков. Без ожидания.</div>
+      </div>
+      <div class="phone-wrap" id="s2-phone">
+        <div class="phone">
+          <div class="phone-screen">
+            <!-- ЭКРАН МЕНЮ -->
+            <div class="pscreen on" id="ps-menu">
+              <div class="p-nav">
+                <div class="p-av">🤖</div>
+                <div><div class="p-title">WebForge AI</div><div class="p-status">● онлайн</div></div>
+              </div>
+              <div class="p-menu">
+                <div class="p-item" id="pi1"><span>💬</span> Свободный вопрос</div>
+                <div class="p-item accent" id="pi2"><span>📋</span> Составить ТЗ</div>
+                <div class="p-item" id="pi3"><span>💰</span> Цены и услуги</div>
+                <div class="p-item" id="pi4"><span>🖼</span> Примеры работ</div>
+                <div class="p-item" id="pi5"><span>📝</span> Оставить заявку</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- СЦЕНА 3: ДИАЛОГ -->
+  <div class="scene" id="s3">
+    <div class="scene-split">
+      <div class="phone-wrap" id="s3-phone">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="pscreen on" id="ps-chat">
+              <div class="p-nav">
+                <div style="font-size:.6rem;color:#f0f0f5;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:2px 7px">‹ Меню</div>
+                <div style="flex:1;text-align:center"><div class="p-title">Свободный вопрос</div></div>
+              </div>
+              <div class="p-body" id="chat-body">
+                <!-- сообщения появятся через JS -->
+              </div>
+              <div class="p-card" id="p-card-el">
+                <div id="p-card-text">Лендинг от 5 000 ₽ — делаем за 3 дня. Сайт-визитка от 5 000 ₽. Telegram-бот с ИИ от 10 000 ₽.</div>
+                <div class="p-card-btns">
+                  <div class="p-card-btn">📝 Заказать</div>
+                  <div class="p-card-btn">💰 Подробнее</div>
+                </div>
+              </div>
+              <div class="p-inp" id="p-inp-el">
+                <div class="p-inp-field">Написать вопрос...</div>
+                <div class="p-inp-send"><svg width="9" height="9" viewBox="0 0 24 24" fill="#fff"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="scene-left">
+        <div class="label" id="s3-label">Умный диалог</div>
+        <div class="title" id="s3-title" style="font-size:clamp(1.6rem,4.5vw,3.2rem)">Отвечает<br><span class="g">мгновенно</span></div>
+        <div class="sub" id="s3-sub" style="text-align:left">ИИ-консультант работает 24/7. Отвечает на вопросы, помогает выбрать услугу, принимает заявки.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- СЦЕНА 4: ТЗ -->
+  <div class="scene" id="s4">
+    <div class="scene-split">
+      <div class="scene-left">
+        <div class="label" id="s4-label">Эксклюзивно</div>
+        <div class="title" id="s4-title" style="font-size:clamp(1.6rem,4.5vw,3.2rem)">ТЗ за<br><span class="g">3 минуты</span></div>
+        <div class="sub" id="s4-sub" style="text-align:left">Клиент отвечает на 11 вопросов прямо в чате. Готовое техзадание — менеджеру мгновенно.</div>
+      </div>
+      <div class="phone-wrap" id="s4-phone">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="pscreen on">
+              <div class="p-nav">
+                <div style="font-size:.6rem;color:#f0f0f5;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:2px 7px">‹ Меню</div>
+                <div style="flex:1;text-align:center"><div class="p-title">Составление ТЗ</div></div>
+              </div>
+              <div class="p-bar" id="s4-bar"></div>
+              <div style="font-size:.6rem;color:#6b6b80;padding:3px 8px;display:flex;justify-content:space-between"><span id="s4-lbl">Вопрос 1 из 11</span><span style="color:#6c63ff">9%</span></div>
+              <div class="p-body" style="flex:1;justify-content:flex-end">
+                <div class="p-bot on" style="opacity:.15;font-size:.6rem">Чем занимается бизнес?</div>
+                <div class="p-user on" style="opacity:.35;font-size:.6rem">Салон красоты, Кисловодск</div>
+                <div class="p-bot on" style="opacity:.6;font-size:.6rem">Что нужно разработать?</div>
+              </div>
+              <div style="margin:0 8px 6px;background:#13131a;border:1px solid rgba(108,99,255,.3);border-radius:12px;padding:8px">
+                <div style="font-size:.58rem;color:#6c63ff;margin-bottom:4px">Вопрос 4 из 11: Какие функции нужны?</div>
+                <div style="display:flex;flex-wrap:wrap;gap:3px">
+                  <div class="p-card-btn" style="font-size:.55rem">📅 Запись</div>
+                  <div class="p-card-btn" style="font-size:.55rem">🖼 Галерея</div>
+                  <div class="p-card-btn" style="font-size:.55rem">✅ Всё</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- СЦЕНА 5: ЦЕНА -->
+  <div class="scene" id="s5">
+    <div class="scene-content">
+      <div class="label" id="s5-label">Доступно каждому</div>
+      <div class="title" id="s5-title">Ваш сайт<br><span class="g">уже завтра</span></div>
+      <div class="price-card" id="s5-price">
+        <div class="price-from">от</div>
+        <div><span class="price-num">5 000</span><span class="price-unit">₽</span></div>
+        <div class="price-sub">Лендинг · Сайт · Telegram-бот с ИИ</div>
+      </div>
+      <div class="features" style="margin-top:1rem">
+        <div class="feat" id="f4"><div class="feat-dot"></div>За 3 дня</div>
+        <div class="feat" id="f5" style="transition-delay:.1s"><div class="feat-dot"></div>Поддержка 24/7</div>
+        <div class="feat" id="f6" style="transition-delay:.2s"><div class="feat-dot"></div>Кисловодск</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- СЦЕНА 6: CTA -->
+  <div class="scene" id="s6">
+    <div class="scene-content">
+      <div class="logo-badge" id="s6-badge"><div class="logo-dot"></div><div class="logo-text">WEBFORGE AI</div></div>
+      <div class="title" id="s6-title">Начните<br><span class="g">прямо сейчас</span></div>
+      <div class="sub" id="s6-sub">Первый сайт — за 3 дня.<br>Первая консультация — бесплатно.</div>
+      <div class="cta" id="s6-cta">Написать менеджеру →</div>
+      <div class="tag" id="s6-tag">@LyudmilaVadimovna1 · Telegram</div>
+    </div>
+  </div>
+
+  <!-- ПРОГРЕСС -->
+  <div id="progress">
+    <div class="pd act" id="pd0"></div>
+    <div class="pd" id="pd1"></div>
+    <div class="pd" id="pd2"></div>
+    <div class="pd" id="pd3"></div>
+    <div class="pd" id="pd4"></div>
+    <div class="pd" id="pd5"></div>
+    <div class="pd" id="pd6"></div>
+  </div>
+</div>
+
+<script>
+// ЧАСТИЦЫ
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+const pts=Array.from({length:60},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.5,o:Math.random()*.4+.1}));
+function drawPts(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
+    if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(108,99,255,${p.o})`;ctx.fill();
+  });
+  // Линии между близкими
+  pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{
+    const d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(d<100){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=`rgba(108,99,255,${.08*(1-d/100)})`;ctx.stroke();}
+  }));
+  requestAnimationFrame(drawPts);
+}
+drawPts();
+
+// СЦЕНЫ
+let cur=0;
+const SCENES=7;
+const DURATIONS=[4000,4000,5000,5000,4500,4000,999999]; // последняя бесконечная
+
+function show(el){if(el)el.classList.add('show')}
+function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+
+async function runScene0(){
+  await delay(300);show(document.getElementById('s0-badge'));
+  await delay(400);show(document.getElementById('s0-label'));
+  await delay(300);show(document.getElementById('s0-title'));
+  await delay(300);show(document.getElementById('s0-line'));
+  await delay(400);show(document.getElementById('s0-sub'));
+}
+
+async function runScene1(){
+  await delay(300);show(document.getElementById('s1-label'));
+  await delay(300);show(document.getElementById('s1-title'));
+  await delay(400);show(document.getElementById('s1-sub'));
+  await delay(300);
+  show(document.getElementById('f1'));
+  await delay(150);show(document.getElementById('f2'));
+  await delay(150);show(document.getElementById('f3'));
+}
+
+async function runScene2(){
+  await delay(200);show(document.getElementById('s2-label'));
+  await delay(300);show(document.getElementById('s2-title'));
+  await delay(300);show(document.getElementById('s2-sub'));
+  await delay(400);show(document.getElementById('s2-phone'));
+  // Анимируем пункты меню
+  await delay(600);
+  ['pi1','pi2','pi3','pi4','pi5'].forEach((id,i)=>{
+    setTimeout(()=>document.getElementById(id).classList.add('on'),i*120);
+  });
+}
+
+async function runScene3(){
+  await delay(200);show(document.getElementById('s3-label'));
+  await delay(300);show(document.getElementById('s3-title'));
+  await delay(300);show(document.getElementById('s3-sub'));
+  await delay(400);show(document.getElementById('s3-phone'));
+  // Анимируем чат
+  const body=document.getElementById('chat-body');
+  const msgs=[
+    {t:'bot',tx:'Привет! Чем могу помочь?'},
+    {t:'user',tx:'Сколько стоит сайт для кафе?'},
+    {t:'bot',tx:'Сейчас отвечу...'},
+  ];
+  await delay(600);
+  for(const m of msgs){
+    const el=document.createElement('div');
+    el.className=m.t==='bot'?'p-bot':'p-user';
+    el.textContent=m.tx;body.appendChild(el);
+    await delay(50);el.classList.add('on');
+    await delay(600);
+  }
+  await delay(200);
+  document.getElementById('p-card-el').classList.add('on');
+  document.getElementById('p-inp-el').classList.add('on');
+}
+
+async function runScene4(){
+  await delay(200);show(document.getElementById('s4-label'));
+  await delay(300);show(document.getElementById('s4-title'));
+  await delay(400);show(document.getElementById('s4-sub'));
+  await delay(500);show(document.getElementById('s4-phone'));
+  await delay(700);document.getElementById('s4-bar').classList.add('on');
+}
+
+async function runScene5(){
+  await delay(300);show(document.getElementById('s5-label'));
+  await delay(300);show(document.getElementById('s5-title'));
+  await delay(400);show(document.getElementById('s5-price'));
+  await delay(300);
+  show(document.getElementById('f4'));
+  await delay(120);show(document.getElementById('f5'));
+  await delay(120);show(document.getElementById('f6'));
+}
+
+async function runScene6(){
+  await delay(300);show(document.getElementById('s6-badge'));
+  await delay(400);show(document.getElementById('s6-title'));
+  await delay(400);show(document.getElementById('s6-sub'));
+  await delay(300);show(document.getElementById('s6-cta'));
+  await delay(200);show(document.getElementById('s6-tag'));
+}
+
+const runners=[runScene0,runScene1,runScene2,runScene3,runScene4,runScene5,runScene6];
+
+function updateProgress(n){
+  for(let i=0;i<SCENES;i++){
+    const pd=document.getElementById('pd'+i);
+    pd.classList.toggle('act',i===n);
+  }
+}
+
+async function goTo(n){
+  if(n<0||n>=SCENES)return;
+  // Fade out текущей
+  const prev=document.getElementById('s'+cur);
+  prev.style.opacity='0';prev.style.transition='opacity .4s ease';
+  await delay(400);
+  prev.classList.remove('active');prev.style.opacity='';prev.style.transition='';
+  cur=n;
+  const next=document.getElementById('s'+n);
+  next.classList.add('active');
+  updateProgress(n);
+  await runners[n]();
+}
+
+// АВТОПЛЕЙ
+async function autoPlay(){
+  runners[0]();
+  for(let i=1;i<SCENES;i++){
+    await delay(DURATIONS[i-1]);
+    await goTo(i);
+  }
+}
+
+// НАВИГАЦИЯ КЛИКОМ
+document.addEventListener('click',e=>{
+  if(e.clientX>window.innerWidth/2){
+    if(cur<SCENES-1)goTo(cur+1);
+  } else {
+    if(cur>0)goTo(cur-1);
+  }
+});
+
+// КЛАВИШИ
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ')goTo(Math.min(cur+1,SCENES-1));
+  if(e.key==='ArrowLeft')goTo(Math.max(cur-1,0));
+});
+
+autoPlay();
+</script>
+</body>
+</html>
