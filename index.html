@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebForge AI — Сайты и боты для бизнеса</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --border: #1e1e2e;
+    --accent: #6c63ff;
+    --accent2: #ff6b9d;
+    --text: #f0f0f5;
+    --muted: #6b6b80;
+    --chat-bg: #0f0f18;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ШАПКА */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.1rem; font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none; font-size: 0.875rem;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ГЕРОЙ */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+    padding: 6rem 2rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .hero-left h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+  }
+  .hero-left h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-left p {
+    color: var(--muted); font-size: 1rem; line-height: 1.7;
+    margin-bottom: 2rem; max-width: 420px;
+  }
+  .hero-badges {
+    display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem;
+  }
+  .badge {
+    font-size: 0.75rem; padding: 0.35rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--muted);
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--accent);
+    color: #fff; font-size: 0.875rem; font-weight: 500;
+    padding: 0.75rem 1.75rem; border-radius: 8px;
+    border: none; cursor: pointer; transition: opacity 0.2s;
+    text-decoration: none;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+
+  /* ЧАТБОКС */
+  .chat-widget {
+    background: var(--chat-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    height: 520px;
+    box-shadow: 0 0 60px rgba(108,99,255,0.1);
+  }
+  .chat-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.75rem;
+    background: var(--surface);
+  }
+  .chat-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+  .chat-title { font-size: 0.875rem; font-weight: 500; }
+  .chat-status {
+    font-size: 0.7rem; color: #4ade80;
+    display: flex; align-items: center; gap: 0.3rem;
+  }
+  .chat-status::before {
+    content: ''; width: 6px; height: 6px;
+    border-radius: 50%; background: #4ade80;
+  }
+  .chat-messages {
+    flex: 1; overflow-y: auto; padding: 1rem;
+    display: flex; flex-direction: column; gap: 0.75rem;
+  }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .msg {
+    max-width: 80%; padding: 0.65rem 0.9rem;
+    border-radius: 12px; font-size: 0.85rem; line-height: 1.5;
+    animation: fadeIn 0.3s ease;
+  }
+  .msg.bot {
+    background: var(--surface); color: var(--text);
+    border-bottom-left-radius: 4px; align-self: flex-start;
+  }
+  .msg.user {
+    background: var(--accent); color: #fff;
+    border-bottom-right-radius: 4px; align-self: flex-end;
+  }
+  .msg-buttons {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    align-self: flex-start; max-width: 90%;
+  }
+  .msg-btn {
+    font-size: 0.75rem; padding: 0.4rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 100px; background: transparent;
+    color: var(--muted); cursor: pointer;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .msg-btn:hover {
+    border-color: var(--accent); color: var(--accent);
+    background: rgba(108,99,255,0.08);
+  }
+  .typing {
+    display: flex; gap: 4px; padding: 0.65rem 0.9rem;
+    background: var(--surface); border-radius: 12px;
+    border-bottom-left-radius: 4px; align-self: flex-start;
+  }
+  .typing span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--muted);
+    animation: bounce 1.2s infinite;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce {
+    0%,60%,100% { transform: translateY(0); }
+    30% { transform: translateY(-6px); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .chat-input-area {
+    padding: 0.75rem;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    display: flex; gap: 0.5rem;
+  }
+  .chat-input {
+    flex: 1; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.6rem 0.9rem; color: var(--text);
+    font-size: 0.85rem; outline: none;
+    transition: border-color 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .chat-input:focus { border-color: var(--accent); }
+  .chat-input::placeholder { color: var(--muted); }
+  .send-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--accent); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.2s; flex-shrink: 0;
+  }
+  .send-btn:hover { opacity: 0.85; }
+  .send-btn svg { width: 16px; height: 16px; fill: #fff; }
+
+  /* СЕКЦИИ */
+  section { padding: 5rem 2rem; max-width: 1200px; margin: 0 auto; }
+  .section-label {
+    font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    font-weight: 600; margin-bottom: 1rem;
+  }
+  .section-sub { color: var(--muted); max-width: 480px; line-height: 1.7; }
+
+  /* КАРТОЧКИ УСЛУГ */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem; margin-top: 3rem;
+  }
+  .service-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+  .service-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .service-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: rgba(108,99,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; margin-bottom: 1rem;
+  }
+  .service-card h3 {
+    font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem;
+  }
+  .service-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+  .service-price {
+    margin-top: 1rem; font-size: 0.8rem;
+    color: var(--accent); font-weight: 500;
+  }
+
+  /* ДЕМО-САЙТЫ */
+  .portfolio-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1rem; margin-top: 3rem;
+  }
+  .portfolio-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+    transition: border-color 0.2s;
+    text-decoration: none; color: var(--text);
+  }
+  .portfolio-card:hover { border-color: var(--accent); }
+  .portfolio-preview {
+    height: 140px;
+    background: linear-gradient(135deg, rgba(108,99,255,0.2), rgba(255,107,157,0.15));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+  }
+  .portfolio-info { padding: 1rem; }
+  .portfolio-info h3 { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.3rem; }
+  .portfolio-info p { font-size: 0.8rem; color: var(--muted); }
+  .portfolio-link {
+    font-size: 0.75rem; color: var(--accent);
+    margin-top: 0.5rem; display: block;
+  }
+
+  /* ФУТЕР */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  /* АДАПТИВ */
+  @media (max-width: 768px) {
+    .hero {
+      grid-template-columns: 1fr;
+      padding-top: 5rem;
+    }
+    .chat-widget { height: 420px; }
+    .portfolio-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+
+  /* ФОРМА ЗАЯВКИ */
+  .form-overlay {
+    display: none; position: fixed;
+    inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  .form-overlay.active { display: flex; }
+  .form-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem;
+    width: 90%; max-width: 420px;
+  }
+  .form-box h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.1rem; margin-bottom: 1.5rem;
+  }
+  .form-field { margin-bottom: 1rem; }
+  .form-field label {
+    display: block; font-size: 0.8rem;
+    color: var(--muted); margin-bottom: 0.4rem;
+  }
+  .form-field input, .form-field select {
+    width: 100%; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.6rem 0.9rem; color: var(--text);
+    font-size: 0.875rem; outline: none;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s;
+  }
+  .form-field input:focus, .form-field select:focus { border-color: var(--accent); }
+  .form-field select option { background: var(--surface); }
+  .form-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+  .btn-ghost {
+    flex: 1; padding: 0.7rem; border-radius: 8px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--muted); cursor: pointer; font-size: 0.875rem;
+    transition: border-color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--text); color: var(--text); }
+  .btn-submit {
+    flex: 2; padding: 0.7rem; border-radius: 8px;
+    background: var(--accent); border: none;
+    color: #fff; cursor: pointer; font-size: 0.875rem;
+    font-weight: 500; transition: opacity 0.2s;
+  }
+  .btn-submit:hover { opacity: 0.85; }
+  .form-success {
+    text-align: center; padding: 2rem 0;
+    display: none;
+  }
+  .form-success .check { font-size: 2.5rem; margin-bottom: 1rem; }
+  .form-success h3 { margin-bottom: 0.5rem; }
+  .form-success p { color: var(--muted); font-size: 0.875rem; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">WebForge AI</div>
+  <div class="nav-links">
+    <a href="#services">Услуги</a>
+    <a href="#portfolio">Примеры</a>
+    <a href="#" onclick="openForm()">Заказать</a>
+  </div>
+</nav>
+
+<!-- ГЕРОЙ -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-badges">
+      <span class="badge">Кисловодск</span>
+      <span class="badge">От 3 дней</span>
+      <span class="badge">Поддержка 24/7</span>
+    </div>
+    <h1>Сайты и боты<br>для вашего<br><span>бизнеса</span></h1>
+    <p>Делаем продающие сайты и Telegram-ботов с ИИ для салонов, кафе, гостевых домов и частных мастеров. Быстро, красиво, под ключ.</p>
+    <a href="#" class="btn-primary" onclick="openForm(); return false;">
+      Заказать сайт — от 5000 ₽
+    </a>
+  </div>
+
+  <div class="chat-widget">
+    <div class="chat-header">
+      <div class="chat-avatar">🤖</div>
+      <div>
+        <div class="chat-title">ИИ-консультант WebForge</div>
+        <div class="chat-status">онлайн</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-area">
+      <input class="chat-input" id="chatInput" type="text" placeholder="Задайте вопрос..." maxlength="300">
+      <button class="send-btn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- УСЛУГИ -->
+<section id="services">
+  <div class="section-label">Что мы делаем</div>
+  <div class="section-title">Услуги под ключ</div>
+  <p class="section-sub">От простого лендинга до умного Telegram-бота с ИИ — всё в одном месте.</p>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon">🌐</div>
+      <h3>Лендинг</h3>
+      <p>Одностраничный продающий сайт. Красиво, быстро, адаптирован под мобильные.</p>
+      <div class="service-price">от 5000 ₽ · 3 дня</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📱</div>
+      <h3>Сайт-визитка</h3>
+      <p>Многостраничный сайт с описанием услуг, ценами, галереей и формой записи.</p>
+      <div class="service-price">от 5000 ₽ · 5 дней</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🤖</div>
+      <h3>Telegram-бот с ИИ</h3>
+      <p>Бот отвечает на вопросы, принимает заявки и консультирует клиентов 24/7.</p>
+      <div class="service-price">от 10000 ₽ · 7-10 дней</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🔧</div>
+      <h3>Поддержка</h3>
+      <p>Хостинг, правки, обновления. Решаем любые задачи в течение суток.</p>
+      <div class="service-price">1500-2500 ₽/мес</div>
+    </div>
+  </div>
+</section>
+
+<!-- ПРИМЕРЫ -->
+<section id="portfolio">
+  <div class="section-label">Портфолио</div>
+  <div class="section-title">Примеры работ</div>
+  <p class="section-sub">Реальные сайты которые мы уже сделали для бизнеса в Кисловодске.</p>
+  <div class="portfolio-grid">
+    <a class="portfolio-card" href="https://clubvine44-gif.github.io/demo-salon-1" target="_blank">
+      <div class="portfolio-preview">💅</div>
+      <div class="portfolio-info">
+        <h3>Салон красоты LUMIÈRE</h3>
+        <p>Полноценный сайт салона — услуги, мастера, цены, запись онлайн</p>
+        <span class="portfolio-link">Открыть сайт →</span>
+      </div>
+    </a>
+    <a class="portfolio-card" href="https://clubvine44-gif.github.io/salon-demo2/" target="_blank">
+      <div class="portfolio-preview">✨</div>
+      <div class="portfolio-info">
+        <h3>Мастер маникюра Алина</h3>
+        <p>Сайт частного мастера — прайс, график, галерея работ, форма записи</p>
+        <span class="portfolio-link">Открыть сайт →</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 WebForge AI · Кисловодск · <a href="https://t.me/LyudmilaVadimovna1" style="color: var(--accent); text-decoration: none;">Написать менеджеру</a></p>
+</footer>
+
+<!-- ФОРМА ЗАЯВКИ -->
+<div class="form-overlay" id="formOverlay" onclick="if(event.target===this)closeForm()">
+  <div class="form-box">
+    <div id="formContent">
+      <h2>Оставить заявку</h2>
+      <div class="form-field">
+        <label>Ваше имя</label>
+        <input type="text" id="fName" placeholder="Как вас зовут?">
+      </div>
+      <div class="form-field">
+        <label>Телефон или Telegram</label>
+        <input type="text" id="fContact" placeholder="+7 900 000-00-00 или @username">
+      </div>
+      <div class="form-field">
+        <label>Что нужно?</label>
+        <select id="fService">
+          <option value="Сайт">Сайт</option>
+          <option value="Telegram-бот">Telegram-бот с ИИ</option>
+          <option value="Сайт + бот">Сайт + бот</option>
+          <option value="Не знаю, нужна консультация">Не знаю, нужна консультация</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button class="btn-ghost" onclick="closeForm()">Отмена</button>
+        <button class="btn-submit" onclick="submitForm()">Отправить заявку</button>
+      </div>
+    </div>
+    <div class="form-success" id="formSuccess">
+      <div class="check">✅</div>
+      <h3>Заявка отправлена!</h3>
+      <p>Менеджер Люда свяжется с вами в ближайшее время.<br><br>Или напишите сразу: <a href="https://t.me/LyudmilaVadimovna1" style="color: var(--accent);">@LyudmilaVadimovna1</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const BOT_TOKEN = "8678852008:AAGZeO7cKJWT1vNugKy8wkuII-wotKDZe70";
+const LYUDA_ID = "5679074450";
+const GROQ_KEY = "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";
+const MODEL = "llama-3.3-70b-versatile";
+
+const SYSTEM_PROMPT = `Ты консультант компании WebForge AI из Кисловодска. Отвечай дружелюбно и конкретно.
+
+ЧТО МЫ ДЕЛАЕМ:
+- Лендинг от 5000 руб, срок 3 дня
+- Сайт-визитка от 5000 руб
+- Telegram-бот с ИИ от 10000 руб, срок 7-10 дней
+- Абонентка 1500-2500 руб/мес
+
+ПРИМЕРЫ РАБОТ:
+- Сайт салона красоты: https://clubvine44-gif.github.io/demo-salon-1
+- Сайт мастера маникюра: https://clubvine44-gif.github.io/salon-demo2/
+
+ПРАВИЛА:
+1. Только русский язык, никаких символов кроме обычного текста
+2. Не выдумывай клиентов, отзывы, телефоны
+3. Если хотят заказать — предложи оставить заявку
+4. Отвечай коротко — 3-4 предложения максимум
+5. Если не знаешь — направь к менеджеру @LyudmilaVadimovna1`;
+
+let chatHistory = [];
+let isTyping = false;
+
+const messagesEl = document.getElementById('chatMessages');
+const inputEl = document.getElementById('chatInput');
+
+function addMsg(text, type, buttons) {
+  const el = document.createElement('div');
+  el.className = `msg ${type}`;
+  el.textContent = text;
+  messagesEl.appendChild(el);
+  if (buttons) {
+    const btnsEl = document.createElement('div');
+    btnsEl.className = 'msg-buttons';
+    buttons.forEach(b => {
+      const btn = document.createElement('button');
+      btn.className = 'msg-btn';
+      btn.textContent = b.text;
+      btn.onclick = () => {
+        btnsEl.querySelectorAll('.msg-btn').forEach(x => x.disabled = true);
+        sendUserMessage(b.value || b.text);
+      };
+      btnsEl.appendChild(btn);
+    });
+    messagesEl.appendChild(btnsEl);
+  }
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function showTyping() {
+  const el = document.createElement('div');
+  el.className = 'typing'; el.id = 'typing';
+  el.innerHTML = '<span></span><span></span><span></span>';
+  messagesEl.appendChild(el);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function hideTyping() {
+  const el = document.getElementById('typing');
+  if (el) el.remove();
+}
+
+async function askAI(question) {
+  chatHistory.push({ role: 'user', content: question });
+  if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
+  try {
+    const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...chatHistory],
+        max_tokens: 300
+      })
+    });
+    const data = await resp.json();
+    let answer = data.choices[0].message.content;
+    ['*','_','`','#'].forEach(c => answer = answer.replaceAll(c, ''));
+    chatHistory.push({ role: 'assistant', content: answer });
+    return answer.trim();
+  } catch (e) {
+    return 'Не удалось получить ответ. Напишите нам: @LyudmilaVadimovna1';
+  }
+}
+
+async function sendUserMessage(text) {
+  if (isTyping) return;
+  addMsg(text, 'user');
+  isTyping = true;
+  showTyping();
+  const answer = await askAI(text);
+  hideTyping();
+  isTyping = false;
+  const lower = answer.toLowerCase();
+  let buttons = null;
+  if (lower.includes('заявк') || lower.includes('заказ') || lower.includes('интересу')) {
+    buttons = [
+      { text: 'Оставить заявку', value: '__order__' },
+      { text: 'Узнать цены', value: 'Сколько стоит сайт?' }
+    ];
+  }
+  addMsg(answer, 'bot', buttons);
+  if (text === '__order__') { openForm(); }
+}
+
+function sendMessage() {
+  const text = inputEl.value.trim();
+  if (!text || isTyping) return;
+  inputEl.value = '';
+  sendUserMessage(text);
+}
+
+inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+
+async function sendToTelegram(text) {
+  try {
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: LYUDA_ID, text, parse_mode: 'HTML' })
+    });
+  } catch (e) {}
+}
+
+function openForm() {
+  document.getElementById('formOverlay').classList.add('active');
+  document.getElementById('formContent').style.display = 'block';
+  document.getElementById('formSuccess').style.display = 'none';
+}
+function closeForm() {
+  document.getElementById('formOverlay').classList.remove('active');
+}
+
+async function submitForm() {
+  const name = document.getElementById('fName').value.trim();
+  const contact = document.getElementById('fContact').value.trim();
+  const service = document.getElementById('fService').value;
+  if (!name || !contact) { alert('Заполните имя и контакт'); return; }
+  const msg = `🌐 Новая заявка с сайта!\n\nИмя: ${name}\nКонтакт: ${contact}\nУслуга: ${service}`;
+  await sendToTelegram(msg);
+  document.getElementById('formContent').style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
+}
+
+// Стартовые сообщения
+setTimeout(() => {
+  addMsg('Привет! Я ИИ-консультант WebForge AI. Помогу выбрать услугу и отвечу на любые вопросы.', 'bot', [
+    { text: 'Сколько стоит сайт?' },
+    { text: 'Что такое бот с ИИ?' },
+    { text: 'Посмотреть примеры' }
+  ]);
+}, 500);
+</script>
+</body>
+</html>
