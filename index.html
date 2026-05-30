@@ -61,8 +61,8 @@ height:100dvh;height:100vh;}
 .msg-wrap{display:flex;flex-direction:column;gap:2px}
 .msg-wrap.user{align-items:flex-end}
 .msg-wrap.bot{align-items:flex-start}
-.msg{max-width:82%;padding:.65rem .9rem;border-radius:20px;font-size:.9rem;line-height:1.5;word-break:break-word;animation:pop .22s cubic-bezier(.34,1.56,.64,1) both}
-@keyframes pop{from{opacity:0;transform:scale(.85) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.msg{max-width:82%;padding:.65rem .9rem;border-radius:20px;font-size:.9rem;line-height:1.5;word-break:break-word}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 .msg.bot{background:var(--s);color:var(--t);border-bottom-left-radius:5px;border-top-left-radius:20px}
 .msg.user{background:linear-gradient(135deg,var(--a),#8b85ff);color:#fff;border-bottom-right-radius:5px;border-top-right-radius:20px}
@@ -290,20 +290,61 @@ let tzWait=false;
 function now(){const d=new Date();return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')}
 
 function scrollBot(){
+  // Плавный скролл к последнему элементу
   const doScroll=()=>{
-    msgsEl.scrollTop=msgsEl.scrollHeight+9999;
     const last=msgsEl.lastElementChild;
-    if(last) last.scrollIntoView({block:'end'});
+    if(last){
+      last.scrollIntoView({behavior:'smooth',block:'end'});
+    }
+    msgsEl.scrollTop=msgsEl.scrollHeight;
   };
   doScroll();
-  setTimeout(doScroll,80);
-  setTimeout(doScroll,200);
-  setTimeout(doScroll,450);
+  setTimeout(doScroll,100);
+  setTimeout(doScroll,350);
 }
 
-function addMsg(text,role,btns){
+// Очередь сообщений для плавного вывода
+let msgQueue=[];
+let msgPlaying=false;
+
+function addMsg(text,role,btns,instant){
+  if(instant){
+    _renderMsg(text,role,btns);
+    return;
+  }
+  msgQueue.push({text,role,btns});
+  if(!msgPlaying) playQueue();
+}
+
+async function playQueue(){
+  msgPlaying=true;
+  while(msgQueue.length){
+    const item=msgQueue.shift();
+    // Показываем typing если это бот и не последнее в очереди
+    const isBot=item.role==='bot';
+    if(isBot&&msgQueue.length===0&&item.text.length>30){
+      // Имитируем набор текста — задержка пропорциональна длине
+      const delay=Math.min(item.text.length*18,1200);
+      showTyping();
+      await sleep(delay);
+      hideTyping();
+    }
+    _renderMsg(item.text,item.role,item.btns);
+    // Пауза между сообщениями чтобы успеть прочитать
+    if(msgQueue.length>0){
+      await sleep(400);
+    }
+  }
+  msgPlaying=false;
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+function _renderMsg(text,role,btns){
   const wrap=document.createElement('div');
   wrap.className=`msg-wrap ${role}`;
+  wrap.style.opacity='0';
+  wrap.style.transform='translateY(12px)';
 
   const el=document.createElement('div');
   el.className=`msg ${role}`;
@@ -317,9 +358,17 @@ function addMsg(text,role,btns){
 
   msgsEl.appendChild(wrap);
 
+  // Плавное появление
+  requestAnimationFrame(()=>{
+    wrap.style.transition='opacity .3s ease, transform .3s ease';
+    wrap.style.opacity='1';
+    wrap.style.transform='translateY(0)';
+  });
+
   if(btns&&btns.length){
     const bwrap=document.createElement('div');
     bwrap.className='reply-btns';
+    bwrap.style.opacity='0';
     btns.forEach(b=>{
       const btn=document.createElement('button');
       btn.className='rb';
@@ -332,7 +381,13 @@ function addMsg(text,role,btns){
       bwrap.appendChild(btn);
     });
     msgsEl.appendChild(bwrap);
+    // Кнопки появляются чуть позже
+    setTimeout(()=>{
+      bwrap.style.transition='opacity .25s ease';
+      bwrap.style.opacity='1';
+    },150);
   }
+
   scrollBot();
   updatePreview();
 }
@@ -560,12 +615,6 @@ function tzAsk(){
   const q=TZ[tzStep];
   updateTZProgress();
   const num=`Вопрос ${tzStep+1} из ${TZ.length}`;
-  // Сначала номер вопроса маленьким
-  const numEl=document.createElement('div');
-  numEl.style.cssText='font-size:.7rem;color:var(--m);margin-top:.25rem;align-self:flex-start;padding:0 .25rem';
-  numEl.textContent=num;
-  msgsEl.appendChild(numEl);
-
   if(q.type==='text'){
     addMsg(q.q,'bot');
     const hints={
@@ -610,8 +659,14 @@ function tzAsk(){
       wrap.appendChild(btn);
     });
     msgsEl.appendChild(wrap);
-    scrollBot();
-    setTimeout(scrollBot,150);
+    // Кнопки появляются плавно
+    wrap.style.opacity='0';
+    setTimeout(()=>{
+      wrap.style.transition='opacity .25s ease';
+      wrap.style.opacity='1';
+      scrollBot();
+    },200);
+    setTimeout(scrollBot,400);
     keepFocus();
   }
 }
@@ -654,14 +709,12 @@ async function tzFinish(){
 
     // Разбиваем ТЗ на логические части по переносам строк
     const parts=tz.split(/\n{2,}/).filter(p=>p.trim());
-    parts.forEach((p,i)=>setTimeout(()=>addMsg(p.trim(),'bot'),i*200));
-
-    setTimeout(()=>{
-      addMsg('Техническое задание готово и отправлено менеджеру Люде. Она свяжется с вами!','bot',[
-        {label:'📝 Оставить заявку',cb:openForm},
-        {label:'💬 Написать Люде',cb:()=>window.open('https://t.me/LyudmilaVadimovna1','_blank')}
-      ]);
-    },parts.length*200+300);
+    // Добавляем через очередь — части ТЗ появляются одна за другой с имитацией набора
+    parts.forEach(p=>addMsg(p.trim(),'bot'));
+    addMsg('Техническое задание готово и отправлено менеджеру Люде. Она свяжется с вами!','bot',[
+      {label:'📝 Оставить заявку',cb:openForm},
+      {label:'💬 Написать Люде',cb:()=>window.open('https://t.me/LyudmilaVadimovna1','_blank')}
+    ]);
 
     sendTG(`📋 Новое ТЗ с сайта!\nКонтакт: ${tzData.contacts||'не указан'}\n\n${tz}`);
   }catch{
