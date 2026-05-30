@@ -73,16 +73,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:.875rem 1.25rem;displ
 #screenChat{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
 
 /* ИСТОРИЯ — скроллится, размывается к низу */
-.chat-history{flex:1;min-height:0;overflow-y:auto;padding:.875rem .875rem 4rem;display:flex;flex-direction:column;gap:.5rem;-webkit-overflow-scrolling:touch}
-/* Размытие последних сообщений через маску */
-.chat-history{-webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 20%,black 55%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0%,black 20%,black 55%,transparent 100%)}
+.chat-history{flex:1;min-height:0;overflow-y:auto;padding:.875rem .875rem 4rem;display:flex;flex-direction:column;gap:.5rem;-webkit-overflow-scrolling:touch;position:relative}
 
 /* Сообщения в истории — постепенно размываются */
-.hm{transition:filter .4s,opacity .4s}
-.hm.old-1{filter:blur(.5px);opacity:.7}
-.hm.old-2{filter:blur(1.5px);opacity:.45}
-.hm.old-3{filter:blur(2.5px);opacity:.25}
-.hm.old-4{filter:blur(3px);opacity:.12}
+.hm{transition:filter .5s ease,opacity .5s ease}
+.hm.old-1{filter:blur(1px);opacity:.6}
+.hm.old-2{filter:blur(2px);opacity:.35}
+.hm.old-3{filter:blur(3px);opacity:.18}
+.hm.old-4{filter:blur(4px);opacity:.08}
+/* Оверлей размытия поверх истории */
+.history-overlay{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to bottom,rgba(10,10,15,0) 0%,rgba(10,10,15,.6) 50%,rgba(10,10,15,.95) 100%);pointer-events:none;z-index:2}
 
 .hm-wrap{display:flex;flex-direction:column}
 .hm-wrap.user{align-items:flex-end}
@@ -275,7 +275,10 @@ footer{border-top:1px solid var(--b);padding:1.5rem 1.25rem;text-align:center;co
 
   <!-- ЭКРАН ЧАТА -->
   <div id="screenChat" style="display:none;flex:1;flex-direction:column;overflow:hidden;position:relative">
-    <div class="chat-history" id="chatHistory" style="flex:1;min-height:0"></div>
+    <div style="flex:1;min-height:0;position:relative;display:flex;flex-direction:column;overflow:hidden">
+      <div class="chat-history" id="chatHistory"></div>
+      <div class="history-overlay"></div>
+    </div>
     <div class="current-card" id="currentCard" style="flex-shrink:0"></div>
     <div class="inp-area" id="inpArea">
       <textarea id="chatInp" placeholder="Написать..." rows="1" maxlength="500"></textarea>
