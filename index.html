@@ -11,10 +11,12 @@
 html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);overflow-x:hidden}
 
+/* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:.875rem 1.25rem;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--b)}
 .logo{font-family:'Unbounded',sans-serif;font-size:1rem;font-weight:700;background:linear-gradient(135deg,var(--a),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .nav-cta{font-size:.8rem;font-weight:500;background:var(--a);color:#fff;padding:.5rem 1rem;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif}
 
+/* HERO ЛЕНДИНГ */
 .hero{padding:5rem 1.25rem 2rem;max-width:1100px;margin:0 auto}
 .hero-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
 .badge{font-size:.7rem;padding:.3rem .65rem;border:1px solid var(--b);border-radius:100px;color:var(--m)}
@@ -25,125 +27,124 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:.875rem 1.25rem;displ
 .btn-p{display:inline-flex;align-items:center;background:var(--a);color:#fff;font-size:.875rem;font-weight:500;padding:.75rem 1.5rem;border-radius:10px;border:none;cursor:pointer;font-family:'Inter',sans-serif;text-decoration:none}
 .btn-o{display:inline-flex;align-items:center;background:transparent;color:var(--t);font-size:.875rem;padding:.75rem 1.5rem;border-radius:10px;border:1px solid var(--b);text-decoration:none}
 
-/* ПРЕВЬЮ */
-.chat-preview{background:#0c0c14;border:1px solid var(--b);border-radius:16px;overflow:hidden;cursor:pointer;margin-bottom:3rem;transition:border-color .2s,box-shadow .2s;box-shadow:0 0 40px rgba(108,99,255,.08)}
-.chat-preview:hover{border-color:var(--a);box-shadow:0 0 40px rgba(108,99,255,.15)}
-.prev-header{padding:.875rem 1rem;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:.75rem;background:var(--s)}
+/* ПРЕВЬЮ КНОПКА */
+.chat-entry{background:#0c0c14;border:1px solid var(--b);border-radius:16px;overflow:hidden;cursor:pointer;margin-bottom:3rem;transition:border-color .2s;box-shadow:0 0 40px rgba(108,99,255,.08)}
+.chat-entry:hover{border-color:var(--a)}
+.entry-header{padding:.875rem 1rem;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:.75rem;background:var(--s)}
 .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
 .ct{font-size:.8rem;font-weight:500}
 .cs{font-size:.65rem;color:#4ade80;display:flex;align-items:center;gap:.25rem}
 .cs::before{content:'';width:5px;height:5px;border-radius:50%;background:#4ade80}
-.prev-msgs{padding:.875rem;display:flex;flex-direction:column;gap:.5rem;min-height:90px}
-.prev-bar{padding:.65rem;border-top:1px solid var(--b);background:var(--s);display:flex;align-items:center;gap:.5rem}
-.prev-bar span{flex:1;font-size:.82rem;color:var(--m);padding:.55rem .85rem;background:var(--bg);border:1px solid var(--b);border-radius:8px}
-.sb{width:36px;height:36px;border-radius:8px;background:var(--a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.sb svg{width:15px;height:15px;fill:#fff}
+.entry-body{padding:.875rem;display:flex;flex-direction:column;gap:.4rem}
+.entry-item{background:var(--s);border:1px solid var(--b);border-radius:10px;padding:.7rem .875rem;display:flex;justify-content:space-between;align-items:center;transition:border-color .2s}
+.entry-item:hover{border-color:var(--a)}
+.entry-item-left{display:flex;align-items:center;gap:.6rem;font-size:.82rem}
+.entry-item-chevron{color:var(--m);font-size:.9rem}
+.entry-item.accent{background:rgba(108,99,255,.08);border-color:rgba(108,99,255,.3)}
+.entry-item.accent .entry-item-left{color:var(--a)}
 
-/* ПОЛНОЭКРАННЫЙ ЧАТ */
-#CF{position:fixed;inset:0;z-index:200;background:#0a0a0f;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.4,0,.2,1);will-change:transform;
-/* Используем dvh для корректной работы с клавиатурой */
-height:100dvh;height:100vh;}
-#CF.open{transform:translateY(0)}
-/* Когда клавиатура открыта браузер уменьшает viewport — чат адаптируется автоматически */
-@supports(height:100dvh){#CF{height:100dvh}}
+/* ПОЛНОЭКРАННЫЙ ИНТЕРФЕЙС */
+#APP{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.4,0,.2,1);will-change:transform;height:100dvh}
+#APP.open{transform:translateY(0)}
 
-.cf-header{padding:.875rem 1rem;padding-top:calc(.875rem + env(safe-area-inset-top,0px));border-bottom:1px solid var(--b);display:flex;align-items:center;gap:.75rem;background:var(--s);flex-shrink:0}
-/* КНОПКА НАЗАД — современная */
-.cf-back{display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:.4rem .75rem .4rem .5rem;color:var(--t);font-size:.78rem;font-weight:500;cursor:pointer;flex-shrink:0;transition:background .2s}
-.cf-back:active{background:rgba(255,255,255,.12)}
-.cf-back svg{width:16px;height:16px;fill:none;stroke:var(--t);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.app-header{padding:.75rem 1rem;padding-top:calc(.75rem + env(safe-area-inset-top,0px));border-bottom:1px solid var(--b);display:flex;align-items:center;gap:.75rem;background:var(--s);flex-shrink:0}
+.back-btn{display:flex;align-items:center;gap:.35rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:.35rem .7rem .35rem .45rem;color:var(--t);font-size:.75rem;font-weight:500;cursor:pointer;flex-shrink:0;transition:background .15s}
+.back-btn:active{background:rgba(255,255,255,.12)}
+.back-btn svg{width:14px;height:14px;fill:none;stroke:var(--t);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.app-title{font-size:.8rem;font-weight:500;flex:1;text-align:center}
+.app-header-right{width:60px}
 
-#cfMsgs{flex:1;overflow-y:auto;padding:1rem .875rem;display:flex;flex-direction:column;gap:.5rem;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
-#cfMsgs::-webkit-scrollbar{width:3px}
-#cfMsgs::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
+/* ЭКРАН МЕНЮ */
+#screenMenu{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.5rem;-webkit-overflow-scrolling:touch}
+.menu-greeting{background:var(--s);border-radius:18px;border-bottom-left-radius:5px;padding:.875rem 1rem;margin-bottom:.5rem;border:1px solid var(--b)}
+.menu-greeting p{font-size:.9rem;line-height:1.5;color:var(--t);margin:0}
+.menu-greeting .gt{font-size:.68rem;color:var(--m);margin-top:.3rem;text-align:right}
+.menu-item{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:.875rem 1rem;display:flex;align-items:center;gap:.75rem;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.menu-item:active{transform:scale(.98);border-color:var(--a)}
+.menu-item-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.menu-item-text{flex:1}
+.menu-item-title{font-size:.875rem;font-weight:500;color:var(--t);margin-bottom:.15rem}
+.menu-item-sub{font-size:.72rem;color:var(--m)}
+.menu-item-arr{font-size:1rem;color:var(--m)}
+.menu-item.hi .menu-item-icon{background:rgba(108,99,255,.15)}
+.menu-item.hi{border-color:rgba(108,99,255,.25);background:rgba(108,99,255,.05)}
 
-/* СООБЩЕНИЯ — стиль мессенджера */
-.msg-wrap{display:flex;flex-direction:column;gap:2px}
-.msg-wrap.user{align-items:flex-end}
-.msg-wrap.bot{align-items:flex-start}
-.msg{max-width:82%;padding:.65rem .9rem;border-radius:20px;font-size:.9rem;line-height:1.5;word-break:break-word}
-@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+/* ЭКРАН ДИАЛОГА */
+#screenChat{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
 
-/* МОДАЛЬНОЕ ОКНО ВОПРОСА ТЗ */
-.tz-modal-overlay{
-  position:absolute;inset:0;z-index:10;
-  background:rgba(10,10,15,.75);
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  display:flex;align-items:flex-end;justify-content:center;
-  padding:.75rem;
-  opacity:0;pointer-events:none;
-  transition:opacity .25s ease;
-}
-.tz-modal-overlay.show{opacity:1;pointer-events:all;}
-.tz-modal{
-  background:var(--s);
-  border:1px solid rgba(108,99,255,.3);
-  border-radius:20px 20px 12px 12px;
-  width:100%;max-width:480px;
-  padding:1.25rem;
-  transform:translateY(24px) scale(.97);
-  transition:transform .3s cubic-bezier(.34,1.4,.64,1), opacity .25s ease;
-  opacity:0;
-  box-shadow:0 -8px 40px rgba(108,99,255,.15);
-}
-.tz-modal-overlay.show .tz-modal{transform:translateY(0) scale(1);opacity:1;}
-.tz-q-num{font-size:.68rem;color:var(--a);font-weight:500;margin-bottom:.5rem;letter-spacing:.05em}
-.tz-q-text{font-size:.95rem;line-height:1.55;color:var(--t);margin-bottom:1rem;font-weight:500}
-.tz-modal-btns{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.875rem}
-.tz-modal-btn{font-size:.82rem;padding:.5rem .9rem;border:1.5px solid rgba(108,99,255,.35);border-radius:14px;background:rgba(108,99,255,.08);color:var(--a);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
-.tz-modal-btn:active{background:var(--a);color:#fff;border-color:var(--a);transform:scale(.96)}
-.tz-modal-inp-row{display:flex;gap:.5rem;align-items:flex-end}
-.tz-modal-inp{flex:1;background:rgba(255,255,255,.06);border:1.5px solid var(--b);border-radius:14px;padding:.6rem .9rem;color:var(--t);font-size:.95rem;outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;transition:border-color .2s;min-height:44px}
-.tz-modal-inp:focus{border-color:var(--a);background:rgba(108,99,255,.06)}
-.tz-modal-inp::placeholder{color:var(--m)}
-.tz-modal-send{width:44px;height:44px;border-radius:50%;background:var(--a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.tz-modal-send svg{width:16px;height:16px;fill:#fff;margin-left:2px}
-.tz-hint-modal{font-size:.7rem;color:var(--a);padding:.35rem .5rem 0;opacity:.8}
-.msg.bot{background:var(--s);color:var(--t);border-bottom-left-radius:5px;border-top-left-radius:20px}
-.msg.user{background:linear-gradient(135deg,var(--a),#8b85ff);color:#fff;border-bottom-right-radius:5px;border-top-right-radius:20px}
-.msg-time{font-size:.62rem;color:var(--m);padding:0 .25rem;margin-top:1px}
-.msg-time.user{text-align:right}
-.msg-time.bot{text-align:left}
+/* ИСТОРИЯ — скроллится, размывается к низу */
+.chat-history{flex:1;overflow-y:auto;padding:.875rem .875rem 0;display:flex;flex-direction:column;gap:.5rem;-webkit-overflow-scrolling:touch;position:relative}
+.chat-history::after{content:'';position:absolute;bottom:0;left:0;right:0;height:100px;background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none}
 
-/* КНОПКИ ОТВЕТОВ */
-.reply-btns{display:flex;flex-wrap:wrap;gap:.4rem;align-self:flex-start;max-width:95%;margin-top:.1rem}
-.rb{font-size:.8rem;padding:.45rem .9rem;border:1.5px solid rgba(108,99,255,.4);border-radius:20px;background:rgba(108,99,255,.08);color:var(--a);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap}
-.rb:active,.rb:hover{background:var(--a);color:#fff;border-color:var(--a)}
-.rb:disabled{opacity:.3;pointer-events:none}
+/* Сообщения в истории — постепенно размываются */
+.hm{transition:filter .4s,opacity .4s}
+.hm.old-1{filter:blur(.5px);opacity:.7}
+.hm.old-2{filter:blur(1.5px);opacity:.45}
+.hm.old-3{filter:blur(2.5px);opacity:.25}
+.hm.old-4{filter:blur(3px);opacity:.12}
 
-.typing{display:flex;gap:4px;padding:.65rem .9rem;background:var(--s);border-radius:18px;border-bottom-left-radius:4px;align-self:flex-start}
-.typing span{width:6px;height:6px;border-radius:50%;background:var(--m);animation:bounce 1.2s infinite}
-.typing span:nth-child(2){animation-delay:.2s}
-.typing span:nth-child(3){animation-delay:.4s}
+.hm-wrap{display:flex;flex-direction:column}
+.hm-wrap.user{align-items:flex-end}
+.hm-wrap.bot{align-items:flex-start}
+.hm-bubble{max-width:85%;padding:.6rem .875rem;border-radius:18px;font-size:.875rem;line-height:1.5;word-break:break-word}
+.hm-bubble.bot{background:var(--s);color:var(--t);border-bottom-left-radius:4px;border:1px solid var(--b)}
+.hm-bubble.user{background:linear-gradient(135deg,var(--a),#8b85ff);color:#fff;border-bottom-right-radius:4px}
+.hm-time{font-size:.62rem;color:var(--m);margin-top:.2rem;padding:0 .25rem}
+.hm-time.user{text-align:right}
+
+/* ТЕКУЩАЯ КАРТОЧКА БОТА */
+.current-card{flex-shrink:0;padding:.5rem .875rem;padding-bottom:calc(.5rem + env(safe-area-inset-bottom,0px));background:var(--bg)}
+.cc-bubble{background:var(--s);border:1px solid rgba(108,99,255,.2);border-radius:18px;border-bottom-left-radius:5px;padding:1rem;margin-bottom:.5rem;box-shadow:0 -4px 24px rgba(108,99,255,.08);animation:cardIn .3s cubic-bezier(.34,1.4,.64,1)}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.cc-text{font-size:.9rem;line-height:1.55;color:var(--t);margin-bottom:.5rem}
+.cc-time{font-size:.62rem;color:var(--m);text-align:right;margin-bottom:.5rem}
+.cc-btns{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.5rem}
+.cc-btn{font-size:.78rem;padding:.42rem .85rem;border:1.5px solid rgba(108,99,255,.35);border-radius:14px;background:rgba(108,99,255,.08);color:var(--a);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap}
+.cc-btn:active{background:var(--a);color:#fff;border-color:var(--a)}
+
+/* ПОЛЕ ВВОДА */
+.inp-area{display:flex;gap:.5rem;align-items:flex-end;padding:.5rem .875rem;padding-bottom:calc(.5rem + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid rgba(255,255,255,.04)}
+.inp-area textarea{flex:1;background:rgba(255,255,255,.05);border:1.5px solid var(--b);border-radius:20px;padding:.6rem 1rem;color:var(--t);font-size:.95rem;outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;transition:border-color .2s;resize:none;min-height:42px;max-height:100px;line-height:1.4}
+.inp-area textarea:focus{border-color:var(--a)}
+.inp-area textarea::placeholder{color:var(--m);font-size:.85rem}
+.send-btn{width:42px;height:42px;border-radius:50%;background:var(--a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.send-btn svg{width:16px;height:16px;fill:#fff;margin-left:2px}
+
+/* TYPING */
+.typing-bubble{background:var(--s);border-radius:18px;border-bottom-left-radius:4px;padding:.6rem .875rem;display:inline-flex;gap:4px;border:1px solid var(--b)}
+.typing-bubble span{width:6px;height:6px;border-radius:50%;background:var(--m);animation:bounce 1.2s infinite}
+.typing-bubble span:nth-child(2){animation-delay:.2s}
+.typing-bubble span:nth-child(3){animation-delay:.4s}
 @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 
 /* ПРОГРЕСС ТЗ */
-.tz-progress{padding:.4rem .875rem .5rem;background:var(--s);border-bottom:1px solid var(--b);flex-shrink:0;display:none}
-.tz-progress.show{display:block}
-.tz-bar-wrap{background:rgba(255,255,255,.08);border-radius:6px;height:5px;overflow:hidden;margin-bottom:.35rem}
+.tz-prog{padding:.35rem .875rem .4rem;border-bottom:1px solid var(--b);background:var(--s);flex-shrink:0;display:none}
+.tz-prog.show{display:block}
+.tz-bar-wrap{background:rgba(255,255,255,.08);border-radius:6px;height:4px;overflow:hidden;margin-bottom:.3rem}
 .tz-bar{height:100%;background:linear-gradient(90deg,var(--a),var(--a2));border-radius:6px;transition:width .4s cubic-bezier(.4,0,.2,1)}
-.tz-meta{display:flex;justify-content:space-between;align-items:center}
-.tz-label{font-size:.7rem;color:var(--m)}
-.tz-pct{font-size:.7rem;color:var(--a);font-weight:500}
+.tz-meta{display:flex;justify-content:space-between}
+.tz-lbl{font-size:.68rem;color:var(--m)}
+.tz-pct{font-size:.68rem;color:var(--a);font-weight:500}
 
-.cf-quick{padding:.45rem .75rem;border-top:1px solid var(--b);display:flex;gap:.35rem;overflow-x:auto;flex-shrink:0;background:var(--s);-webkit-overflow-scrolling:touch}
-.cf-quick::-webkit-scrollbar{display:none}
-.qb{font-size:.72rem;padding:.35rem .7rem;border:1px solid var(--b);border-radius:100px;background:transparent;color:var(--m);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;flex-shrink:0;transition:all .15s}
-.qb:active{border-color:var(--a);color:var(--a)}
+/* МОДАЛКА ТЗ */
+.tz-overlay{position:absolute;inset:0;z-index:10;background:rgba(10,10,15,.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;padding:.75rem;opacity:0;pointer-events:none;transition:opacity .25s}
+.tz-overlay.show{opacity:1;pointer-events:all}
+.tz-card{background:var(--s);border:1px solid rgba(108,99,255,.3);border-radius:20px 20px 14px 14px;width:100%;max-width:500px;padding:1.25rem;transform:translateY(20px) scale(.97);opacity:0;transition:transform .3s cubic-bezier(.34,1.4,.64,1),opacity .25s;box-shadow:0 -8px 40px rgba(108,99,255,.15)}
+.tz-overlay.show .tz-card{transform:translateY(0) scale(1);opacity:1}
+.tz-q-num{font-size:.68rem;color:var(--a);font-weight:500;margin-bottom:.4rem;letter-spacing:.04em}
+.tz-q-text{font-size:.95rem;line-height:1.5;color:var(--t);margin-bottom:.875rem;font-weight:500}
+.tz-btns{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.75rem}
+.tz-btn{font-size:.8rem;padding:.48rem .9rem;border:1.5px solid rgba(108,99,255,.35);border-radius:14px;background:rgba(108,99,255,.08);color:var(--a);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.tz-btn:active{background:var(--a);color:#fff;border-color:var(--a);transform:scale(.96)}
+.tz-inp-row{display:flex;gap:.5rem;align-items:flex-end}
+.tz-hint{font-size:.7rem;color:var(--a);margin-bottom:.3rem;opacity:.8}
+.tz-inp{flex:1;background:rgba(255,255,255,.06);border:1.5px solid var(--b);border-radius:14px;padding:.6rem .9rem;color:var(--t);font-size:.95rem;outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;transition:border-color .2s;min-height:44px;resize:none}
+.tz-inp:focus{border-color:var(--a)}
+.tz-inp::placeholder{color:var(--m)}
+.tz-send{width:44px;height:44px;border-radius:50%;background:var(--a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tz-send svg{width:16px;height:16px;fill:#fff;margin-left:2px}
 
-.cf-inp-area{padding:.6rem .75rem;padding-bottom:calc(.6rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--b);background:var(--s);display:flex;gap:.5rem;flex-shrink:0;align-items:flex-end}
-/* Когда фокус на инпуте — прячем быстрые кнопки для экономии места */
-#CF.kb-open .cf-quick{display:none}
-#CF.kb-open .tz-progress{padding:.25rem .875rem}
-#cfInp{flex:1;background:rgba(255,255,255,.06);border:1.5px solid var(--b);border-radius:22px;padding:.6rem 1rem;color:var(--t);font-size:1rem;outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;transition:border-color .2s;resize:none;max-height:100px;min-height:44px;line-height:1.4;-webkit-user-select:text;user-select:text}
-#cfInp:focus{border-color:var(--a);background:rgba(108,99,255,.08)}
-#cfInp::placeholder{color:var(--m)}
-.send-btn{width:42px;height:42px;border-radius:50%;background:var(--a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s,opacity .15s}
-.send-btn:active{transform:scale(.9)}
-.send-btn svg{width:16px;height:16px;fill:#fff;margin-left:2px}
-
-/* СЕКЦИИ */
+/* СЕКЦИИ ЛЕНДИНГА */
 section{padding:3.5rem 1.25rem;max-width:1100px;margin:0 auto}
 .sl{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--a);margin-bottom:.75rem}
 .st{font-family:'Unbounded',sans-serif;font-size:clamp(1.3rem,4vw,2rem);font-weight:600;margin-bottom:.75rem}
@@ -178,7 +179,7 @@ footer{border-top:1px solid var(--b);padding:1.5rem 1.25rem;text-align:center;co
 .ff input:focus,.ff select:focus{border-color:var(--a)}
 .ff select option{background:var(--s)}
 .fa{display:flex;gap:.65rem;margin-top:1.25rem}
-.bg{flex:1;padding:.75rem;border-radius:10px;border:1px solid var(--b);background:transparent;color:var(--m);cursor:pointer;font-size:.875rem;font-family:'Inter',sans-serif}
+.bg2{flex:1;padding:.75rem;border-radius:10px;border:1px solid var(--b);background:transparent;color:var(--m);cursor:pointer;font-size:.875rem;font-family:'Inter',sans-serif}
 .bs{flex:2;padding:.75rem;border-radius:10px;background:var(--a);border:none;color:#fff;cursor:pointer;font-size:.875rem;font-weight:500;font-family:'Inter',sans-serif}
 .fok{text-align:center;padding:1.5rem 0;display:none}
 .fok .ck{font-size:2.5rem;margin-bottom:.875rem}
@@ -186,7 +187,7 @@ footer{border-top:1px solid var(--b);padding:1.5rem 1.25rem;text-align:center;co
 
 @media(min-width:768px){
   .hero{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;padding-top:6rem}
-  .chat-preview{margin-bottom:0}
+  .chat-entry{margin-bottom:0}
   .fo{align-items:center;padding:1rem}
   .fb{border-radius:16px}
   @keyframes su{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
@@ -211,61 +212,17 @@ footer{border-top:1px solid var(--b);padding:1.5rem 1.25rem;text-align:center;co
     </div>
   </div>
 
-  <div class="chat-preview" onclick="openChat()">
-    <div class="prev-header">
+  <div class="chat-entry" onclick="openApp()">
+    <div class="entry-header">
       <div class="av">🤖</div>
-      <div><div class="ct">ИИ-консультант WebForge</div><div class="cs">онлайн</div></div>
+      <div><div class="ct">ИИ-консультант WebForge</div><div class="cs">онлайн — нажмите чтобы открыть</div></div>
     </div>
-    <div class="prev-msgs" id="prevMsgs">
-      <div class="msg bot" style="font-size:.8rem;padding:.5rem .75rem">Привет! Помогу выбрать услугу, отвечу на вопросы или составлю ТЗ.</div>
+    <div class="entry-body">
+      <div class="entry-item"><div class="entry-item-left"><span>💰</span> Цены и услуги</div><span class="entry-item-chevron">›</span></div>
+      <div class="entry-item"><div class="entry-item-left"><span>🖼</span> Примеры работ</div><span class="entry-item-chevron">›</span></div>
+      <div class="entry-item accent"><div class="entry-item-left"><span>📋</span> Составить ТЗ</div><span class="entry-item-chevron">›</span></div>
+      <div class="entry-item"><div class="entry-item-left"><span>💬</span> Свободный вопрос</div><span class="entry-item-chevron">›</span></div>
     </div>
-    <div class="prev-bar"><span>Нажмите чтобы открыть чат...</span><div class="sb"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></div></div>
-  </div>
-</div>
-
-<!-- ПОЛНОЭКРАННЫЙ ЧАТ -->
-<div id="CF">
-  <div class="cf-header">
-    <button class="cf-back" onclick="closeChat()">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      Назад
-    </button>
-    <div class="av" style="margin-left:.25rem">🤖</div>
-    <div><div class="ct">ИИ-консультант WebForge</div><div class="cs">онлайн</div></div>
-  </div>
-  <div class="tz-progress" id="tzProg">
-    <div class="tz-bar-wrap"><div class="tz-bar" id="tzBar" style="width:0%"></div></div>
-    <div class="tz-meta"><div class="tz-label" id="tzLbl">Составление ТЗ</div><div class="tz-pct" id="tzPct">0%</div></div>
-  </div>
-  <div id="cfMsgs"></div>
-  <!-- МОДАЛЬНОЕ ОКНО ВОПРОСА ТЗ -->
-  <div class="tz-modal-overlay" id="tzModal">
-    <div class="tz-modal">
-      <div class="tz-q-num" id="tzMNum"></div>
-      <div class="tz-q-text" id="tzMText"></div>
-      <div class="tz-modal-btns" id="tzMBtns"></div>
-      <div id="tzMInpRow" class="tz-modal-inp-row" style="display:none">
-        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
-          <div id="tzMHint" class="tz-hint-modal" style="display:none"></div>
-          <textarea class="tz-modal-inp" id="tzMInp" rows="1" placeholder="Ваш ответ..." maxlength="500"></textarea>
-        </div>
-        <button class="tz-modal-send" onclick="tzModalSend()"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
-      </div>
-    </div>
-  </div>
-  <div class="cf-quick" id="cfQuick">
-    <button class="qb" onclick="qs('Сколько стоит сайт?')">💰 Цены</button>
-    <button class="qb" onclick="startTZ()">📋 Составить ТЗ</button>
-    <button class="qb" onclick="qs('Покажи примеры работ')">🖼 Примеры</button>
-    <button class="qb" onclick="qs('Что такое бот с ИИ?')">🤖 Про бота</button>
-    <button class="qb" onclick="openForm()">📝 Заявка</button>
-  </div>
-  <div class="cf-inp-area">
-    <div style="flex:1;display:flex;flex-direction:column;gap:4px">
-      <div id="cfHint" style="font-size:.7rem;color:var(--a);padding:0 .5rem;display:none;animation:fadeIn .2s"></div>
-      <textarea id="cfInp" placeholder="Написать сообщение..." rows="1" maxlength="500"></textarea>
-    </div>
-    <button class="send-btn" onclick="sendMsg()"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
   </div>
 </div>
 
@@ -293,6 +250,53 @@ footer{border-top:1px solid var(--b);padding:1.5rem 1.25rem;text-align:center;co
 
 <footer><p>© 2026 WebForge AI · Кисловодск · <a href="https://t.me/LyudmilaVadimovna1" style="color:var(--a);text-decoration:none">Написать менеджеру</a></p></footer>
 
+<!-- ПОЛНОЭКРАННЫЙ ИНТЕРФЕЙС -->
+<div id="APP">
+  <div class="app-header">
+    <button class="back-btn" id="backBtn" onclick="goBack()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      <span id="backLabel">Назад</span>
+    </button>
+    <div class="app-title" id="appTitle">WebForge AI</div>
+    <div class="app-header-right"></div>
+  </div>
+
+  <!-- ПРОГРЕСС ТЗ -->
+  <div class="tz-prog" id="tzProg">
+    <div class="tz-bar-wrap"><div class="tz-bar" id="tzBar" style="width:0%"></div></div>
+    <div class="tz-meta"><div class="tz-lbl" id="tzLbl">Составление ТЗ</div><div class="tz-pct" id="tzPct">0%</div></div>
+  </div>
+
+  <!-- ЭКРАН МЕНЮ -->
+  <div id="screenMenu" style="display:none;flex:1;overflow-y:auto;padding:1rem;flex-direction:column;gap:.5rem;-webkit-overflow-scrolling:touch"></div>
+
+  <!-- ЭКРАН ЧАТА -->
+  <div id="screenChat" style="display:none;flex:1;flex-direction:column;overflow:hidden;position:relative">
+    <div class="chat-history" id="chatHistory"></div>
+    <div class="current-card" id="currentCard"></div>
+    <div class="inp-area" id="inpArea">
+      <textarea id="chatInp" placeholder="Написать..." rows="1" maxlength="500"></textarea>
+      <button class="send-btn" onclick="sendFreeMsg()"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+    </div>
+    <!-- МОДАЛКА ТЗ -->
+    <div class="tz-overlay" id="tzOverlay">
+      <div class="tz-card">
+        <div class="tz-q-num" id="tzQNum"></div>
+        <div class="tz-q-text" id="tzQText"></div>
+        <div class="tz-btns" id="tzQBtns"></div>
+        <div id="tzQInpWrap" style="display:none">
+          <div class="tz-hint" id="tzQHint" style="display:none"></div>
+          <div class="tz-inp-row">
+            <textarea class="tz-inp" id="tzQInp" rows="1" placeholder="Ваш ответ..."></textarea>
+            <button class="tz-send" onclick="tzSend()"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ФОРМА -->
 <div class="fo" id="FO" onclick="if(event.target===this)closeForm()">
   <div class="fb">
     <div class="fh"></div>
@@ -301,7 +305,7 @@ footer{border-top:1px solid var(--b);padding:1.5rem 1.25rem;text-align:center;co
       <div class="ff"><label>Ваше имя</label><input type="text" id="fN" placeholder="Как вас зовут?" autocomplete="name"></div>
       <div class="ff"><label>Телефон</label><input type="tel" id="fP" placeholder="+7 (___) ___-__-__" inputmode="tel"></div>
       <div class="ff"><label>Что нужно?</label><select id="fS"><option>Сайт</option><option>Telegram-бот с ИИ</option><option>Сайт + бот</option><option>Консультация</option></select></div>
-      <div class="fa"><button class="bg" onclick="closeForm()">Отмена</button><button class="bs" onclick="subForm()">Отправить заявку</button></div>
+      <div class="fa"><button class="bg2" onclick="closeForm()">Отмена</button><button class="bs" onclick="subForm()">Отправить заявку</button></div>
     </div>
     <div class="fok" id="FOK"><div class="ck">✅</div><p>Заявка принята! Менеджер Люда свяжется с вами.<br><br><a href="https://t.me/LyudmilaVadimovna1" style="color:var(--a)">@LyudmilaVadimovna1</a></p></div>
   </div>
@@ -313,589 +317,441 @@ const LID='5679074450';
 const GK='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';
 const MD='llama-3.3-70b-versatile';
 
-// ЗВУК ПУЗЫРЬКА через Web Audio API
-function playPop(type='in'){
-  try{
-    const ctx=new(window.AudioContext||window.webkitAudioContext)();
-    const o=ctx.createOscillator();
-    const g=ctx.createGain();
-    o.connect(g);g.connect(ctx.destination);
-    if(type==='in'){
-      // Входящее — мягкий пузырёк вверх
-      o.type='sine';
-      o.frequency.setValueAtTime(380,ctx.currentTime);
-      o.frequency.exponentialRampToValueAtTime(520,ctx.currentTime+.08);
-      g.gain.setValueAtTime(.12,ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.15);
-      o.start(ctx.currentTime);o.stop(ctx.currentTime+.15);
-    } else {
-      // Исходящее — короткий пузырёк
-      o.type='sine';
-      o.frequency.setValueAtTime(520,ctx.currentTime);
-      o.frequency.exponentialRampToValueAtTime(420,ctx.currentTime+.06);
-      g.gain.setValueAtTime(.08,ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.1);
-      o.start(ctx.currentTime);o.stop(ctx.currentTime+.1);
-    }
-  }catch(e){}
-}
-
 const AI_SYS=`Ты консультант WebForge AI из Кисловодска. Отвечай коротко и дружелюбно — максимум 3 предложения.
 Услуги: лендинг от 5000 руб/3 дня, сайт-визитка от 5000 руб, Telegram-бот с ИИ от 10000 руб/7-10 дней, абонентка 1500-2500 руб/мес.
 Примеры: https://clubvine44-gif.github.io/demo-salon-1 и https://clubvine44-gif.github.io/salon-demo2/
-Правила: только русский язык, без форматирования, не выдумывай клиентов и отзывы, если хотят заказать — скажи про кнопку Заявка.`;
+Правила: только русский язык, без форматирования, не выдумывай клиентов и отзывы, если хотят заказать — скажи оставить заявку.`;
 
-const TZ_SYS=`Ты менеджер WebForge AI. На основе ответов клиента составь профессиональное ТЗ.
-Оформи чётко по разделам с заголовками каждого раздела на отдельной строке.
-Используй только факты из ответов. Если данных нет — пиши "уточнить у клиента".
-Только русский язык, без markdown символов.`;
+const TZ_SYS=`Ты менеджер WebForge AI. Составь чёткое профессиональное ТЗ по ответам клиента. Каждый раздел с заголовком. Только факты, без выдумок. Если данных нет — "уточнить". Разделяй разделы пустой строкой. Только русский язык.`;
 
-const msgsEl=document.getElementById('cfMsgs');
-const inp=document.getElementById('cfInp');
-const CF=document.getElementById('CF');
+// ЗВУК
+function playPop(type='in'){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    if(type==='in'){o.type='sine';o.frequency.setValueAtTime(380,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(520,ctx.currentTime+.08);g.gain.setValueAtTime(.1,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.15);o.start();o.stop(ctx.currentTime+.15);}
+    else{o.type='sine';o.frequency.setValueAtTime(520,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(400,ctx.currentTime+.07);g.gain.setValueAtTime(.07,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.12);o.start();o.stop(ctx.currentTime+.12);}
+  }catch(e){}
+}
+
+// STATE
+const APP=document.getElementById('APP');
+const screenMenu=document.getElementById('screenMenu');
+const screenChat=document.getElementById('screenChat');
+const chatHistory=document.getElementById('chatHistory');
+const currentCard=document.getElementById('currentCard');
+const inpArea=document.getElementById('inpArea');
+const chatInp=document.getElementById('chatInp');
+const tzOverlay=document.getElementById('tzOverlay');
 const tzProg=document.getElementById('tzProg');
 const tzBar=document.getElementById('tzBar');
 const tzLbl=document.getElementById('tzLbl');
+const tzPct=document.getElementById('tzPct');
 
-let aiHist=[];
+let mode='menu'; // menu | free | tz | prices | portfolio
+let aiHistory=[];
 let busy=false;
-let tzMode=false;
-let tzStep=0;
-let tzData={};
-let tzWait=false;
+let historyMsgs=[];
+let tzMode=false,tzStep=0,tzData={};
 
-// Модальное окно ТЗ
-const tzModal=document.getElementById('tzModal');
-const tzMNum=document.getElementById('tzMNum');
-const tzMText=document.getElementById('tzMText');
-const tzMBtns=document.getElementById('tzMBtns');
-const tzMInpRow=document.getElementById('tzMInpRow');
-const tzMInp=document.getElementById('tzMInp');
-const tzMHint=document.getElementById('tzMHint');
+function now(){const d=new Date();return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')}
 
-function showTZModal(q,step,total){
-  tzMNum.textContent=`Вопрос ${step} из ${total}`;
-  // Убираем переносы строк из текста вопроса
-  tzMText.textContent=q.q.replace(/\n+/g,' ').trim();
-  tzMBtns.innerHTML='';
-  tzMInpRow.style.display='none';
-  tzMHint.style.display='none';
+// ===== ОТКРЫТИЕ/ЗАКРЫТИЕ =====
+function openApp(){
+  APP.classList.add('open');
+  document.body.style.overflow='hidden';
+  showMenu();
+}
+
+function closeApp(){
+  APP.classList.remove('open');
+  document.body.style.overflow='';
+  tzOverlay.classList.remove('show');
+  tzProg.classList.remove('show');
+}
+
+function goBack(){
+  if(mode==='menu'){closeApp();return;}
+  showMenu();
+}
+
+function setTitle(t,back='Назад'){
+  document.getElementById('appTitle').textContent=t;
+  document.getElementById('backLabel').textContent=back;
+}
+
+// ===== МЕНЮ =====
+function showMenu(){
+  mode='menu';
+  setTitle('WebForge AI','Назад');
+  screenMenu.style.display='flex';
+  screenChat.style.display='none';
+  tzProg.classList.remove('show');
+  tzOverlay.classList.remove('show');
+  renderMenu();
+}
+
+function renderMenu(){
+  const time=now();
+  screenMenu.innerHTML=`
+    <div class="menu-greeting">
+      <p>Привет! Выберите раздел или задайте вопрос — помогу с выбором услуги.</p>
+      <div class="gt">${time}</div>
+    </div>
+    <div class="menu-item hi" onclick="startMode('free')">
+      <div class="menu-item-icon">💬</div>
+      <div class="menu-item-text">
+        <div class="menu-item-title">Свободный вопрос</div>
+        <div class="menu-item-sub">Спросите что угодно об услугах</div>
+      </div>
+      <div class="menu-item-arr">›</div>
+    </div>
+    <div class="menu-item hi" onclick="startMode('tz')">
+      <div class="menu-item-icon">📋</div>
+      <div class="menu-item-text">
+        <div class="menu-item-title">Составить ТЗ</div>
+        <div class="menu-item-sub">11 вопросов — готовое задание</div>
+      </div>
+      <div class="menu-item-arr">›</div>
+    </div>
+    <div class="menu-item" onclick="startMode('prices')">
+      <div class="menu-item-icon" style="background:rgba(255,107,157,.1)">💰</div>
+      <div class="menu-item-text">
+        <div class="menu-item-title">Цены и услуги</div>
+        <div class="menu-item-sub">Что делаем и сколько стоит</div>
+      </div>
+      <div class="menu-item-arr">›</div>
+    </div>
+    <div class="menu-item" onclick="startMode('portfolio')">
+      <div class="menu-item-icon" style="background:rgba(29,158,117,.1)">🖼</div>
+      <div class="menu-item-text">
+        <div class="menu-item-title">Примеры работ</div>
+        <div class="menu-item-sub">Готовые сайты которые мы сделали</div>
+      </div>
+      <div class="menu-item-arr">›</div>
+    </div>
+    <div class="menu-item" onclick="closeApp();setTimeout(openForm,300)">
+      <div class="menu-item-icon" style="background:rgba(108,99,255,.1)">📝</div>
+      <div class="menu-item-text">
+        <div class="menu-item-title">Оставить заявку</div>
+        <div class="menu-item-sub">Менеджер свяжется с вами</div>
+      </div>
+      <div class="menu-item-arr">›</div>
+    </div>`;
+}
+
+// ===== РЕЖИМЫ =====
+function startMode(m){
+  mode=m;
+  screenMenu.style.display='none';
+  screenChat.style.display='flex';
+
+  if(m==='free'){
+    setTitle('Свободный вопрос','Меню');
+    inpArea.style.display='flex';
+    // Если история пустая — показываем приветствие
+    if(historyMsgs.length===0){
+      showCard('Задайте любой вопрос об услугах, ценах или сроках — отвечу подробно.',[
+        {t:'💰 Цены',a:'Сколько стоит сайт?'},
+        {t:'🖼 Примеры',a:'Покажи примеры работ'},
+        {t:'⏱ Сроки',a:'Как быстро делаете?'},
+      ]);
+    } else {
+      // Восстанавливаем историю
+      renderHistory();
+      showCard('Продолжим? Задайте следующий вопрос.',[]);
+    }
+    setTimeout(()=>chatInp.focus(),300);
+  }
+  else if(m==='prices'){
+    setTitle('Цены и услуги','Меню');
+    inpArea.style.display='flex';
+    showCard('Наши услуги:\n\n🌐 Лендинг — от 5000 ₽, срок 3 дня\n📱 Сайт-визитка — от 5000 ₽\n🤖 Telegram-бот с ИИ — от 10000 ₽, срок 7-10 дней\n🔧 Абонентка — 1500–2500 ₽/мес',[
+      {t:'📋 Составить ТЗ',cb:()=>startMode('tz')},
+      {t:'📝 Заказать',cb:openForm},
+      {t:'💬 Вопрос',cb:()=>startMode('free')},
+    ]);
+  }
+  else if(m==='portfolio'){
+    setTitle('Примеры работ','Меню');
+    inpArea.style.display='flex';
+    showCard('Вот наши демо-сайты:\n\n💅 Салон красоты LUMIÈRE:\nhttps://clubvine44-gif.github.io/demo-salon-1\n\n✨ Мастер маникюра Алина:\nhttps://clubvine44-gif.github.io/salon-demo2/',[
+      {t:'📝 Заказать такой же',cb:openForm},
+      {t:'📋 Составить ТЗ',cb:()=>startMode('tz')},
+    ]);
+  }
+  else if(m==='tz'){
+    setTitle('Составление ТЗ','Меню');
+    inpArea.style.display='none';
+    tzMode=true;tzStep=0;tzData={};
+    tzProg.classList.add('show');
+    updateTZProg();
+    showCard('Составим техническое задание вместе. Отвечайте нажатием кнопок или текстом — вопросы появятся в окне.',[
+      {t:'▶ Начать',cb:()=>{pushHistory('Начать','user');setTimeout(tzAsk,300);}},
+    ]);
+  }
+}
+
+// ===== КАРТОЧКА ОТВЕТА =====
+function showCard(text,btns){
+  playPop('in');
+  currentCard.innerHTML='';
+  const card=document.createElement('div');
+  card.className='cc-bubble';
+
+  // Текст с переносами
+  const p=document.createElement('div');
+  p.className='cc-text';
+  p.style.whiteSpace='pre-line';
+  p.textContent=text;
+  card.appendChild(p);
+
+  const tm=document.createElement('div');
+  tm.className='cc-time';
+  tm.textContent=now();
+  card.appendChild(tm);
+
+  if(btns&&btns.length){
+    const bw=document.createElement('div');
+    bw.className='cc-btns';
+    btns.forEach(b=>{
+      const btn=document.createElement('button');
+      btn.className='cc-btn';
+      btn.textContent=b.t;
+      btn.onclick=()=>{
+        bw.querySelectorAll('.cc-btn').forEach(x=>x.disabled=true);
+        if(b.cb){b.cb();return;}
+        if(b.a){
+          pushHistory(b.t,'user');
+          pushHistory(text,'bot');
+          askAI(b.a);
+        }
+      };
+      bw.appendChild(btn);
+    });
+    card.appendChild(bw);
+  }
+  currentCard.appendChild(card);
+}
+
+// ===== ИСТОРИЯ =====
+function pushHistory(text,role){
+  historyMsgs.push({text,role,t:now()});
+  renderHistory();
+}
+
+function renderHistory(){
+  chatHistory.innerHTML='';
+  const msgs=historyMsgs;
+  msgs.forEach((m,i)=>{
+    const age=msgs.length-1-i; // 0=последнее
+    const wrap=document.createElement('div');
+    wrap.className='hm-wrap '+m.role;
+    const bub=document.createElement('div');
+    bub.className='hm-bubble '+m.role;
+    bub.style.whiteSpace='pre-line';
+    bub.textContent=m.text;
+    const tm=document.createElement('div');
+    tm.className='hm-time '+m.role;
+    tm.textContent=m.t;
+    wrap.appendChild(bub);
+    wrap.appendChild(tm);
+    // Размытие по возрасту
+    if(age>=4) wrap.classList.add('hm','old-4');
+    else if(age>=3) wrap.classList.add('hm','old-3');
+    else if(age>=2) wrap.classList.add('hm','old-2');
+    else if(age>=1) wrap.classList.add('hm','old-1');
+    else wrap.classList.add('hm');
+    chatHistory.appendChild(wrap);
+  });
+  chatHistory.scrollTop=chatHistory.scrollHeight;
+}
+
+// ===== AI =====
+async function askAI(text){
+  if(busy)return;
+  busy=true;
+  // Показываем typing в карточке
+  currentCard.innerHTML='<div style="padding:.75rem"><div class="typing-bubble"><span></span><span></span><span></span></div></div>';
+  aiHistory.push({role:'user',content:text});
+  if(aiHistory.length>8)aiHistory=aiHistory.slice(-8);
+  try{
+    const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',headers:{'Authorization':`Bearer ${GK}`,'Content-Type':'application/json'},
+      body:JSON.stringify({model:MD,messages:[{role:'system',content:AI_SYS},...aiHistory],max_tokens:200})
+    });
+    const d=await r.json();
+    let ans=d.choices[0].message.content;
+    ['*','_','`','#'].forEach(c=>ans=ans.replaceAll(c,''));
+    ans=ans.trim();
+    aiHistory.push({role:'assistant',content:ans});
+    pushHistory(ans,'bot');
+    const btns=[];
+    if(ans.toLowerCase().includes('заявк')||ans.toLowerCase().includes('заказ'))btns.push({t:'📝 Оставить заявку',cb:openForm});
+    btns.push({t:'🏠 В меню',cb:showMenu});
+    showCard(ans,btns);
+  }catch{
+    showCard('Ошибка соединения. Напишите нам: @LyudmilaVadimovna1',[{t:'🏠 В меню',cb:showMenu}]);
+  }
+  busy=false;
+}
+
+function sendFreeMsg(){
+  const text=chatInp.value.trim();
+  if(!text||busy)return;
+  chatInp.value='';chatInp.style.height='';
+  playPop('out');
+  pushHistory(text,'user');
+  askAI(text);
+}
+
+chatInp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendFreeMsg();}});
+chatInp.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';});
+
+// VisualViewport для клавиатуры
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',()=>{
+    if(APP.classList.contains('open')){
+      APP.style.height=window.visualViewport.height+'px';
+    }
+  });
+}
+
+// ===== ТЗ =====
+const TZ=[
+  {k:'business',q:'Расскажите о вашем бизнесе.\n\nЧем занимаетесь, как называется, в каком городе?',type:'text',hint:'Пример: Салон красоты "Люкс", Кисловодск'},
+  {k:'product',q:'Что нужно разработать?',type:'btns',opts:[{l:'🌐 Сайт',v:'Сайт'},{l:'🤖 Telegram-бот',v:'Telegram-бот'},{l:'🌐🤖 Сайт + бот',v:'Сайт + Telegram-бот'},{l:'🤷 Пока не знаю',v:'Не определились'}]},
+  {k:'goal',q:'Какая главная цель?',type:'btns',opts:[{l:'📅 Запись на услугу',v:'Онлайн-запись на услуги'},{l:'📞 Информация и контакт',v:'Получить информацию и связаться'},{l:'🛒 Заказ товаров/услуг',v:'Оформление заказов онлайн'},{l:'✅ Всё перечисленное',v:'Запись, информация и заказы онлайн'},{l:'✏️ Опишу сам',v:null}]},
+  {k:'functions',q:'Какие функции нужны?',type:'btns',opts:[{l:'📅 Онлайн-запись',v:'Онлайн-запись'},{l:'📋 Каталог с ценами',v:'Каталог услуг с ценами'},{l:'🖼 Галерея',v:'Галерея работ'},{l:'💳 Оплата онлайн',v:'Онлайн-оплата'},{l:'📞 Форма связи',v:'Форма обратной связи'},{l:'✅ Всё перечисленное',v:'Онлайн-запись, каталог с ценами, галерея, оплата онлайн, форма связи'},{l:'✏️ Напишу сам',v:null}]},
+  {k:'payment',q:'Нужна онлайн-оплата?',type:'btns',opts:[{l:'✅ Да',v:'Да'},{l:'❌ Нет',v:'Нет'},{l:'🤔 Обсудим',v:'Обсудим позже'}]},
+  {k:'content',q:'Есть готовые материалы?',type:'btns',opts:[{l:'✅ Всё — тексты, фото, лого',v:'Есть тексты, фотографии и логотип'},{l:'📷 Только фото',v:'Есть фото, тексты нужны'},{l:'📝 Только тексты',v:'Есть тексты, фото нужны'},{l:'🎨 Только лого',v:'Есть логотип, остальное нужно'},{l:'❌ Всё с нуля',v:'Материалов нет, всё создаём с нуля'}]},
+  {k:'examples',q:'Есть примеры которые нравятся?',type:'btns',opts:[{l:'⬜ Минимализм',v:'Минималистичный стиль'},{l:'🎨 Яркий современный',v:'Яркий современный дизайн'},{l:'🏛 Строгий деловой',v:'Строгий деловой стиль'},{l:'💡 Нет предпочтений',v:'Нет предпочтений, доверяем'},{l:'🔗 Скину ссылки',v:null}]},
+  {k:'deadline',q:'Когда нужно запустить?',type:'btns',opts:[{l:'🔥 Как можно быстрее',v:'Как можно быстрее'},{l:'📅 В течение недели',v:'В течение недели'},{l:'🗓 В течение месяца',v:'В течение месяца'},{l:'😌 Сроки гибкие',v:'Сроки гибкие'}]},
+  {k:'budget',q:'Бюджет на разработку?',type:'btns',opts:[{l:'до 5 000 ₽',v:'До 5 000 руб'},{l:'5–10 тыс ₽',v:'5–10 тысяч руб'},{l:'10–20 тыс ₽',v:'10–20 тысяч руб'},{l:'более 20 тыс ₽',v:'Более 20 тысяч руб'},{l:'💬 Обсудим',v:'Обсудим'}]},
+  {k:'contacts',q:'Как с вами связаться?',type:'text',hint:'Пример: +7 928 123-45-67 или @username'},
+  {k:'extra',q:'Дополнительные пожелания?',type:'btns',opts:[{l:'✅ Нет, всё указано',v:'Дополнений нет'},{l:'✏️ Есть что добавить',v:null}]},
+];
+
+function updateTZProg(){
+  const pct=Math.round((tzStep/TZ.length)*100);
+  tzBar.style.width=pct+'%';
+  tzPct.textContent=pct+'%';
+  tzLbl.textContent=tzStep===0?'Составление ТЗ':`Вопрос ${tzStep+1} из ${TZ.length}`;
+}
+
+function tzAsk(){
+  updateTZProg();
+  const q=TZ[tzStep];
+  const ov=tzOverlay;
+  document.getElementById('tzQNum').textContent=`Вопрос ${tzStep+1} из ${TZ.length}`;
+  document.getElementById('tzQText').textContent=q.q.replace(/\n+/g,' ').trim();
+  const bw=document.getElementById('tzQBtns');
+  bw.innerHTML='';
+  const iw=document.getElementById('tzQInpWrap');
+  iw.style.display='none';
+  document.getElementById('tzQHint').style.display='none';
 
   if(q.type==='btns'){
     q.opts.forEach(o=>{
       const btn=document.createElement('button');
-      btn.className='tz-modal-btn';
-      btn.textContent=o.label;
+      btn.className='tz-btn';
+      btn.textContent=o.l;
       btn.onclick=()=>{
-        if(o.val===null){
-          // Нужен текстовый ввод
-          tzMBtns.style.display='none';
-          tzMInpRow.style.display='flex';
-          const hints={functions:'Перечислите через запятую',examples:'Ссылки или опишите стиль',extra:'Любые пожелания'};
-          const h=hints[q.k];
-          if(h){tzMHint.textContent='💡 '+h;tzMHint.style.display='block';}
-          setTimeout(()=>tzMInp.focus(),100);
+        bw.querySelectorAll('.tz-btn').forEach(x=>x.disabled=true);
+        if(o.v===null){
+          bw.style.display='none';
+          iw.style.display='block';
+          if(q.hint){const h=document.getElementById('tzQHint');h.textContent='💡 '+q.hint;h.style.display='block';}
+          document.getElementById('tzQInp').focus();
         } else {
           playPop('out');
-          closeTZModal(()=>{
-            addMsg(o.label,'user');
-            tzData[q.k]=o.val;
-            tzStep++;
-            if(tzStep>=TZ.length){tzFinish();}
-            else{setTimeout(()=>{
-              addMsg(TZ[tzStep].q.split('\n')[0],'bot');
-              setTimeout(()=>showTZModal(TZ[tzStep],tzStep+1,TZ.length),600);
-            },300);}
-          });
+          tzData[q.k]=o.v;
+          pushHistory(o.l,'user');
+          closeTZModal(()=>tzNext());
         }
       };
-      tzMBtns.appendChild(btn);
+      bw.appendChild(btn);
     });
   } else {
-    // Только текстовый ввод
-    tzMInpRow.style.display='flex';
-    const hints={business:'Пример: Салон красоты "Люкс", Кисловодск',contacts:'Пример: +7 928 123-45-67 или @username',extra:'Любые пожелания или особенности'};
-    const h=hints[q.k];
-    if(h){tzMHint.textContent='💡 '+h;tzMHint.style.display='block';}
-    setTimeout(()=>tzMInp.focus(),200);
+    iw.style.display='block';
+    if(q.hint){const h=document.getElementById('tzQHint');h.textContent='💡 '+q.hint;h.style.display='block';}
+    setTimeout(()=>document.getElementById('tzQInp').focus(),200);
   }
-
-  // Показываем модалку
-  requestAnimationFrame(()=>{
-    tzModal.classList.add('show');
-  });
+  ov.classList.add('show');
 }
 
+function tzSend(){
+  const text=document.getElementById('tzQInp').value.trim();
+  if(!text)return;
+  playPop('out');
+  tzData[TZ[tzStep].k]=text;
+  pushHistory(text,'user');
+  document.getElementById('tzQInp').value='';
+  closeTZModal(()=>tzNext());
+}
+
+document.getElementById('tzQInp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();tzSend();}});
+document.getElementById('tzQInp').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';});
+
 function closeTZModal(cb){
-  tzModal.classList.remove('show');
-  tzMInp.value='';
-  tzMBtns.style.display='flex';
+  tzOverlay.classList.remove('show');
   setTimeout(()=>{if(cb)cb();},280);
 }
 
-function tzModalSend(){
-  const text=tzMInp.value.trim();
-  if(!text)return;
-  playPop('out');
-  closeTZModal(()=>{
-    addMsg(text,'user');
-    tzData[TZ[tzStep].k]=text;
-    tzStep++;
-    if(tzStep>=TZ.length){tzFinish();}
-    else{setTimeout(()=>{
-      addMsg(TZ[tzStep].q.split('\n')[0],'bot');
-      setTimeout(()=>showTZModal(TZ[tzStep],tzStep+1,TZ.length),600);
-    },300);}
-  });
-}
-
-tzMInp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();tzModalSend();}});
-tzMInp.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';});
-
-// ===== УТИЛИТЫ =====
-function now(){const d=new Date();return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')}
-
-function scrollBot(){
-  // Мгновенный скролл — без лагов на мобиле
-  msgsEl.scrollTop=msgsEl.scrollHeight+9999;
-  setTimeout(()=>msgsEl.scrollTop=msgsEl.scrollHeight+9999, 50);
-  setTimeout(()=>msgsEl.scrollTop=msgsEl.scrollHeight+9999, 200);
-}
-
-// Очередь сообщений для плавного вывода
-let msgQueue=[];
-let msgPlaying=false;
-
-function addMsg(text,role,btns,instant){
-  if(instant){
-    _renderMsg(text,role,btns);
-    return;
-  }
-  msgQueue.push({text,role,btns});
-  if(!msgPlaying) playQueue();
-}
-
-async function playQueue(){
-  msgPlaying=true;
-  let soundPlayed=false;
-  while(msgQueue.length){
-    const item=msgQueue.shift();
-    // Звук один раз на всю пачку сообщений
-    if(!soundPlayed){
-      playPop(item.role==='bot'?'in':'out');
-      soundPlayed=true;
-    }
-    const isBot=item.role==='bot';
-    if(isBot&&msgQueue.length===0&&item.text.length>30){
-      // Имитируем набор текста — задержка пропорциональна длине
-      const delay=Math.min(item.text.length*18,1200);
-      showTyping();
-      await sleep(delay);
-      hideTyping();
-    }
-    _renderMsg(item.text,item.role,item.btns);
-    // Пауза между сообщениями чтобы успеть прочитать
-    if(msgQueue.length>0){
-      await sleep(400);
-    }
-  }
-  msgPlaying=false;
-}
-
-function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-
-function _renderMsg(text,role,btns){
-  const wrap=document.createElement('div');
-  wrap.className=`msg-wrap ${role}`;
-  wrap.style.opacity='0';
-  wrap.style.transform='translateY(12px)';
-
-  const el=document.createElement('div');
-  el.className=`msg ${role}`;
-  el.textContent=text;
-  wrap.appendChild(el);
-
-  const tm=document.createElement('div');
-  tm.className=`msg-time ${role}`;
-  tm.textContent=now();
-  wrap.appendChild(tm);
-
-  msgsEl.appendChild(wrap);
-
-  // Плавное появление
-  requestAnimationFrame(()=>{
-    wrap.style.transition='opacity .3s ease, transform .3s ease';
-    wrap.style.opacity='1';
-    wrap.style.transform='translateY(0)';
-  });
-
-  if(btns&&btns.length){
-    const bwrap=document.createElement('div');
-    bwrap.className='reply-btns';
-    bwrap.style.opacity='0';
-    btns.forEach(b=>{
-      const btn=document.createElement('button');
-      btn.className='rb';
-      btn.textContent=b.label;
-      btn.onclick=()=>{
-        bwrap.querySelectorAll('.rb').forEach(x=>x.disabled=true);
-        if(b.cb){b.cb();return;}
-        if(b.val){handleInput(b.label,b.val);}
-      };
-      bwrap.appendChild(btn);
-    });
-    msgsEl.appendChild(bwrap);
-    // Кнопки появляются чуть позже
-    setTimeout(()=>{
-      bwrap.style.transition='opacity .25s ease';
-      bwrap.style.opacity='1';
-    },150);
-  }
-
-  scrollBot();
-  updatePreview();
-}
-
-function showTyping(){
-  const el=document.createElement('div');
-  el.className='typing';el.id='TY';
-  el.innerHTML='<span></span><span></span><span></span>';
-  msgsEl.appendChild(el);
-  setTimeout(scrollBot,50);
-}
-function hideTyping(){document.getElementById('TY')?.remove();}
-
-function keepFocus(){
-  inp.focus();
-  setTimeout(()=>{inp.focus();scrollBot();},50);
-  setTimeout(()=>{inp.focus();scrollBot();},200);
-  setTimeout(scrollBot,500);
-}
-
-inp.addEventListener('focus',()=>CF.classList.add('kb-open'));
-inp.addEventListener('blur',()=>{
-  // Не убираем kb-open если потеряли фокус из-за нажатия кнопки
-  setTimeout(()=>{
-    if(document.activeElement!==inp) CF.classList.remove('kb-open');
-  },150);
-});
-
-// ===== ЧАТ =====
-function openChat(){
-  CF.classList.add('open');
-  document.body.style.overflow='hidden';
-  // Устанавливаем правильную высоту сразу
-  if(window.visualViewport){
-    CF.style.height=window.visualViewport.height+'px';
-  }
-  // Фокус с задержкой чтобы анимация завершилась
-  setTimeout(()=>{
-    inp.focus();
-    scrollBot();
-    // После открытия клавиатуры обновляем высоту
-    setTimeout(()=>{
-      if(window.visualViewport) CF.style.height=window.visualViewport.height+'px';
-      scrollBot();
-    },500);
-  },420);
-}
-
-// Когда клавиатура открывается — скроллим вниз
-// VisualViewport — самый надёжный способ отслеживать клавиатуру
-if(window.visualViewport){
-  window.visualViewport.addEventListener('resize',()=>{
-    if(CF.classList.contains('open')){
-      // Высота чата = высота видимого viewport
-      const vh=window.visualViewport.height;
-      CF.style.height=vh+'px';
-      scrollBot();
-      setTimeout(scrollBot,150);
-    }
-  });
-  window.visualViewport.addEventListener('scroll',()=>{
-    if(CF.classList.contains('open')) scrollBot();
-  });
-} else {
-  window.addEventListener('resize',()=>{
-    if(CF.classList.contains('open')){
-      setTimeout(scrollBot,100);
-      setTimeout(scrollBot,300);
-    }
-  });
-}
-
-// Предотвращаем закрытие клавиатуры при нажатии на кнопки ответов
-document.addEventListener('mousedown',e=>{
-  if(CF.classList.contains('open')&&e.target!==inp){
-    // Не даём потерять фокус при нажатии на кнопки ответов
-    if(e.target.classList.contains('rb')||e.target.classList.contains('qb')||e.target.classList.contains('send-btn')||e.target.closest('.send-btn')){
-      e.preventDefault();
-    }
-  }
-},true);
-function closeChat(){
-  // Сначала убираем фокус чтобы клавиатура закрылась
-  inp.blur();
-  CF.classList.remove('open');
-  CF.style.height='';
-  document.body.style.overflow='';
-  // Сбрасываем placeholder
-  inp.placeholder='Написать сообщение...';
-}
-
-async function askAI(text){
-  aiHist.push({role:'user',content:text});
-  if(aiHist.length>8)aiHist=aiHist.slice(-8);
-  try{
-    const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
-      method:'POST',
-      headers:{'Authorization':`Bearer ${GK}`,'Content-Type':'application/json'},
-      body:JSON.stringify({model:MD,messages:[{role:'system',content:AI_SYS},...aiHist],max_tokens:180})
-    });
-    const d=await r.json();
-    let a=d.choices[0].message.content;
-    ['*','_','`','#'].forEach(c=>a=a.replaceAll(c,''));
-    aiHist.push({role:'assistant',content:a});
-    return a.trim();
-  }catch{return 'Ошибка соединения. Напишите нам: @LyudmilaVadimovna1';}
-}
-
-async function handleInput(show,send){
-  if(busy)return;
-  addMsg(show,'user');
-  busy=true;showTyping();
-  const ans=await askAI(send||show);
-  hideTyping();busy=false;
-  const btns=[];
-  if(ans.toLowerCase().includes('заявк')||ans.toLowerCase().includes('заказ'))
-    btns.push({label:'📝 Оставить заявку',cb:openForm});
-  addMsg(ans,'bot',btns.length?btns:null);
-  keepFocus();
-}
-
-function sendMsg(){
-  const text=inp.value.trim();
-  if(!text)return;
-  inp.value='';inp.style.height='';
-  if(tzMode&&tzWait){tzHandleText(text);return;}
-  if(tzMode)return;
-  handleInput(text);
-}
-
-inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
-inp.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px';});
-
-function qs(t){
-  if(busy||tzMode)return;
-  handleInput(t);
-}
-
-// ===== ТЗ — 11 ВОПРОСОВ =====
-const TZ=[
-  {k:'business',q:'Расскажите о вашем бизнесе.\n\nЧем занимаетесь, как называется компания, в каком городе работаете?',type:'text'},
-  {k:'product',q:'Что нужно разработать?',type:'btns',opts:[
-    {label:'🌐 Сайт',val:'Сайт'},
-    {label:'🤖 Telegram-бот',val:'Telegram-бот'},
-    {label:'🌐🤖 Сайт + бот',val:'Сайт + Telegram-бот'},
-    {label:'🤷 Пока не знаю',val:'Не определились, нужна консультация'}
-  ]},
-  {k:'goal',q:'Какая главная цель?\n\nЧто должны делать клиенты на вашем сайте или в боте?',type:'btns',opts:[
-    {label:'📅 Записываться на услугу',val:'Онлайн-запись на услуги'},
-    {label:'📞 Узнать о компании и связаться',val:'Получить информацию о компании и связаться'},
-    {label:'🛒 Заказывать товары или услуги',val:'Оформление заказов товаров/услуг онлайн'},
-    {label:'✅ Всё перечисленное',val:'Запись на услуги, получение информации о компании и оформление заказов онлайн'},
-    {label:'✏️ Опишу сам',val:null}
-  ]},
-  {k:'functions',q:'Какие функции нужны?\n\nВыберите одну или несколько (или напишите свой вариант):',type:'btns',hint:'Например: онлайн-запись, каталог услуг, галерея фото, форма связи, оплата онлайн, личный кабинет. Можно перечислить через запятую.',opts:[
-    {label:'📅 Онлайн-запись',val:'Онлайн-запись на услуги'},
-    {label:'📋 Каталог услуг с ценами',val:'Каталог услуг с ценами'},
-    {label:'🖼 Галерея фото',val:'Галерея фото'},
-    {label:'💳 Оплата онлайн',val:'Оплата онлайн'},
-    {label:'📞 Форма обратной связи',val:'Форма обратной связи'},
-    {label:'✅ Всё перечисленное',val:'Онлайн-запись на услуги, каталог услуг с ценами, галерея работ и портфолио, онлайн-оплата, форма обратной связи'},
-    {label:'✏️ Напишу свой вариант',val:null}
-  ]},
-  {k:'payment',q:'Нужна ли онлайн-оплата прямо на сайте или в боте?',type:'btns',opts:[
-    {label:'✅ Да, нужна',val:'Да, нужна онлайн-оплата'},
-    {label:'❌ Нет, только наличные',val:'Нет, оплата только наличными или переводом'},
-    {label:'🤔 Возможно, обсудим позже',val:'Возможно, нужно обсудить дополнительно'}
-  ]},
-  {k:'content',q:'Есть ли у вас готовые материалы?\n\nОтметьте что есть:',type:'btns',opts:[
-    {label:'✅ Есть всё — тексты, фото, логотип',val:'Есть все материалы: готовые тексты для сайта, фотографии и логотип компании'},
-    {label:'📷 Только фото',val:'Есть фотографии, тексты и логотип нужно разработать'},
-    {label:'📝 Только тексты',val:'Есть готовые тексты, фотографии и логотип нужны'},
-    {label:'🎨 Только логотип',val:'Есть логотип, тексты и фотографии нужно разработать'},
-    {label:'❌ Ничего нет, всё с нуля',val:'Материалов нет — тексты, фото и логотип нужно разработать с нуля'}
-  ]},
-  {k:'examples',q:'Есть ли примеры сайтов которые вам нравятся?\n\nЕсли есть — вставьте ссылки или опишите стиль (минимализм, яркий, строгий). Если нет — нажмите кнопку.',type:'btns',opts:[
-    {label:'🔗 Вставлю ссылки — напишу сам',val:null},
-    {label:'⬜ Минимализм, чисто, просто',val:'Минималистичный стиль — чисто и просто'},
-    {label:'🎨 Яркий, современный',val:'Яркий современный дизайн'},
-    {label:'🏛 Строгий, деловой',val:'Строгий деловой стиль'},
-    {label:'💡 Нет предпочтений',val:'Нет предпочтений по дизайну, доверяем вам'}
-  ]},
-  {k:'deadline',q:'Когда нужно запустить проект?',type:'btns',opts:[
-    {label:'🔥 Как можно быстрее',val:'Как можно быстрее'},
-    {label:'📅 В течение недели',val:'В течение 1 недели'},
-    {label:'🗓 В течение месяца',val:'В течение 1 месяца'},
-    {label:'😌 Сроки гибкие',val:'Сроки гибкие, не горит'}
-  ]},
-  {k:'budget',q:'Какой бюджет на разработку?',type:'btns',opts:[
-    {label:'до 5 000 ₽',val:'До 5 000 рублей'},
-    {label:'5 000 — 10 000 ₽',val:'5 000 — 10 000 рублей'},
-    {label:'10 000 — 20 000 ₽',val:'10 000 — 20 000 рублей'},
-    {label:'более 20 000 ₽',val:'Более 20 000 рублей'},
-    {label:'💬 Обсудим',val:'Бюджет обсуждается'}
-  ]},
-  {k:'contacts',q:'Как с вами связаться?\n\nУкажите телефон или Telegram-аккаунт.',type:'text'},
-  {k:'extra',q:'Есть дополнительные пожелания или особенности?\n\nЕсли всё уже сказано — нажмите кнопку ниже.',type:'btns',opts:[
-    {label:'✅ Нет, всё указано выше',val:'Дополнительных пожеланий нет, всё необходимое уже указано в ответах выше'},
-    {label:'✏️ Есть что добавить',val:null}
-  ]},
-];
-
-function updateTZProgress(){
-  const pct=Math.round((tzStep/TZ.length)*100);
-  tzBar.style.width=pct+'%';
-  const pctEl=document.getElementById('tzPct');
-  if(pctEl) pctEl.textContent=pct+'%';
-  if(tzStep===0){
-    tzLbl.textContent='Составление ТЗ';
-  } else {
-    tzLbl.textContent=`Вопрос ${Math.min(tzStep+1,TZ.length)} из ${TZ.length}`;
-  }
-}
-
-function startTZ(){
-  if(busy)return;
-  tzMode=true;tzStep=0;tzData={};tzWait=false;
-  tzProg.classList.add('show');
-  updateTZProgress();
-  addMsg('Отлично! Составим техническое задание. Отвечайте нажатием кнопок или текстом — вопросы будут появляться в окне.','bot');
-  setTimeout(()=>{
-    addMsg(TZ[0].q.split('\n')[0],'bot');
-    setTimeout(()=>showTZModal(TZ[0],1,TZ.length),700);
-  },800);
-}
-
-function tzAsk(){
-  updateTZProgress();
-  showTZModal(TZ[tzStep],tzStep+1,TZ.length);
-}
-
-function tzHandleText(text){
-  // Эта функция больше не используется — ввод через модалку
-  // Оставляем для совместимости
-  if(!tzWait)return;
-  tzWait=false;
-  tzModalSend();
+function tzNext(){
+  tzStep++;
+  if(tzStep>=TZ.length){tzFinish();return;}
+  const q=TZ[tzStep];
+  showCard(`Вопрос ${tzStep+1} из ${TZ.length}: ${q.q.split('\n')[0]}`,[]);
+  setTimeout(tzAsk,500);
 }
 
 async function tzFinish(){
   tzMode=false;
   tzProg.classList.remove('show');
-  tzBar.style.width='100%';
-  addMsg('Все данные собраны. Формирую техническое задание...','bot');
-  showTyping();
-
-  const labels={business:'Бизнес клиента',product:'Что нужно разработать',goal:'Цель проекта',functions:'Функциональные требования',payment:'Онлайн-оплата',content:'Готовые материалы',examples:'Референсы и стиль',deadline:'Сроки',budget:'Бюджет',contacts:'Контакт клиента',extra:'Дополнительные пожелания'};
-  let src='Ответы клиента для составления ТЗ:\n\n';
+  showCard('Все данные собраны. Формирую техническое задание...',[]);
+  const labels={business:'Бизнес',product:'Что разработать',goal:'Цель',functions:'Функции',payment:'Оплата онлайн',content:'Материалы',examples:'Референсы',deadline:'Сроки',budget:'Бюджет',contacts:'Контакт',extra:'Доп.пожелания'};
+  let src='Ответы клиента:\n\n';
   for(const[k,v]of Object.entries(tzData))src+=`${labels[k]||k}:\n${v}\n\n`;
-
   try{
     const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
-      method:'POST',
-      headers:{'Authorization':`Bearer ${GK}`,'Content-Type':'application/json'},
+      method:'POST',headers:{'Authorization':`Bearer ${GK}`,'Content-Type':'application/json'},
       body:JSON.stringify({model:MD,messages:[{role:'system',content:TZ_SYS},{role:'user',content:src}],max_tokens:1000})
     });
     const d=await r.json();
     let tz=d.choices[0].message.content;
     ['*','_','`','#'].forEach(c=>tz=tz.replaceAll(c,''));
     tz=tz.trim();
-    hideTyping();
-
-    // Разбиваем ТЗ на логические части по переносам строк
-    const parts=tz.split(/\n{2,}/).filter(p=>p.trim());
-    // Добавляем через очередь — части ТЗ появляются одна за другой с имитацией набора
-    parts.forEach(p=>addMsg(p.trim(),'bot'));
-    addMsg('Техническое задание готово и отправлено менеджеру Люде. Она свяжется с вами!','bot',[
-      {label:'📝 Оставить заявку',cb:openForm},
-      {label:'💬 Написать Люде',cb:()=>window.open('https://t.me/LyudmilaVadimovna1','_blank')}
+    // Показываем части ТЗ в истории
+    const parts=tz.split(/\n{2,}/).filter(p=>p.trim()).slice(0,10);
+    parts.forEach(p=>pushHistory(p.trim(),'bot'));
+    showCard('Техническое задание готово и отправлено менеджеру Люде!',[
+      {t:'📝 Оставить заявку',cb:openForm},
+      {t:'💬 Написать Люде',cb:()=>window.open('https://t.me/LyudmilaVadimovna1','_blank')},
+      {t:'🏠 В меню',cb:showMenu},
     ]);
-
     sendTG(`📋 Новое ТЗ с сайта!\nКонтакт: ${tzData.contacts||'не указан'}\n\n${tz}`);
   }catch{
-    hideTyping();
-    addMsg('Не удалось сформировать ТЗ. Напишите Люде напрямую: @LyudmilaVadimovna1','bot');
+    showCard('Ошибка. Напишите Люде напрямую: @LyudmilaVadimovna1',[{t:'💬 Написать Люде',cb:()=>window.open('https://t.me/LyudmilaVadimovna1','_blank')}]);
   }
-}
-
-// ===== ПРЕВЬЮ =====
-function updatePreview(){
-  const prev=document.getElementById('prevMsgs');
-  const msgs=msgsEl.querySelectorAll('.msg');
-  if(!msgs.length)return;
-  prev.innerHTML='';
-  Array.from(msgs).slice(-2).forEach(m=>{
-    const el=document.createElement('div');
-    el.className=m.className;
-    el.style.cssText='font-size:.78rem;padding:.45rem .7rem;';
-    const full=m.textContent;
-    // Убираем время из превью
-    el.textContent=full.length>65?full.slice(0,65)+'...':full;
-    prev.appendChild(el);
-  });
 }
 
 // ===== ФОРМА =====
 const fP=document.getElementById('fP');
-fP.addEventListener('input',function(){
-  let v=this.value.replace(/\D/g,'');
-  if(v.startsWith('8'))v='7'+v.slice(1);
-  if(v&&!v.startsWith('7'))v='7'+v;
-  v=v.slice(0,11);
-  let f='+7';
-  if(v.length>1)f+=' ('+v.slice(1,4);
-  if(v.length>=4)f+=') '+v.slice(4,7);
-  if(v.length>=7)f+='-'+v.slice(7,9);
-  if(v.length>=9)f+='-'+v.slice(9,11);
-  this.value=f;
-});
+fP.addEventListener('input',function(){let v=this.value.replace(/\D/g,'');if(v.startsWith('8'))v='7'+v.slice(1);if(v&&!v.startsWith('7'))v='7'+v;v=v.slice(0,11);let f='+7';if(v.length>1)f+=' ('+v.slice(1,4);if(v.length>=4)f+=') '+v.slice(4,7);if(v.length>=7)f+='-'+v.slice(7,9);if(v.length>=9)f+='-'+v.slice(9,11);this.value=f;});
 fP.addEventListener('focus',function(){if(!this.value)this.value='+7 (';});
 fP.addEventListener('keydown',function(e){if(e.key==='Backspace'&&this.value==='+7 ('){e.preventDefault();this.value='';}});
 
-function openForm(){
-  document.getElementById('FO').classList.add('active');
-  document.getElementById('FC').style.display='block';
-  document.getElementById('FOK').style.display='none';
-  document.body.style.overflow='hidden';
-}
-function closeForm(){
-  document.getElementById('FO').classList.remove('active');
-  if(!CF.classList.contains('open'))document.body.style.overflow='';
-}
+function openForm(){document.getElementById('FO').classList.add('active');document.getElementById('FC').style.display='block';document.getElementById('FOK').style.display='none';document.body.style.overflow='hidden';}
+function closeForm(){document.getElementById('FO').classList.remove('active');if(!APP.classList.contains('open'))document.body.style.overflow='';}
 async function subForm(){
-  const n=document.getElementById('fN').value.trim();
-  const p=document.getElementById('fP').value.trim();
-  const s=document.getElementById('fS').value;
+  const n=document.getElementById('fN').value.trim(),p=document.getElementById('fP').value.trim(),s=document.getElementById('fS').value;
   if(!n||p.length<5){alert('Заполните имя и телефон');return;}
   await sendTG(`🌐 Новая заявка с сайта!\n\nИмя: ${n}\nТелефон: ${p}\nУслуга: ${s}`);
-  document.getElementById('FC').style.display='none';
-  document.getElementById('FOK').style.display='block';
+  document.getElementById('FC').style.display='none';document.getElementById('FOK').style.display='block';
 }
-
-async function sendTG(text){
-  try{await fetch(`https://api.telegram.org/bot${TK}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:LID,text})});}catch{}
-}
-
-// СТАРТ
-setTimeout(()=>{
-  addMsg('Привет! Я помогу выбрать услугу, отвечу на вопросы или составлю техническое задание для вашего проекта.','bot',[
-    {label:'💰 Цены',val:'Сколько стоит сайт?'},
-    {label:'🖼 Примеры работ',val:'Покажи примеры работ'},
-    {label:'📋 Составить ТЗ',cb:startTZ}
-  ]);
-},300);
+async function sendTG(text){try{await fetch(`https://api.telegram.org/bot${TK}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:LID,text})});}catch{}}
 </script>
 </body>
 </html>
