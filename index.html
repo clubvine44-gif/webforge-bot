@@ -575,7 +575,7 @@ async function askAI(question) {
       body: JSON.stringify({
         model: MODEL,
         messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...chatHistory],
-        max_tokens: 250
+        max_tokens: 180
       })
     });
     const data = await resp.json();
@@ -615,6 +615,7 @@ function sendMessage() {
 }
 
 function quickSend(text) {
+  if (text === 'Составить ТЗ') { window.open('https://t.me/LyudmilaVadimovna1', '_blank'); return; }
   if (isTyping) return;
   sendUserMessage(text);
 }
