@@ -64,6 +64,42 @@ height:100dvh;height:100vh;}
 .msg{max-width:82%;padding:.65rem .9rem;border-radius:20px;font-size:.9rem;line-height:1.5;word-break:break-word}
 @keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* МОДАЛЬНОЕ ОКНО ВОПРОСА ТЗ */
+.tz-modal-overlay{
+  position:absolute;inset:0;z-index:10;
+  background:rgba(10,10,15,.75);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:flex-end;justify-content:center;
+  padding:.75rem;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s ease;
+}
+.tz-modal-overlay.show{opacity:1;pointer-events:all;}
+.tz-modal{
+  background:var(--s);
+  border:1px solid rgba(108,99,255,.3);
+  border-radius:20px 20px 12px 12px;
+  width:100%;max-width:480px;
+  padding:1.25rem;
+  transform:translateY(24px) scale(.97);
+  transition:transform .3s cubic-bezier(.34,1.4,.64,1), opacity .25s ease;
+  opacity:0;
+  box-shadow:0 -8px 40px rgba(108,99,255,.15);
+}
+.tz-modal-overlay.show .tz-modal{transform:translateY(0) scale(1);opacity:1;}
+.tz-q-num{font-size:.68rem;color:var(--a);font-weight:500;margin-bottom:.5rem;letter-spacing:.05em}
+.tz-q-text{font-size:.95rem;line-height:1.55;color:var(--t);margin-bottom:1rem;font-weight:500}
+.tz-modal-btns{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.875rem}
+.tz-modal-btn{font-size:.82rem;padding:.5rem .9rem;border:1.5px solid rgba(108,99,255,.35);border-radius:14px;background:rgba(108,99,255,.08);color:var(--a);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.tz-modal-btn:active{background:var(--a);color:#fff;border-color:var(--a);transform:scale(.96)}
+.tz-modal-inp-row{display:flex;gap:.5rem;align-items:flex-end}
+.tz-modal-inp{flex:1;background:rgba(255,255,255,.06);border:1.5px solid var(--b);border-radius:14px;padding:.6rem .9rem;color:var(--t);font-size:.95rem;outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;transition:border-color .2s;min-height:44px}
+.tz-modal-inp:focus{border-color:var(--a);background:rgba(108,99,255,.06)}
+.tz-modal-inp::placeholder{color:var(--m)}
+.tz-modal-send{width:44px;height:44px;border-radius:50%;background:var(--a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tz-modal-send svg{width:16px;height:16px;fill:#fff;margin-left:2px}
+.tz-hint-modal{font-size:.7rem;color:var(--a);padding:.35rem .5rem 0;opacity:.8}
 .msg.bot{background:var(--s);color:var(--t);border-bottom-left-radius:5px;border-top-left-radius:20px}
 .msg.user{background:linear-gradient(135deg,var(--a),#8b85ff);color:#fff;border-bottom-right-radius:5px;border-top-right-radius:20px}
 .msg-time{font-size:.62rem;color:var(--m);padding:0 .25rem;margin-top:1px}
@@ -202,6 +238,21 @@ footer{border-top:1px solid var(--b);padding:1.5rem 1.25rem;text-align:center;co
     <div class="tz-meta"><div class="tz-label" id="tzLbl">Составление ТЗ</div><div class="tz-pct" id="tzPct">0%</div></div>
   </div>
   <div id="cfMsgs"></div>
+  <!-- МОДАЛЬНОЕ ОКНО ВОПРОСА ТЗ -->
+  <div class="tz-modal-overlay" id="tzModal">
+    <div class="tz-modal">
+      <div class="tz-q-num" id="tzMNum"></div>
+      <div class="tz-q-text" id="tzMText"></div>
+      <div class="tz-modal-btns" id="tzMBtns"></div>
+      <div id="tzMInpRow" class="tz-modal-inp-row" style="display:none">
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <div id="tzMHint" class="tz-hint-modal" style="display:none"></div>
+          <textarea class="tz-modal-inp" id="tzMInp" rows="1" placeholder="Ваш ответ..." maxlength="500"></textarea>
+        </div>
+        <button class="tz-modal-send" onclick="tzModalSend()"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+      </div>
+    </div>
+  </div>
   <div class="cf-quick" id="cfQuick">
     <button class="qb" onclick="qs('Сколько стоит сайт?')">💰 Цены</button>
     <button class="qb" onclick="startTZ()">📋 Составить ТЗ</button>
@@ -262,6 +313,33 @@ const LID='5679074450';
 const GK='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';
 const MD='llama-3.3-70b-versatile';
 
+// ЗВУК ПУЗЫРЬКА через Web Audio API
+function playPop(type='in'){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    if(type==='in'){
+      // Входящее — мягкий пузырёк вверх
+      o.type='sine';
+      o.frequency.setValueAtTime(380,ctx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(520,ctx.currentTime+.08);
+      g.gain.setValueAtTime(.12,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.15);
+      o.start(ctx.currentTime);o.stop(ctx.currentTime+.15);
+    } else {
+      // Исходящее — короткий пузырёк
+      o.type='sine';
+      o.frequency.setValueAtTime(520,ctx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(420,ctx.currentTime+.06);
+      g.gain.setValueAtTime(.08,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.1);
+      o.start(ctx.currentTime);o.stop(ctx.currentTime+.1);
+    }
+  }catch(e){}
+}
+
 const AI_SYS=`Ты консультант WebForge AI из Кисловодска. Отвечай коротко и дружелюбно — максимум 3 предложения.
 Услуги: лендинг от 5000 руб/3 дня, сайт-визитка от 5000 руб, Telegram-бот с ИИ от 10000 руб/7-10 дней, абонентка 1500-2500 руб/мес.
 Примеры: https://clubvine44-gif.github.io/demo-salon-1 и https://clubvine44-gif.github.io/salon-demo2/
@@ -286,21 +364,102 @@ let tzStep=0;
 let tzData={};
 let tzWait=false;
 
+// Модальное окно ТЗ
+const tzModal=document.getElementById('tzModal');
+const tzMNum=document.getElementById('tzMNum');
+const tzMText=document.getElementById('tzMText');
+const tzMBtns=document.getElementById('tzMBtns');
+const tzMInpRow=document.getElementById('tzMInpRow');
+const tzMInp=document.getElementById('tzMInp');
+const tzMHint=document.getElementById('tzMHint');
+
+function showTZModal(q,step,total){
+  tzMNum.textContent=`Вопрос ${step} из ${total}`;
+  // Убираем переносы строк из текста вопроса
+  tzMText.textContent=q.q.replace(/\n+/g,' ').trim();
+  tzMBtns.innerHTML='';
+  tzMInpRow.style.display='none';
+  tzMHint.style.display='none';
+
+  if(q.type==='btns'){
+    q.opts.forEach(o=>{
+      const btn=document.createElement('button');
+      btn.className='tz-modal-btn';
+      btn.textContent=o.label;
+      btn.onclick=()=>{
+        if(o.val===null){
+          // Нужен текстовый ввод
+          tzMBtns.style.display='none';
+          tzMInpRow.style.display='flex';
+          const hints={functions:'Перечислите через запятую',examples:'Ссылки или опишите стиль',extra:'Любые пожелания'};
+          const h=hints[q.k];
+          if(h){tzMHint.textContent='💡 '+h;tzMHint.style.display='block';}
+          setTimeout(()=>tzMInp.focus(),100);
+        } else {
+          playPop('out');
+          closeTZModal(()=>{
+            addMsg(o.label,'user');
+            tzData[q.k]=o.val;
+            tzStep++;
+            if(tzStep>=TZ.length){tzFinish();}
+            else{setTimeout(()=>{
+              addMsg(TZ[tzStep].q.split('\n')[0],'bot');
+              setTimeout(()=>showTZModal(TZ[tzStep],tzStep+1,TZ.length),600);
+            },300);}
+          });
+        }
+      };
+      tzMBtns.appendChild(btn);
+    });
+  } else {
+    // Только текстовый ввод
+    tzMInpRow.style.display='flex';
+    const hints={business:'Пример: Салон красоты "Люкс", Кисловодск',contacts:'Пример: +7 928 123-45-67 или @username',extra:'Любые пожелания или особенности'};
+    const h=hints[q.k];
+    if(h){tzMHint.textContent='💡 '+h;tzMHint.style.display='block';}
+    setTimeout(()=>tzMInp.focus(),200);
+  }
+
+  // Показываем модалку
+  requestAnimationFrame(()=>{
+    tzModal.classList.add('show');
+  });
+}
+
+function closeTZModal(cb){
+  tzModal.classList.remove('show');
+  tzMInp.value='';
+  tzMBtns.style.display='flex';
+  setTimeout(()=>{if(cb)cb();},280);
+}
+
+function tzModalSend(){
+  const text=tzMInp.value.trim();
+  if(!text)return;
+  playPop('out');
+  closeTZModal(()=>{
+    addMsg(text,'user');
+    tzData[TZ[tzStep].k]=text;
+    tzStep++;
+    if(tzStep>=TZ.length){tzFinish();}
+    else{setTimeout(()=>{
+      addMsg(TZ[tzStep].q.split('\n')[0],'bot');
+      setTimeout(()=>showTZModal(TZ[tzStep],tzStep+1,TZ.length),600);
+    },300);}
+  });
+}
+
+tzMInp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();tzModalSend();}});
+tzMInp.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';});
+
 // ===== УТИЛИТЫ =====
 function now(){const d=new Date();return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')}
 
 function scrollBot(){
-  // Плавный скролл к последнему элементу
-  const doScroll=()=>{
-    const last=msgsEl.lastElementChild;
-    if(last){
-      last.scrollIntoView({behavior:'smooth',block:'end'});
-    }
-    msgsEl.scrollTop=msgsEl.scrollHeight;
-  };
-  doScroll();
-  setTimeout(doScroll,100);
-  setTimeout(doScroll,350);
+  // Мгновенный скролл — без лагов на мобиле
+  msgsEl.scrollTop=msgsEl.scrollHeight+9999;
+  setTimeout(()=>msgsEl.scrollTop=msgsEl.scrollHeight+9999, 50);
+  setTimeout(()=>msgsEl.scrollTop=msgsEl.scrollHeight+9999, 200);
 }
 
 // Очередь сообщений для плавного вывода
@@ -341,6 +500,8 @@ async function playQueue(){
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
 function _renderMsg(text,role,btns){
+  // Звук пузырька
+  playPop(role==='bot'?'in':'out');
   const wrap=document.createElement('div');
   wrap.className=`msg-wrap ${role}`;
   wrap.style.opacity='0';
@@ -593,12 +754,12 @@ const TZ=[
 function updateTZProgress(){
   const pct=Math.round((tzStep/TZ.length)*100);
   tzBar.style.width=pct+'%';
+  const pctEl=document.getElementById('tzPct');
+  if(pctEl) pctEl.textContent=pct+'%';
   if(tzStep===0){
-    tzLbl.textContent='Составление ТЗ — начинаем';
-    document.getElementById('tzPct').textContent='0%';
+    tzLbl.textContent='Составление ТЗ';
   } else {
-    tzLbl.textContent=`Вопрос ${tzStep} из ${TZ.length}`;
-    document.getElementById('tzPct').textContent=pct+'%';
+    tzLbl.textContent=`Вопрос ${Math.min(tzStep+1,TZ.length)} из ${TZ.length}`;
   }
 }
 
@@ -607,81 +768,24 @@ function startTZ(){
   tzMode=true;tzStep=0;tzData={};tzWait=false;
   tzProg.classList.add('show');
   updateTZProgress();
-  addMsg('Отлично! Составим техническое задание. Я задам 11 вопросов — это займёт около 3 минут. Отвечайте нажатием кнопок или текстом.','bot');
-  setTimeout(()=>{tzAsk();keepFocus();},600);
+  addMsg('Отлично! Составим техническое задание. Отвечайте нажатием кнопок или текстом — вопросы будут появляться в окне.','bot');
+  setTimeout(()=>{
+    addMsg(TZ[0].q.split('\n')[0],'bot');
+    setTimeout(()=>showTZModal(TZ[0],1,TZ.length),700);
+  },800);
 }
 
 function tzAsk(){
-  const q=TZ[tzStep];
   updateTZProgress();
-  const num=`Вопрос ${tzStep+1} из ${TZ.length}`;
-  if(q.type==='text'){
-    addMsg(q.q,'bot');
-    const hints={
-      'business':'💡 Пример: Салон красоты "Люкс", Кисловодск',
-      'functions':'💡 Или напишите свой вариант через запятую',
-      'examples':'💡 Вставьте ссылки или опишите стиль (минимализм, яркий, строгий)',
-      'contacts':'💡 Пример: +7 928 123-45-67 или @username',
-      'extra':'💡 Любые пожелания, особенности или вопросы'
-    };
-    const hintEl=document.getElementById('cfHint');
-    const hint=hints[q.k];
-    if(hint){
-      hintEl.textContent=hint;
-      hintEl.style.display='block';
-    } else {
-      hintEl.style.display='none';
-    }
-    inp.placeholder='Написать ответ...';
-    tzWait=true;
-    keepFocus();
-  } else {
-    addMsg(q.q,'bot');
-    const wrap=document.createElement('div');
-    wrap.className='reply-btns';
-    q.opts.forEach(o=>{
-      const btn=document.createElement('button');
-      btn.className='rb';
-      btn.textContent=o.label;
-      btn.onclick=()=>{
-        wrap.querySelectorAll('.rb').forEach(x=>x.disabled=true);
-        if(o.val===null){
-          addMsg('Напишите ваш ответ:','bot');
-          tzWait=true;keepFocus();
-        } else {
-          addMsg(o.label,'user');
-          tzData[q.k]=o.val;
-          tzStep++;
-          if(tzStep>=TZ.length){tzFinish();}
-          else{setTimeout(()=>{tzAsk();keepFocus();},350);}
-        }
-      };
-      wrap.appendChild(btn);
-    });
-    msgsEl.appendChild(wrap);
-    // Кнопки появляются плавно
-    wrap.style.opacity='0';
-    setTimeout(()=>{
-      wrap.style.transition='opacity .25s ease';
-      wrap.style.opacity='1';
-      scrollBot();
-    },200);
-    setTimeout(scrollBot,400);
-    keepFocus();
-  }
+  showTZModal(TZ[tzStep],tzStep+1,TZ.length);
 }
 
 function tzHandleText(text){
+  // Эта функция больше не используется — ввод через модалку
+  // Оставляем для совместимости
   if(!tzWait)return;
   tzWait=false;
-  inp.placeholder='Написать сообщение...';
-  const hintEl=document.getElementById('cfHint');
-  if(hintEl) hintEl.style.display='none';
-  addMsg(text,'user');
-  tzData[TZ[tzStep].k]=text;
-  tzStep++;
-  if(tzStep>=TZ.length){tzFinish();}
-  else{setTimeout(()=>{tzAsk();keepFocus();},350);}
+  tzModalSend();
 }
 
 async function tzFinish(){
