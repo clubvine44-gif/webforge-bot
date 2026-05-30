@@ -543,6 +543,7 @@ function addMsg(text, type, buttons) {
       btn.onclick = () => {
         btnsEl.querySelectorAll('.msg-btn').forEach(x => x.disabled = true);
         if (b.action === 'form') { openForm(); return; }
+        if (b.action === 'lyuda') { window.open('https://t.me/LyudmilaVadimovna1', '_blank'); return; }
         sendUserMessage(b.value || b.text);
       };
       btnsEl.appendChild(btn);
@@ -609,15 +610,186 @@ async function sendUserMessage(text) {
 
 function sendMessage() {
   const text = inputEl.value.trim();
-  if (!text || isTyping) return;
+  if (!text) return;
+
+  // Режим ТЗ — принимаем текстовый ответ
+  if (inputEl.dataset.tzWaiting === '1') {
+    inputEl.dataset.tzWaiting = '';
+    inputEl.placeholder = 'Ваш вопрос...';
+    addMsg(text, 'user');
+    inputEl.value = '';
+    const q = TZ_QUESTIONS[tzStep];
+    tzAnswers[q.key] = text;
+    tzNextStep();
+    return;
+  }
+
+  if (isTyping) return;
   inputEl.value = '';
   sendUserMessage(text);
 }
 
 function quickSend(text) {
-  if (text === 'Составить ТЗ') { window.open('https://t.me/LyudmilaVadimovna1', '_blank'); return; }
+  if (text === 'Составить ТЗ') { startTZ(); return; }
   if (isTyping) return;
   sendUserMessage(text);
+}
+
+// ===== МОДУЛЬ ТЗ =====
+const TZ_QUESTIONS = [
+  { key: 'business', text: 'Расскажите о вашем бизнесе. Чем занимаетесь, как называется, в каком городе?', type: 'text' },
+  { key: 'product', text: 'Что нужно разработать?', type: 'buttons', options: [
+    { label: '🌐 Сайт', value: 'Сайт' },
+    { label: '🤖 Telegram-бот', value: 'Telegram-бот' },
+    { label: '🌐🤖 Сайт + бот', value: 'Сайт + бот' },
+    { label: '🤷 Пока не знаю', value: 'Не определился' }
+  ]},
+  { key: 'goal', text: 'Какая главная цель? Что должны делать клиенты?', type: 'buttons', options: [
+    { label: '📅 Записываться на услугу', value: 'Запись на услугу' },
+    { label: '📞 Узнать и связаться', value: 'Информация и контакт' },
+    { label: '🛒 Заказывать товары', value: 'Заказ товаров/услуг' },
+    { label: '✏️ Напишу сам', value: null }
+  ]},
+  { key: 'functions', text: 'Какие функции нужны? Напишите всё важное.\n\nНапример: онлайн-запись, каталог услуг, галерея фото, отзывы, форма связи, оплата онлайн.', type: 'text' },
+  { key: 'payment', text: 'Нужна ли онлайн-оплата прямо на сайте/в боте?', type: 'buttons', options: [
+    { label: '✅ Да', value: 'Да' },
+    { label: '❌ Нет', value: 'Нет' },
+    { label: '🤔 Обсудим позже', value: 'Обсудим' }
+  ]},
+  { key: 'content', text: 'Есть ли готовые материалы?\n\nНапишите что есть: тексты, фото, логотип, прайс. Или что нужно делать с нуля.', type: 'text' },
+  { key: 'examples', text: 'Есть ли примеры сайтов которые нравятся? Скиньте ссылки или опишите стиль.\n\nЕсли нет — напишите "нет".', type: 'text' },
+  { key: 'deadline', text: 'Какие сроки запуска?', type: 'buttons', options: [
+    { label: '🔥 Как можно быстрее', value: 'Как можно быстрее' },
+    { label: '📅 В течение недели', value: 'В течение недели' },
+    { label: '🗓 В течение месяца', value: 'В течение месяца' },
+    { label: '😌 Сроки гибкие', value: 'Гибкие сроки' }
+  ]},
+  { key: 'budget', text: 'Какой бюджет на разработку?', type: 'buttons', options: [
+    { label: 'до 5000 ₽', value: 'до 5000 руб' },
+    { label: '5000–10000 ₽', value: '5000–10000 руб' },
+    { label: '10000–20000 ₽', value: '10000–20000 руб' },
+    { label: 'более 20000 ₽', value: 'более 20000 руб' },
+    { label: '💬 Обсудим', value: 'Обсудим' }
+  ]},
+  { key: 'contacts', text: 'Как с вами связаться? Укажите телефон или Telegram.', type: 'text' },
+  { key: 'extra', text: 'Есть дополнительные пожелания или что-то важное?\n\nЕсли нет — напишите "нет".', type: 'text' },
+];
+
+let tzActive = false;
+let tzStep = 0;
+let tzAnswers = {};
+
+function startTZ() {
+  if (isTyping) return;
+  tzActive = true;
+  tzStep = 0;
+  tzAnswers = {};
+  addMsg('Отлично! Составим техническое задание вместе. Это займёт 3-4 минуты, я буду задавать вопросы по одному.', 'bot');
+  setTimeout(() => askTZQuestion(), 600);
+}
+
+function askTZQuestion() {
+  const q = TZ_QUESTIONS[tzStep];
+  if (q.type === 'buttons') {
+    const btnsEl = document.createElement('div');
+    btnsEl.className = 'msg-buttons';
+    btnsEl.style.marginTop = '4px';
+
+    const label = document.createElement('div');
+    label.className = 'msg bot';
+    label.style.marginBottom = '4px';
+    label.textContent = `Вопрос ${tzStep + 1} из ${TZ_QUESTIONS.length}: ${q.text}`;
+    messagesEl.appendChild(label);
+
+    q.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'msg-btn';
+      btn.textContent = opt.label;
+      btn.onclick = () => {
+        btnsEl.querySelectorAll('.msg-btn').forEach(x => x.disabled = true);
+        if (opt.value === null) {
+          addMsg('Напишите своими словами:', 'bot');
+          // ждём текстовый ввод
+          inputEl.placeholder = 'Ваш ответ...';
+          inputEl.focus();
+          inputEl.dataset.tzWaiting = '1';
+        } else {
+          addMsg(opt.label, 'user');
+          tzAnswers[q.key] = opt.value;
+          tzNextStep();
+        }
+      };
+      btnsEl.appendChild(btn);
+    });
+    messagesEl.appendChild(btnsEl);
+  } else {
+    addMsg(`Вопрос ${tzStep + 1} из ${TZ_QUESTIONS.length}: ${q.text}`, 'bot');
+    inputEl.placeholder = 'Ваш ответ...';
+    inputEl.focus();
+    inputEl.dataset.tzWaiting = '1';
+  }
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function tzNextStep() {
+  tzStep++;
+  if (tzStep >= TZ_QUESTIONS.length) {
+    finishTZ();
+  } else {
+    setTimeout(() => askTZQuestion(), 400);
+  }
+}
+
+async function finishTZ() {
+  tzActive = false;
+  inputEl.placeholder = 'Ваш вопрос...';
+  addMsg('Отлично! Генерирую техническое задание...', 'bot');
+
+  const TZ_SYSTEM = `Ты технический менеджер. Составь чёткое ТЗ на основе ответов клиента. Только факты — ничего не выдумывай. Если чего-то нет — напиши "уточнить". Структура: 1. О бизнесе 2. Что разработать 3. Цель 4. Функции 5. Материалы 6. Референсы 7. Сроки и бюджет 8. Контакт 9. Доп. пожелания. Только русский язык, без символов форматирования.`;
+
+  let answersText = 'Ответы клиента:\n';
+  const labels = {
+    business: 'Бизнес', product: 'Что разработать', goal: 'Цель',
+    functions: 'Функции', payment: 'Оплата', content: 'Материалы',
+    examples: 'Референсы', deadline: 'Сроки', budget: 'Бюджет',
+    contacts: 'Контакт', extra: 'Доп. пожелания'
+  };
+  for (const [k, v] of Object.entries(tzAnswers)) {
+    answersText += `${labels[k] || k}: ${v}\n`;
+  }
+
+  showTyping();
+  try {
+    const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [{ role: 'system', content: TZ_SYSTEM }, { role: 'user', content: answersText }],
+        max_tokens: 900
+      })
+    });
+    const data = await resp.json();
+    let tz = data.choices[0].message.content;
+    ['*','_','`','#'].forEach(c => tz = tz.replaceAll(c, ''));
+    hideTyping();
+    addMsg('Готово! Вот ваше техническое задание:', 'bot');
+    // Разбиваем на части если длинное
+    const parts = tz.trim().match(/.{1,400}/gs) || [tz];
+    parts.forEach((p, i) => {
+      setTimeout(() => addMsg(p.trim(), 'bot'), i * 100);
+    });
+    setTimeout(() => {
+      addMsg('ТЗ отправлено менеджеру Люде. Она свяжется с вами в ближайшее время!', 'bot', [
+        { text: '📝 Оставить заявку', action: 'form' },
+        { text: '💬 Написать Люде', action: 'lyuda' }
+      ]);
+    }, parts.length * 100 + 200);
+    await sendToTelegram(`📋 Новое ТЗ с сайта!\n\nКонтакт: ${tzAnswers.contacts || 'не указан'}\n\n${tz}`);
+  } catch(e) {
+    hideTyping();
+    addMsg('Не удалось сформировать ТЗ. Напишите Люде напрямую: @LyudmilaVadimovna1', 'bot');
+  }
 }
 
 inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
