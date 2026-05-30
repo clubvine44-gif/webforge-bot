@@ -283,9 +283,15 @@ let tzWait=false;
 function now(){const d=new Date();return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')}
 
 function scrollBot(){
-  msgsEl.scrollTop=msgsEl.scrollHeight;
-  setTimeout(()=>{msgsEl.scrollTop=msgsEl.scrollHeight;},150);
-  setTimeout(()=>{msgsEl.scrollTop=msgsEl.scrollHeight;},350);
+  const doScroll=()=>{
+    msgsEl.scrollTop=msgsEl.scrollHeight+9999;
+    const last=msgsEl.lastElementChild;
+    if(last) last.scrollIntoView({block:'end'});
+  };
+  doScroll();
+  setTimeout(doScroll,80);
+  setTimeout(doScroll,200);
+  setTimeout(doScroll,450);
 }
 
 function addMsg(text,role,btns){
@@ -345,21 +351,45 @@ function keepFocus(){
 function openChat(){
   CF.classList.add('open');
   document.body.style.overflow='hidden';
+  // Устанавливаем правильную высоту сразу
+  if(window.visualViewport){
+    CF.style.height=window.visualViewport.height+'px';
+  }
   // Фокус с задержкой чтобы анимация завершилась
   setTimeout(()=>{
     inp.focus();
     scrollBot();
+    // После открытия клавиатуры обновляем высоту
+    setTimeout(()=>{
+      if(window.visualViewport) CF.style.height=window.visualViewport.height+'px';
+      scrollBot();
+    },500);
   },420);
 }
 
 // Когда клавиатура открывается — скроллим вниз
-window.addEventListener('resize',()=>{
-  if(CF.classList.contains('open')){
-    // Небольшая задержка чтобы браузер перерисовал
-    setTimeout(scrollBot,100);
-    setTimeout(scrollBot,300);
-  }
-});
+// VisualViewport — самый надёжный способ отслеживать клавиатуру
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',()=>{
+    if(CF.classList.contains('open')){
+      // Высота чата = высота видимого viewport
+      const vh=window.visualViewport.height;
+      CF.style.height=vh+'px';
+      scrollBot();
+      setTimeout(scrollBot,150);
+    }
+  });
+  window.visualViewport.addEventListener('scroll',()=>{
+    if(CF.classList.contains('open')) scrollBot();
+  });
+} else {
+  window.addEventListener('resize',()=>{
+    if(CF.classList.contains('open')){
+      setTimeout(scrollBot,100);
+      setTimeout(scrollBot,300);
+    }
+  });
+}
 
 // Предотвращаем закрытие клавиатуры при нажатии на кнопки ответов
 document.addEventListener('mousedown',e=>{
@@ -435,6 +465,7 @@ const TZ=[
     {label:'📅 Записываться на услугу',val:'Онлайн-запись на услуги'},
     {label:'📞 Узнать о компании и связаться',val:'Получить информацию о компании и связаться'},
     {label:'🛒 Заказывать товары или услуги',val:'Оформление заказов товаров/услуг онлайн'},
+    {label:'✅ Всё перечисленное',val:'Запись на услуги, получение информации о компании и оформление заказов онлайн'},
     {label:'✏️ Опишу сам',val:null}
   ]},
   {k:'functions',q:'Какие функции нужны?\n\nВыберите одну или несколько (или напишите свой вариант):',type:'btns',hint:'Например: онлайн-запись, каталог услуг, галерея фото, форма связи, оплата онлайн, личный кабинет. Можно перечислить через запятую.',opts:[
@@ -443,7 +474,7 @@ const TZ=[
     {label:'🖼 Галерея фото',val:'Галерея фото'},
     {label:'💳 Оплата онлайн',val:'Оплата онлайн'},
     {label:'📞 Форма обратной связи',val:'Форма обратной связи'},
-    {label:'✅ Всё перечисленное',val:'Онлайн-запись, каталог услуг с ценами, галерея фото, оплата онлайн, форма обратной связи'},
+    {label:'✅ Всё перечисленное',val:'Онлайн-запись на услуги, каталог услуг с ценами, галерея работ и портфолио, онлайн-оплата, форма обратной связи'},
     {label:'✏️ Напишу свой вариант',val:null}
   ]},
   {k:'payment',q:'Нужна ли онлайн-оплата прямо на сайте или в боте?',type:'btns',opts:[
@@ -452,10 +483,11 @@ const TZ=[
     {label:'🤔 Возможно, обсудим позже',val:'Возможно, нужно обсудить дополнительно'}
   ]},
   {k:'content',q:'Есть ли у вас готовые материалы?\n\nОтметьте что есть:',type:'btns',opts:[
-    {label:'✅ Есть всё — тексты, фото, логотип',val:'Есть готовые тексты, фотографии и логотип'},
-    {label:'📷 Только фото',val:'Есть только фотографии, тексты нужно разработать'},
-    {label:'📝 Только тексты',val:'Есть тексты, фотографии нужны'},
-    {label:'❌ Ничего нет, всё с нуля',val:'Материалов нет, всё нужно разработать с нуля'}
+    {label:'✅ Есть всё — тексты, фото, логотип',val:'Есть все материалы: готовые тексты для сайта, фотографии и логотип компании'},
+    {label:'📷 Только фото',val:'Есть фотографии, тексты и логотип нужно разработать'},
+    {label:'📝 Только тексты',val:'Есть готовые тексты, фотографии и логотип нужны'},
+    {label:'🎨 Только логотип',val:'Есть логотип, тексты и фотографии нужно разработать'},
+    {label:'❌ Ничего нет, всё с нуля',val:'Материалов нет — тексты, фото и логотип нужно разработать с нуля'}
   ]},
   {k:'examples',q:'Есть ли примеры сайтов которые вам нравятся?\n\nЕсли есть — вставьте ссылки или опишите стиль (минимализм, яркий, строгий). Если нет — нажмите кнопку.',type:'btns',opts:[
     {label:'🔗 Вставлю ссылки — напишу сам',val:null},
@@ -478,9 +510,9 @@ const TZ=[
     {label:'💬 Обсудим',val:'Бюджет обсуждается'}
   ]},
   {k:'contacts',q:'Как с вами связаться?\n\nУкажите телефон или Telegram-аккаунт.',type:'text'},
-  {k:'extra',q:'Есть что-то важное что ещё не упомянули?\n\nДополнительные пожелания, особенности бизнеса или вопросы.',type:'btns',opts:[
-    {label:'✅ Всё указал, можно приступать',val:'Нет дополнений, всё указано'},
-    {label:'✏️ Есть что добавить — напишу',val:null}
+  {k:'extra',q:'Есть дополнительные пожелания или особенности?\n\nЕсли всё уже сказано — нажмите кнопку ниже.',type:'btns',opts:[
+    {label:'✅ Нет, всё указано выше',val:'Дополнительных пожеланий нет, всё необходимое уже указано в ответах выше'},
+    {label:'✏️ Есть что добавить',val:null}
   ]},
 ];
 
