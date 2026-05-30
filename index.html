@@ -287,7 +287,99 @@ footer {
   text-align: center; color: var(--muted); font-size: 0.78rem;
 }
 
-/* ФОРМА */
+/* ПОЛНОЭКРАННЫЙ ЧАТ */
+.chat-fullscreen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: var(--chat-bg);
+  flex-direction: column;
+  animation: chatOpen 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.chat-fullscreen.active { display: flex; }
+@keyframes chatOpen {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.chat-fullscreen .cf-header {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.75rem;
+  background: var(--surface);
+  flex-shrink: 0;
+  padding-top: calc(0.875rem + env(safe-area-inset-top));
+}
+.cf-back {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--border); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text); flex-shrink: 0; font-size: 1.1rem;
+}
+.chat-fullscreen .cf-messages {
+  flex: 1; overflow-y: auto;
+  padding: 1rem; display: flex;
+  flex-direction: column; gap: 0.6rem;
+  -webkit-overflow-scrolling: touch;
+}
+.chat-fullscreen .cf-quick {
+  padding: 0.5rem 0.875rem;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 0.35rem; overflow-x: auto;
+  flex-shrink: 0; background: var(--surface);
+  -webkit-overflow-scrolling: touch;
+}
+.chat-fullscreen .cf-quick::-webkit-scrollbar { display: none; }
+.chat-fullscreen .cf-input-area {
+  padding: 0.65rem;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  display: flex; gap: 0.5rem; flex-shrink: 0;
+  padding-bottom: calc(0.65rem + env(safe-area-inset-bottom));
+}
+.chat-fullscreen .cf-input {
+  flex: 1; background: var(--bg);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.55rem 0.85rem; color: var(--text);
+  font-size: 1rem; outline: none;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.2s; -webkit-appearance: none;
+}
+.chat-fullscreen .cf-input:focus { border-color: var(--accent); }
+.chat-fullscreen .cf-input::placeholder { color: var(--muted); }
+
+/* Мини-чат на сайте — только превью */
+.chat-preview {
+  background: var(--chat-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+  display: flex; flex-direction: column;
+  cursor: pointer;
+  box-shadow: 0 0 40px rgba(108,99,255,0.1);
+  margin-bottom: 3rem;
+  transition: border-color 0.2s;
+}
+.chat-preview:hover { border-color: var(--accent); }
+.chat-preview-messages {
+  padding: 1rem; display: flex;
+  flex-direction: column; gap: 0.6rem;
+  pointer-events: none;
+  min-height: 160px;
+}
+.chat-preview-input {
+  padding: 0.65rem;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  display: flex; gap: 0.5rem; align-items: center;
+}
+.chat-preview-input span {
+  flex: 1; font-size: 0.85rem; color: var(--muted);
+  padding: 0.55rem 0.85rem;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+
 .form-overlay {
   display: none; position: fixed; inset: 0; z-index: 200;
   background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
@@ -383,24 +475,43 @@ footer {
     </div>
   </div>
 
-  <div class="chat-widget">
-    <div class="chat-header">
+  <div class="chat-preview" onclick="openChat()" id="chatPreview">
+    <div class="chat-header" style="background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.875rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
       <div class="chat-avatar">🤖</div>
+      <div>
+        <div class="chat-title">ИИ-консультант WebForge</div>
+        <div class="chat-status">онлайн — нажмите чтобы открыть чат</div>
+      </div>
+    </div>
+    <div class="chat-preview-messages" id="previewMessages"></div>
+    <div class="chat-preview-input">
+      <span>Задайте вопрос или составьте ТЗ...</span>
+      <div class="send-btn">
+        <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ПОЛНОЭКРАННЫЙ ЧАТ -->
+  <div class="chat-fullscreen" id="chatFullscreen">
+    <div class="cf-header">
+      <button class="cf-back" onclick="closeChat()">←</button>
+      <div class="chat-avatar" style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:0.9rem;">🤖</div>
       <div>
         <div class="chat-title">ИИ-консультант WebForge</div>
         <div class="chat-status">онлайн</div>
       </div>
     </div>
-    <div class="chat-messages" id="chatMessages"></div>
-    <div class="chat-quick" id="quickBtns">
+    <div class="cf-messages" id="chatMessages"></div>
+    <div class="cf-quick" id="quickBtns">
       <button class="quick-btn" onclick="quickSend('Сколько стоит сайт?')">💰 Цены</button>
       <button class="quick-btn" onclick="quickSend('Составить ТЗ')">📋 Составить ТЗ</button>
       <button class="quick-btn" onclick="quickSend('Покажи примеры работ')">🖼 Примеры</button>
       <button class="quick-btn" onclick="quickSend('Что такое бот с ИИ?')">🤖 Про бота</button>
       <button class="quick-btn" onclick="openForm()">📝 Заявка</button>
     </div>
-    <div class="chat-input-area">
-      <input class="chat-input" id="chatInput" type="text" placeholder="Ваш вопрос..." maxlength="300" inputmode="text">
+    <div class="cf-input-area">
+      <input class="cf-input" id="chatInput" type="text" placeholder="Ваш вопрос..." maxlength="300" inputmode="text">
       <button class="send-btn" onclick="sendMessage()">
         <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
       </button>
@@ -615,6 +726,7 @@ async function sendUserMessage(text) {
     buttons.push({ text: '🖼 Смотреть примеры', value: 'Покажи ссылки на примеры работ' });
   }
   addMsg(answer, 'bot', buttons.length ? buttons : null);
+  updatePreview();
 }
 
 function sendMessage() {
@@ -865,10 +977,40 @@ async function submitForm() {
 // Фикс клавиатуры на мобильных — скроллим к полю ввода
 inputEl.addEventListener('focus', () => {
   setTimeout(() => {
-    inputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }, 350);
 });
+
+function openChat() {
+  document.getElementById('chatFullscreen').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => {
+    inputEl.focus();
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }, 300);
+}
+
+function closeChat() {
+  document.getElementById('chatFullscreen').classList.remove('active');
+  document.body.style.overflow = '';
+  // Обновляем превью последними сообщениями
+  updatePreview();
+}
+
+function updatePreview() {
+  const preview = document.getElementById('previewMessages');
+  const msgs = document.querySelectorAll('#chatMessages .msg');
+  preview.innerHTML = '';
+  const last = Array.from(msgs).slice(-3);
+  last.forEach(m => {
+    const el = document.createElement('div');
+    el.className = m.className;
+    el.textContent = m.textContent.length > 80 ? m.textContent.slice(0, 80) + '...' : m.textContent;
+    el.style.fontSize = '0.8rem';
+    el.style.padding = '0.5rem 0.75rem';
+    preview.appendChild(el);
+  });
+}
 
 // Стартовое сообщение
 setTimeout(() => {
@@ -877,6 +1019,7 @@ setTimeout(() => {
     { text: '🤖 Про бота', value: 'Что такое бот с ИИ?' },
     { text: '🖼 Примеры', value: 'Покажи примеры работ' }
   ]);
+  updatePreview();
 }, 400);
 </script>
 </body>
