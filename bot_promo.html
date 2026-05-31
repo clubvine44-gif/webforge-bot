@@ -112,7 +112,7 @@ canvas{position:absolute;inset:0;opacity:.22;pointer-events:none}
 .p-back{font-size:.42em;color:rgba(255,255,255,.4);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:1% 6%}
 
 /* КОНТЕНТ ТЕЛЕФОНА */
-.p-body{flex:1;min-height:0;padding:4%;display:flex;flex-direction:column;gap:3%;overflow:hidden;background:#06060e}
+.p-body{flex:1;min-height:0;padding:4%;display:flex;flex-direction:column;gap:3%;overflow:hidden;background:#06060e;justify-content:flex-end}
 .p-menu-wrap{flex:1;min-height:0;padding:3%;display:flex;flex-direction:column;gap:2.5%;background:#06060e}
 .p-item{background:rgba(14,14,24,.9);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:5% 7%;display:flex;align-items:center;justify-content:space-between;font-size:.5em;color:#ddddf0;opacity:0;transform:translateX(-8px);transition:opacity .28s,transform .28s}
 .p-item.on{opacity:1;transform:none}
@@ -414,7 +414,7 @@ async function r2(){
       const el=document.createElement('div');
       el.className=m.r==='bot'?'pb':'pu';el.textContent=m.t;
       body.appendChild(el);await d(40);el.classList.add('on');
-      body.scrollTop=body.scrollHeight+999;
+      // flex-end сам держит сообщения внизу
     }
   }
   await d(200);document.getElementById('s2card').classList.add('on');
