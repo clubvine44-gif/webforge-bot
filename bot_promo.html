@@ -8,179 +8,192 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;background:#04040c;font-family:'Inter',sans-serif}
+#stage{position:fixed;inset:0}
+canvas{position:absolute;inset:0;pointer-events:none}
 
-/* ФОН */
-#stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
-canvas{position:absolute;inset:0;opacity:.22;pointer-events:none}
-.glow{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none;opacity:.7}
-.g1{width:50vmax;height:50vmax;background:radial-gradient(circle,rgba(108,99,255,.3),transparent 70%);top:-20%;left:-15%;animation:da 9s ease-in-out infinite}
-.g2{width:40vmax;height:40vmax;background:radial-gradient(circle,rgba(255,107,157,.2),transparent 70%);bottom:-15%;right:-10%;animation:db 11s ease-in-out infinite}
-@keyframes da{0%,100%{transform:translate(0,0)}50%{transform:translate(3vw,2vh)}}
-@keyframes db{0%,100%{transform:translate(0,0)}50%{transform:translate(-3vw,-3vh)}}
+/* ГЛОУ */
+.glow{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
+.g1{width:60vmax;height:60vmax;background:radial-gradient(circle,rgba(108,99,255,.28),transparent 70%);top:-20%;left:-15%;animation:da 9s ease-in-out infinite}
+.g2{width:45vmax;height:45vmax;background:radial-gradient(circle,rgba(255,107,157,.18),transparent 70%);bottom:-15%;right:-10%;animation:db 12s ease-in-out infinite}
+@keyframes da{0%,100%{transform:translate(0,0)}50%{transform:translate(4vw,3vh)}}
+@keyframes db{0%,100%{transform:translate(0,0)}50%{transform:translate(-3vw,-4vh)}}
 
-/* СЛАЙД — всегда точно по центру */
-.slide{
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;
-  padding:max(env(safe-area-inset-top,0px),12px) 20px max(env(safe-area-inset-bottom,0px),12px);
-}
+/* СЛАЙДЫ */
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;padding:16px 20px;transition:opacity .45s ease}
 .slide.on{opacity:1;pointer-events:all}
+.box{width:100%;max-width:460px;display:flex;flex-direction:column;align-items:center;gap:clamp(8px,2vh,18px)}
 
-/* ВНУТРЕННИЙ КОНТЕЙНЕР — максимум экрана */
-.box{
-  width:100%;max-width:480px;
-  display:flex;flex-direction:column;
-  align-items:center;
-  gap:clamp(6px,1.8vh,16px);
-  max-height:calc(100vh - 40px);
-  overflow:hidden;
-}
-
-/* ТИПОГРАФИКА */
-.chip{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.2);
-  border-radius:100px;padding:4px 14px;
-  font-size:clamp(.52rem,1.6vw,.68rem);
-  color:rgba(255,255,255,.55);letter-spacing:.08em;
-  flex-shrink:0;
-}
-.cdot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d);animation:pulse 2s infinite;flex-shrink:0}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-
-.h1{
-  font-family:'Unbounded',sans-serif;
-  font-size:clamp(1.6rem,7vw,3.5rem);
-  font-weight:700;line-height:1.08;
-  text-align:center;color:#fff;flex-shrink:0;
-}
-.h2{
-  font-family:'Unbounded',sans-serif;
-  font-size:clamp(1.25rem,5.5vw,2.5rem);
-  font-weight:700;line-height:1.1;
-  text-align:center;color:#fff;flex-shrink:0;
-}
+/* ТИПО */
+.chip{display:inline-flex;align-items:center;gap:7px;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.22);border-radius:100px;padding:5px 16px;font-size:clamp(.52rem,1.8vw,.7rem);color:rgba(255,255,255,.55);letter-spacing:.08em;flex-shrink:0}
+.cdot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d);flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.h1{font-family:'Unbounded',sans-serif;font-size:clamp(1.6rem,7.5vw,3.8rem);font-weight:700;line-height:1.08;text-align:center;color:#fff;flex-shrink:0}
+.h2{font-family:'Unbounded',sans-serif;font-size:clamp(1.2rem,5.5vw,2.6rem);font-weight:700;line-height:1.1;text-align:center;color:#fff;flex-shrink:0}
 .gr{background:linear-gradient(135deg,#6c63ff,#ff6b9d,#6c63ff);background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gs 3s infinite}
 @keyframes gs{0%{background-position:0%}50%{background-position:100%}100%{background-position:0%}}
-.sub{
-  font-size:clamp(.72rem,2.2vw,.9rem);
-  color:rgba(255,255,255,.4);
-  text-align:center;line-height:1.6;
-  max-width:min(420px,90vw);flex-shrink:0;
-}
-.ln{width:0;height:1px;background:linear-gradient(90deg,transparent,rgba(108,99,255,.5),transparent);transition:width .8s;flex-shrink:0}
-.ln.on{width:min(140px,35vw)}
+.sub{font-size:clamp(.72rem,2.2vw,.9rem);color:rgba(255,255,255,.38);text-align:center;line-height:1.6;max-width:min(400px,88vw);flex-shrink:0}
+.ln{height:1px;background:linear-gradient(90deg,transparent,rgba(108,99,255,.5),transparent);flex-shrink:0;width:0;transition:width 1s ease}
+.ln.go{width:min(140px,35vw)}
 
-/* АНИМАЦИИ */
-.up{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
-.up.s{opacity:1;transform:none}
+/* АНИМАЦИИ ПОЯВЛЕНИЯ */
+.fade{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.fade.go{opacity:1;transform:none}
+.fadel{opacity:0;transform:translateX(-20px);transition:opacity .55s ease,transform .55s ease}
+.fadel.go{opacity:1;transform:none}
+.fader{opacity:0;transform:translateX(20px);transition:opacity .55s ease,transform .55s ease}
+.fader.go{opacity:1;transform:none}
+.pop{opacity:0;transform:scale(.85);transition:opacity .5s ease,transform .5s cubic-bezier(.34,1.4,.64,1)}
+.pop.go{opacity:1;transform:none}
 
 /* ТЕЛЕФОН */
-.phone-wrap{
-  flex-shrink:0;
-  /* Ограничиваем высоту телефона чтобы всё влезало */
-  height:clamp(160px,35vh,300px);
-  display:flex;align-items:center;justify-content:center;
-}
+.pw{flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .phone{
-  height:100%;
-  aspect-ratio:9/18.5;
-  background:linear-gradient(180deg,#0e0e1c,#07070f);
-  border-radius:clamp(20px,5%,32px);
+  width:clamp(155px,42vw,210px);
+  background:linear-gradient(180deg,#0d0d1b 0%,#06060f 100%);
+  border-radius:clamp(24px,6vw,36px);
   border:1.5px solid rgba(255,255,255,.08);
   position:relative;overflow:hidden;
-  box-shadow:0 0 0 1px rgba(108,99,255,.12),0 20px 60px rgba(0,0,0,.9),0 0 40px rgba(108,99,255,.12),inset 0 1px 0 rgba(255,255,255,.05);
+  box-shadow:0 0 0 1px rgba(108,99,255,.12),0 24px 70px rgba(0,0,0,.92),0 0 50px rgba(108,99,255,.15),inset 0 1px 0 rgba(255,255,255,.06);
+  aspect-ratio:9/19.5;
 }
-.p-island{position:absolute;top:4%;left:50%;transform:translateX(-50%);width:38%;height:4%;max-height:7px;background:#060610;border-radius:100px;z-index:20;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;gap:2px}
-.p-cam{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.08)}
-.p-cam.b{width:5px;height:5px}
-.p-vol{position:absolute;left:-1.5px;border-radius:2px 0 0 2px;background:rgba(255,255,255,.07);width:1.5px}
-.p-vol1{top:20%;height:8%}.p-vol2{top:31%;height:13%}
-.p-pwr{position:absolute;right:-1.5px;top:25%;height:12%;border-radius:0 2px 2px 0;background:rgba(255,255,255,.07);width:1.5px}
-.p-screen{position:absolute;top:8%;left:0;right:0;bottom:4%;display:flex;flex-direction:column;overflow:hidden}
-.p-shine{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.03),transparent 50%);z-index:15;pointer-events:none}
-.p-home{position:absolute;bottom:2%;left:50%;transform:translateX(-50%);width:25%;height:3px;max-height:3px;background:rgba(255,255,255,.1);border-radius:100px;z-index:20}
+.p-isl{position:absolute;top:2.5%;left:50%;transform:translateX(-50%);width:35%;height:3.5%;max-height:8px;background:#060610;border-radius:100px;z-index:30;display:flex;align-items:center;justify-content:flex-end;padding-right:22%;gap:2px}
+.p-cam{border-radius:50%;background:rgba(255,255,255,.07)}
+.p-cam.s{width:4px;height:4px}.p-cam.b{width:5px;height:5px}
+.p-vol{position:absolute;left:-1.5px;width:1.5px;background:rgba(255,255,255,.07);border-radius:2px 0 0 2px}
+.pv1{top:19%;height:7%}.pv2{top:29%;height:12%}
+.p-pwr{position:absolute;right:-1.5px;top:24%;height:11%;width:1.5px;background:rgba(255,255,255,.07);border-radius:0 2px 2px 0}
+.p-scr{position:absolute;top:7%;left:0;right:0;bottom:3%;display:flex;flex-direction:column;overflow:hidden}
+.p-sh{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.03),transparent 55%);z-index:15;pointer-events:none}
+.p-hm{position:absolute;bottom:1.5%;left:50%;transform:translateX(-50%);width:22%;height:2.5px;max-height:3px;background:rgba(255,255,255,.1);border-radius:100px;z-index:30}
 
-/* NAV В ТЕЛЕФОНЕ */
-.p-nav{background:rgba(10,10,20,.97);padding:6% 8% 4%;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:5%;flex-shrink:0}
-.p-av{width:18%;aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d);display:flex;align-items:center;justify-content:center;font-size:.6em;flex-shrink:0;box-shadow:0 0 8px rgba(108,99,255,.5)}
-.p-title{font-size:.55em;font-weight:500;color:#eeeef5;line-height:1.2}
-.p-status{font-size:.42em;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:2px;margin-top:1px}
-.p-sdot{width:3px;height:3px;border-radius:50%;background:#4ade80;animation:bl 2s infinite}
+/* NAV */
+.p-nav{background:rgba(10,10,22,.98);padding:5% 6% 3%;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:4%;flex-shrink:0}
+.p-av{width:16%;aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d);display:flex;align-items:center;justify-content:center;font-size:.55em;flex-shrink:0;box-shadow:0 0 8px rgba(108,99,255,.5)}
+.p-ti{font-size:.52em;font-weight:500;color:#eeeef5;line-height:1.2}
+.p-st{font-size:.4em;color:rgba(255,255,255,.32);display:flex;align-items:center;gap:2px;margin-top:1px}
+.p-sd{width:3px;height:3px;border-radius:50%;background:#4ade80;animation:bl 2s infinite}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
-.p-back{font-size:.42em;color:rgba(255,255,255,.4);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:1% 6%}
+.p-bk{font-size:.4em;color:rgba(255,255,255,.38);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);border-radius:5px;padding:1% 5%;white-space:nowrap}
 
-/* КОНТЕНТ ТЕЛЕФОНА */
-.p-body{flex:1;min-height:0;padding:4%;display:flex;flex-direction:column;gap:3%;overflow:hidden;background:#06060e;justify-content:flex-end}
-.p-menu-wrap{flex:1;min-height:0;padding:3%;display:flex;flex-direction:column;gap:2.5%;background:#06060e}
-.p-item{background:rgba(14,14,24,.9);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:5% 7%;display:flex;align-items:center;justify-content:space-between;font-size:.5em;color:#ddddf0;opacity:0;transform:translateX(-8px);transition:opacity .28s,transform .28s}
-.p-item.on{opacity:1;transform:none}
-.p-item.ac{border-color:rgba(108,99,255,.3);background:rgba(108,99,255,.09);color:#b0abff}
-.p-il{display:flex;align-items:center;gap:6%}
-.p-arr{color:rgba(255,255,255,.18);font-size:.8em}
+/* ТЕЛО ЧАТА */
+.p-body{flex:1;min-height:0;padding:3% 4%;display:flex;flex-direction:column;gap:2.5%;overflow:hidden;background:#05050d;justify-content:flex-end}
 
-/* ЧАТБАБЛЫ В ТЕЛЕФОНЕ */
-.pb{background:rgba(14,14,26,.95);border:1px solid rgba(255,255,255,.05);border-radius:8px 8px 8px 2px;padding:5% 8%;font-size:.5em;color:#ddddf0;max-width:88%;line-height:1.4;opacity:0;transform:translateX(-6px);transition:opacity .3s,transform .3s;flex-shrink:0}
-.pu{background:linear-gradient(135deg,#4a43c8,#6c63ff);border-radius:8px 8px 2px 8px;padding:5% 8%;font-size:.5em;color:#fff;max-width:80%;align-self:flex-end;line-height:1.4;opacity:0;transform:translateX(6px);transition:opacity .3s,transform .3s;flex-shrink:0}
-.pb.on,.pu.on{opacity:1;transform:none}
-.ptyp{display:flex;gap:3px;padding:5% 8%;background:rgba(14,14,26,.95);border:1px solid rgba(255,255,255,.05);border-radius:8px 8px 8px 2px;width:20%;opacity:0;transition:opacity .25s;flex-shrink:0}
-.ptyp.on{opacity:1}
-.tyd{width:4px;height:4px;border-radius:50%;background:#555;animation:ty 1.1s infinite}
+/* ПУЗЫРИ — правильный стиль мессенджера */
+.pb{
+  background:linear-gradient(135deg,rgba(18,18,32,.98),rgba(13,13,26,.98));
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:12px 12px 12px 3px;
+  padding:5% 7%;font-size:.5em;color:#dfe0f0;
+  max-width:84%;line-height:1.45;
+  opacity:0;transform:translateX(-6px) scale(.97);
+  transition:opacity .3s ease,transform .3s ease;
+  flex-shrink:0;word-break:break-word;
+}
+.pu{
+  background:linear-gradient(135deg,#4840cc,#6c63ff);
+  border-radius:12px 12px 3px 12px;
+  padding:5% 7%;font-size:.5em;color:#fff;
+  max-width:78%;align-self:flex-end;line-height:1.45;
+  opacity:0;transform:translateX(6px) scale(.97);
+  transition:opacity .3s ease,transform .3s ease;
+  box-shadow:0 3px 12px rgba(108,99,255,.4);
+  flex-shrink:0;word-break:break-word;
+}
+.pb.go,.pu.go{opacity:1;transform:none}
+
+/* TYPING */
+.ptyp{display:inline-flex;gap:3px;padding:4% 6%;background:linear-gradient(135deg,rgba(18,18,32,.98),rgba(13,13,26,.98));border:1px solid rgba(255,255,255,.06);border-radius:12px 12px 12px 3px;align-self:flex-start;opacity:0;transition:opacity .25s;flex-shrink:0}
+.ptyp.go{opacity:1}
+.tyd{width:4px;height:4px;border-radius:50%;background:#5555aa;animation:ty 1.1s infinite}
 .tyd:nth-child(2){animation-delay:.18s}.tyd:nth-child(3){animation-delay:.36s}
 @keyframes ty{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-3px);opacity:1}}
 
-/* КАРТОЧКА ТЕЛЕФОНА */
-.p-card{background:rgba(14,14,26,.97);border:1px solid rgba(108,99,255,.22);border-radius:8px;padding:4% 6%;font-size:.47em;color:#ddddf0;line-height:1.4;flex-shrink:0;opacity:0;transform:translateY(5px);transition:opacity .3s,transform .3s;box-shadow:0 -2px 10px rgba(108,99,255,.08)}
-.p-card.on{opacity:1;transform:none}
-.p-cbtns{display:flex;gap:4%;margin-top:4%}
-.p-cbtn{font-size:.85em;padding:3% 8%;border:1px solid rgba(108,99,255,.25);border-radius:5px;color:#8884ff}
-
-/* ПРОГРЕСС В ТЕЛЕФОНЕ */
-.p-bar-wrap{padding:0 4%;flex-shrink:0}
-.p-bar{height:2px;background:linear-gradient(90deg,#6c63ff,#ff6b9d);border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .9s ease}
-.p-bar.on{transform:scaleX(.55)}
-.p-prog{display:flex;justify-content:space-between;padding:2% 4%;font-size:.42em;color:rgba(255,255,255,.28);flex-shrink:0}
-.p-prog span:last-child{color:#8884ff}
+/* КАРТОЧКА БОТА */
+.p-card{
+  background:linear-gradient(135deg,rgba(14,14,28,.98),rgba(9,9,22,.98));
+  border:1px solid rgba(108,99,255,.2);
+  border-radius:10px;padding:4% 5%;
+  font-size:.48em;color:#dfe0f0;line-height:1.45;
+  flex-shrink:0;opacity:0;transform:translateY(6px);
+  transition:opacity .35s,transform .35s;
+  box-shadow:0 -2px 12px rgba(108,99,255,.08);
+  margin:0 1%;
+}
+.p-card.go{opacity:1;transform:none}
+.p-cbtns{display:flex;gap:3%;margin-top:4%;flex-wrap:wrap}
+.p-cbtn{
+  font-size:.85em;padding:3% 7%;
+  background:rgba(108,99,255,.1);
+  border:1px solid rgba(108,99,255,.3);
+  border-radius:6px;color:#9c98ff;
+}
 
 /* ИНПУТ ТЕЛЕФОНА */
-.p-inp{padding:3% 4%;display:flex;gap:4%;flex-shrink:0;opacity:0;transition:opacity .3s}
-.p-inp.on{opacity:1}
-.p-inpf{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(108,99,255,.2);border-radius:12px;padding:4% 8%;font-size:.45em;color:rgba(255,255,255,.22)}
-.p-inps{width:8%;aspect-ratio:1;border-radius:50%;background:#6c63ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.p-inp{padding:2% 3% 3%;display:flex;gap:3%;align-items:center;flex-shrink:0;background:#05050d;border-top:1px solid rgba(255,255,255,.04);opacity:0;transition:opacity .3s}
+.p-inp.go{opacity:1}
+.p-inf{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(108,99,255,.18);border-radius:12px;padding:3.5% 7%;font-size:.44em;color:rgba(255,255,255,.2)}
+.p-ins{width:8%;aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#8b85ff);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(108,99,255,.4)}
+
+/* МЕНЮ ТЕЛЕФОНА */
+.p-menu{flex:1;min-height:0;padding:3% 4%;display:flex;flex-direction:column;gap:2%;background:#05050d}
+.p-mi{
+  background:rgba(14,14,26,.9);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:8px;padding:5% 6%;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:.48em;color:#d8d8ee;
+  opacity:0;transform:translateX(-8px);
+  transition:opacity .28s,transform .28s;
+  flex-shrink:0;
+}
+.p-mi.go{opacity:1;transform:none}
+.p-mi.ac{border-color:rgba(108,99,255,.28);background:rgba(108,99,255,.08);color:#b0abff}
+.p-il{display:flex;align-items:center;gap:5%}
+.p-ar{color:rgba(255,255,255,.18);font-size:.75em}
+
+/* ПРОГРЕСС */
+.p-bw{padding:0 4%;flex-shrink:0}
+.p-bar{height:2.5px;background:linear-gradient(90deg,#6c63ff,#ff6b9d);border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform 1s ease}
+.p-bar.go{transform:scaleX(.55)}
+.p-pg{display:flex;justify-content:space-between;padding:1.5% 4%;font-size:.4em;color:rgba(255,255,255,.26);flex-shrink:0}
+.p-pg span:last-child{color:#8884ff}
 
 /* УВЕДОМЛЕНИЯ */
-.notif-wrap{display:flex;flex-direction:column;gap:clamp(6px,1.5vh,10px);width:100%;max-width:min(360px,88vw)}
-.notif{background:rgba(15,15,26,.97);border:1px solid rgba(108,99,255,.2);border-radius:14px;padding:clamp(8px,2vh,14px) clamp(10px,2.5vw,16px);box-shadow:0 4px 20px rgba(0,0,0,.6),0 0 24px rgba(108,99,255,.08);flex-shrink:0}
-.notif-h{display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.notif-av{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d);display:flex;align-items:center;justify-content:center;font-size:.6rem;flex-shrink:0}
-.notif-app{font-size:.6rem;color:rgba(255,255,255,.4)}
-.notif-time{font-size:.55rem;color:rgba(255,255,255,.2);margin-left:auto}
-.notif-txt{font-size:clamp(.62rem,1.8vw,.75rem);color:#e8e8f5;margin-bottom:2px}
-.notif-sub{font-size:clamp(.55rem,1.5vw,.65rem);color:rgba(255,255,255,.33)}
+.notif{background:rgba(12,12,24,.97);border:1px solid rgba(108,99,255,.18);border-radius:14px;padding:clamp(10px,2.5vh,16px) clamp(12px,3vw,18px);box-shadow:0 4px 24px rgba(0,0,0,.7),0 0 28px rgba(108,99,255,.08);width:100%;max-width:min(340px,86vw)}
+.n-h{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.n-av{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d);display:flex;align-items:center;justify-content:center;font-size:.58rem;flex-shrink:0}
+.n-app{font-size:.6rem;color:rgba(255,255,255,.38)}
+.n-tm{font-size:.54rem;color:rgba(255,255,255,.18);margin-left:auto}
+.n-txt{font-size:clamp(.64rem,1.8vw,.76rem);color:#e0e0f5;margin-bottom:2px}
+.n-sub{font-size:clamp(.56rem,1.5vw,.66rem);color:rgba(255,255,255,.3)}
 
-/* ФИЧИ-СЕТКА */
-.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(5px,1.5vw,10px);width:100%;max-width:min(440px,92vw)}
-.feat-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:clamp(10px,2vw,14px);padding:clamp(8px,2vw,14px);display:flex;flex-direction:column;gap:4px}
-.feat-icon{font-size:clamp(1rem,3vw,1.4rem)}
-.feat-title{font-size:clamp(.68rem,2vw,.82rem);font-weight:500;color:#fff}
-.feat-desc{font-size:clamp(.58rem,1.6vw,.68rem);color:rgba(255,255,255,.38);line-height:1.45}
+/* ФИЧИ */
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(6px,1.5vw,10px);width:100%;max-width:min(420px,90vw)}
+.fc{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.055);border-radius:clamp(10px,2.5vw,14px);padding:clamp(8px,2vw,14px);display:flex;flex-direction:column;gap:4px}
+.fi{font-size:clamp(.95rem,2.8vw,1.3rem)}
+.ft{font-size:clamp(.66rem,1.9vw,.8rem);font-weight:500;color:#fff}
+.fd{font-size:clamp(.56rem,1.5vw,.66rem);color:rgba(255,255,255,.36);line-height:1.4}
 
 /* СТАТЫ */
-.stats-row{display:flex;gap:clamp(12px,4vw,24px);justify-content:center;flex-wrap:wrap}
+.stats{display:flex;gap:clamp(12px,4vw,28px);justify-content:center;flex-wrap:wrap}
 .stat{text-align:center}
-.stat-n{font-family:'Unbounded',sans-serif;font-size:clamp(1.4rem,5vw,2.8rem);font-weight:700;background:linear-gradient(135deg,#6c63ff,#ff6b9d);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.stat-l{font-size:clamp(.55rem,1.6vw,.7rem);color:rgba(255,255,255,.35);margin-top:2px}
+.sn{font-family:'Unbounded',sans-serif;font-size:clamp(1.4rem,5.5vw,3rem);font-weight:700;background:linear-gradient(135deg,#6c63ff,#ff6b9d);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sl{font-size:clamp(.54rem,1.5vw,.68rem);color:rgba(255,255,255,.32);margin-top:2px}
 
-/* СПИСОК ФИЧ */
-.flist{display:flex;flex-direction:column;gap:clamp(3px,1vh,6px);width:100%;max-width:min(360px,88vw)}
-.frow{display:flex;align-items:center;gap:8px;font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5)}
-.frow span:first-child{color:#6c63ff;flex-shrink:0}
+/* СПИСОК */
+.flist{display:flex;flex-direction:column;gap:clamp(4px,1vh,7px);width:100%;max-width:min(340px,86vw)}
+.fr{display:flex;align-items:center;gap:8px;font-size:clamp(.62rem,1.8vw,.76rem);color:rgba(255,255,255,.45)}
+.fr span:first-child{color:#6c63ff;font-size:.7em;flex-shrink:0}
 
 /* CTA */
-.cta{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#6c63ff,#8b85ff);color:#fff;font-size:clamp(.72rem,2vw,.88rem);font-weight:500;padding:clamp(8px,2vh,12px) clamp(16px,4vw,28px);border-radius:12px;cursor:pointer;box-shadow:0 4px 20px rgba(108,99,255,.35);flex-shrink:0}
-.dev{font-size:clamp(.5rem,1.4vw,.62rem);color:rgba(255,255,255,.2);border-top:1px solid rgba(255,255,255,.06);padding-top:clamp(6px,1.5vh,10px);text-align:center;flex-shrink:0}
-.dev a{color:rgba(108,99,255,.55);text-decoration:none}
+.cta-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#5a53e8,#8b85ff);color:#fff;font-size:clamp(.7rem,2vw,.88rem);font-weight:500;padding:clamp(9px,2.2vh,13px) clamp(18px,4.5vw,30px);border-radius:12px;cursor:pointer;box-shadow:0 4px 24px rgba(108,99,255,.4);flex-shrink:0}
+.dev-tag{font-size:clamp(.5rem,1.4vw,.62rem);color:rgba(255,255,255,.18);text-align:center;border-top:1px solid rgba(255,255,255,.05);padding-top:clamp(6px,1.5vh,10px);flex-shrink:0}
+.dev-tag a{color:rgba(108,99,255,.5);text-decoration:none}
+
+/* ИНТРО — точка взрыв */
+#intro-dot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:50;pointer-events:none}
+.dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d);box-shadow:0 0 30px rgba(108,99,255,.8);transition:all .8s cubic-bezier(.4,0,.2,1)}
+.dot.expand{width:120vmax;height:120vmax;opacity:0;background:radial-gradient(circle,rgba(108,99,255,.3),transparent 60%)}
 </style>
 </head>
 <body>
@@ -188,167 +201,168 @@ canvas{position:absolute;inset:0;opacity:.22;pointer-events:none}
 <canvas id="cv"></canvas>
 <div class="glow g1"></div><div class="glow g2"></div>
 
-<!-- S0 ИНТРО -->
-<div class="slide on" id="s0">
+<!-- ИНТРО ТОЧКА -->
+<div id="intro-dot"><div class="dot" id="dot"></div></div>
+
+<!-- S0 -->
+<div class="slide" id="s0">
 <div class="box">
-  <div class="chip up" id="a00"><div class="cdot"></div>WEBFORGE AI · КИСЛОВОДСК</div>
-  <div class="h1 up" id="a01">ИИ-бот для<br><span class="gr">вашего бизнеса</span></div>
-  <div class="ln up" id="a02"></div>
-  <div class="sub up" id="a03">Работает 24/7. Отвечает мгновенно.<br>Принимает заявки пока вы спите.</div>
+  <div class="chip fade" id="a0"><div class="cdot"></div>WEBFORGE AI · КИСЛОВОДСК</div>
+  <div class="h1 fade" id="a1">ИИ-бот для<br><span class="gr">вашего бизнеса</span></div>
+  <div class="ln fade" id="a2"></div>
+  <div class="sub fade" id="a3">Работает 24/7. Отвечает мгновенно.<br>Принимает заявки пока вы спите.</div>
 </div></div>
 
 <!-- S1 МЕНЮ -->
 <div class="slide" id="s1">
 <div class="box">
-  <div class="chip up" id="b00"><div class="cdot"></div>ГЛАВНОЕ МЕНЮ</div>
-  <div class="h2 up" id="b01">Всё в одном <span class="gr">месте</span></div>
-  <div class="sub up" id="b02">Клиент открывает — и сразу видит чёткое меню. Нажал — получил.</div>
-  <div class="phone-wrap up" id="b03">
+  <div class="chip fade" id="b0"><div class="cdot"></div>ГЛАВНОЕ МЕНЮ</div>
+  <div class="h2 fade" id="b1">Всё в одном <span class="gr">месте</span></div>
+  <div class="sub fade" id="b2">Клиент открывает — видит чёткое меню. Нажал — получил.</div>
+  <div class="pw fade" id="b3">
     <div class="phone">
-      <div class="p-island"><div class="p-cam"></div><div class="p-cam b"></div></div>
-      <div class="p-vol p-vol1"></div><div class="p-vol p-vol2"></div><div class="p-pwr"></div>
-      <div class="p-screen"><div class="p-shine"></div>
-        <div class="p-nav"><div class="p-av">🤖</div><div><div class="p-title">WebForge AI</div><div class="p-status"><span class="p-sdot"></span>онлайн</div></div></div>
-        <div class="p-menu-wrap">
-          <div class="p-item" id="mi0"><div class="p-il"><span>💬</span>Свободный вопрос</div><span class="p-arr">›</span></div>
-          <div class="p-item ac" id="mi1"><div class="p-il"><span>📋</span>Составить ТЗ</div><span class="p-arr" style="color:#8884ff">›</span></div>
-          <div class="p-item" id="mi2"><div class="p-il"><span>💰</span>Цены и услуги</div><span class="p-arr">›</span></div>
-          <div class="p-item" id="mi3"><div class="p-il"><span>🖼</span>Примеры работ</div><span class="p-arr">›</span></div>
-          <div class="p-item" id="mi4"><div class="p-il"><span>📝</span>Оставить заявку</div><span class="p-arr">›</span></div>
+      <div class="p-isl"><div class="p-cam s"></div><div class="p-cam b"></div></div>
+      <div class="p-vol pv1"></div><div class="p-vol pv2"></div><div class="p-pwr"></div>
+      <div class="p-scr"><div class="p-sh"></div>
+        <div class="p-nav"><div class="p-av">🤖</div><div><div class="p-ti">WebForge AI</div><div class="p-st"><span class="p-sd"></span>онлайн</div></div></div>
+        <div class="p-menu">
+          <div class="p-mi" id="mi0"><div class="p-il"><span>💬</span>Свободный вопрос</div><span class="p-ar">›</span></div>
+          <div class="p-mi ac" id="mi1"><div class="p-il"><span>📋</span>Составить ТЗ</div><span class="p-ar" style="color:#9c98ff">›</span></div>
+          <div class="p-mi" id="mi2"><div class="p-il"><span>💰</span>Цены и услуги</div><span class="p-ar">›</span></div>
+          <div class="p-mi" id="mi3"><div class="p-il"><span>🖼</span>Примеры работ</div><span class="p-ar">›</span></div>
+          <div class="p-mi" id="mi4"><div class="p-il"><span>📝</span>Заявка</div><span class="p-ar">›</span></div>
         </div>
-      </div><div class="p-home"></div>
+      </div><div class="p-hm"></div>
     </div>
   </div>
-  <div class="flist up" id="b04">
-    <div class="frow"><span>✓</span>Цены · Примеры · ТЗ · Заявка</div>
-    <div class="frow"><span>✓</span>Мгновенный ответ на любой раздел</div>
+  <div class="flist fade" id="b4">
+    <div class="fr"><span>✓</span>Мгновенный доступ ко всем разделам</div>
+    <div class="fr"><span>✓</span>Без лишних слов — нажал и получил</div>
   </div>
 </div></div>
 
-<!-- S2 ИИ КОНСУЛЬТАНТ -->
+<!-- S2 ДИАЛОГ -->
 <div class="slide" id="s2">
 <div class="box">
-  <div class="chip up" id="c00"><div class="cdot"></div>ИИ-КОНСУЛЬТАНТ</div>
-  <div class="h2 up" id="c01">Отвечает <span class="gr">как человек</span></div>
-  <div class="phone-wrap up" id="c02" style="height:clamp(180px,42vh,340px)">
-    <div class="phone">
-      <div class="p-island"><div class="p-cam"></div><div class="p-cam b"></div></div>
-      <div class="p-vol p-vol1"></div><div class="p-vol p-vol2"></div><div class="p-pwr"></div>
-      <div class="p-screen"><div class="p-shine"></div>
-        <div class="p-nav"><div class="p-back">‹ Меню</div><div style="flex:1;text-align:center"><div class="p-title">Свободный вопрос</div></div><div style="width:15%"></div></div>
-        <div class="p-body" id="s2body"></div>
-        <div class="p-card" id="s2card" style="opacity:0;transform:translateY(5px);transition:opacity .35s,transform .35s"><div>Если материалы готовы — сделаем за 2 дня 🔥</div><div class="p-cbtns"><div class="p-cbtn">📝 Заказать</div><div class="p-cbtn">💰 Цены</div></div></div>
-        <div class="p-inp" id="s2inp" style="opacity:0;transition:opacity .3s"><div class="p-inpf">Написать вопрос...</div><div class="p-inps"><svg width="7" height="7" viewBox="0 0 24 24" fill="#fff"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></div></div>
-      </div><div class="p-home"></div>
+  <div class="chip fade" id="c0"><div class="cdot"></div>ИИ-КОНСУЛЬТАНТ</div>
+  <div class="h2 fade" id="c1">Отвечает <span class="gr">как человек</span></div>
+  <div class="pw fade" id="c2" style="width:100%;max-width:min(220px,56vw)">
+    <div class="phone" style="width:100%">
+      <div class="p-isl"><div class="p-cam s"></div><div class="p-cam b"></div></div>
+      <div class="p-vol pv1"></div><div class="p-vol pv2"></div><div class="p-pwr"></div>
+      <div class="p-scr"><div class="p-sh"></div>
+        <div class="p-nav"><div class="p-bk">‹ Меню</div><div style="flex:1;text-align:center"><div class="p-ti">Свободный вопрос</div></div><div style="width:12%"></div></div>
+        <div class="p-body" id="s2b"></div>
+        <div class="p-card" id="s2card"><div>Лендинг от 5 000 ₽ за 3 дня — адаптив, форма, карты.</div><div class="p-cbtns"><div class="p-cbtn">📝 Заказать</div><div class="p-cbtn">💰 Цены</div></div></div>
+        <div class="p-inp" id="s2inp"><div class="p-inf">Написать вопрос...</div><div class="p-ins"><svg width="7" height="7" viewBox="0 0 24 24" fill="#fff"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></div></div>
+      </div><div class="p-hm"></div>
     </div>
   </div>
-  <div class="flist up" id="c03">
-    <div class="frow"><span>✓</span>Понимает вопросы на русском языке</div>
-    <div class="frow"><span>✓</span>Не выдумывает — только факты о нас</div>
-    <div class="frow"><span>✓</span>Мягко подводит к заявке</div>
+  <div class="flist fade" id="c3">
+    <div class="fr"><span>✓</span>Понимает вопросы на русском</div>
+    <div class="fr"><span>✓</span>Мягко подводит к заявке</div>
+    <div class="fr"><span>✓</span>Не выдумывает лишнего</div>
   </div>
 </div></div>
 
 <!-- S3 ТЗ -->
 <div class="slide" id="s3">
 <div class="box">
-  <div class="chip up" id="d00"><div class="cdot"></div>СОСТАВЛЕНИЕ ТЗ</div>
-  <div class="h2 up" id="d01">11 вопросов — <span class="gr">готовое ТЗ</span></div>
-  <div class="phone-wrap up" id="d02" style="height:clamp(180px,42vh,340px)">
-    <div class="phone">
-      <div class="p-island"><div class="p-cam"></div><div class="p-cam b"></div></div>
-      <div class="p-vol p-vol1"></div><div class="p-vol p-vol2"></div><div class="p-pwr"></div>
-      <div class="p-screen"><div class="p-shine"></div>
-        <div class="p-nav"><div class="p-back">‹ Меню</div><div style="flex:1;text-align:center"><div class="p-title">Составление ТЗ</div></div></div>
-        <div class="p-bar-wrap"><div class="p-bar" id="s3bar"></div></div>
-        <div class="p-prog"><span>Вопрос 5 из 11</span><span>45%</span></div>
-        <div class="p-body" style="justify-content:flex-end">
-          <div class="pb on" style="opacity:.12;font-size:.45em">Чем занимается бизнес?</div>
-          <div class="pu on" style="opacity:.22;font-size:.45em">Салон красоты, Кисловодск</div>
-          <div class="pb on" style="opacity:.45;font-size:.45em">Что нужно разработать?</div>
-          <div class="pu on" style="opacity:.65;font-size:.45em">🌐 Сайт + 🤖 Бот</div>
-          <div class="pb on" style="opacity:.85;font-size:.45em">Какие функции нужны?</div>
+  <div class="chip fade" id="d0"><div class="cdot"></div>СОСТАВЛЕНИЕ ТЗ</div>
+  <div class="h2 fade" id="d1">11 вопросов — <span class="gr">готовое ТЗ</span></div>
+  <div class="pw fade" id="d2" style="width:100%;max-width:min(220px,56vw)">
+    <div class="phone" style="width:100%">
+      <div class="p-isl"><div class="p-cam s"></div><div class="p-cam b"></div></div>
+      <div class="p-vol pv1"></div><div class="p-vol pv2"></div><div class="p-pwr"></div>
+      <div class="p-scr"><div class="p-sh"></div>
+        <div class="p-nav"><div class="p-bk">‹ Меню</div><div style="flex:1;text-align:center"><div class="p-ti">Составление ТЗ</div></div></div>
+        <div class="p-bw"><div class="p-bar" id="s3bar"></div></div>
+        <div class="p-pg"><span>Вопрос 5 из 11</span><span>45%</span></div>
+        <div class="p-body" style="justify-content:flex-end;gap:2%">
+          <div class="pb go" style="opacity:.15;font-size:.44em;transition:none">Чем занимается бизнес?</div>
+          <div class="pu go" style="opacity:.28;font-size:.44em;transition:none">Салон красоты, Кисловодск</div>
+          <div class="pb go" style="opacity:.5;font-size:.44em;transition:none">Что нужно разработать?</div>
+          <div class="pu go" style="opacity:.7;font-size:.44em;transition:none">🌐 Сайт + 🤖 Бот</div>
+          <div class="pb go" style="font-size:.44em;transition:none">Какие функции нужны?</div>
         </div>
-        <div style="padding:3% 4%;flex-shrink:0">
-          <div style="background:rgba(14,14,26,.97);border:1px solid rgba(108,99,255,.25);border-radius:7px;padding:4% 5%">
-            <div style="font-size:.42em;color:#8884ff;margin-bottom:3%">Выберите нужные:</div>
-            <div style="display:flex;flex-wrap:wrap;gap:3%">
-              <div class="p-cbtn" style="font-size:.82em">📅 Запись</div>
-              <div class="p-cbtn" style="font-size:.82em">🖼 Галерея</div>
-              <div class="p-cbtn" style="font-size:.82em;background:rgba(108,99,255,.18)">✅ Всё</div>
+        <!-- КНОПКИ ОТВЕТА — красивые маленькие пилюли -->
+        <div style="padding:2.5% 4%;flex-shrink:0">
+          <div style="background:rgba(14,14,28,.98);border:1px solid rgba(108,99,255,.22);border-radius:8px;padding:3.5% 4%">
+            <div style="font-size:.38em;color:#9c98ff;margin-bottom:3%;font-weight:500">Выберите нужные:</div>
+            <div style="display:flex;flex-wrap:wrap;gap:2.5%">
+              <div style="font-size:.38em;padding:2.5% 5%;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);border-radius:20px;color:#b0abff;margin-bottom:2%">📅 Запись</div>
+              <div style="font-size:.38em;padding:2.5% 5%;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);border-radius:20px;color:#b0abff;margin-bottom:2%">🖼 Галерея</div>
+              <div style="font-size:.38em;padding:2.5% 5%;background:rgba(108,99,255,.18);border:1px solid rgba(108,99,255,.45);border-radius:20px;color:#d0ccff;margin-bottom:2%">✅ Всё</div>
             </div>
           </div>
         </div>
-      </div><div class="p-home"></div>
+      </div><div class="p-hm"></div>
     </div>
   </div>
-  <div class="flist up" id="d03">
-    <div class="frow"><span>✓</span>Кнопки быстрого ответа на каждый вопрос</div>
-    <div class="frow"><span>✓</span>ИИ формирует документ автоматически</div>
+  <div class="flist fade" id="d3">
+    <div class="fr"><span>✓</span>Кнопки быстрого ответа на каждый вопрос</div>
+    <div class="fr"><span>✓</span>ИИ формирует документ автоматически</div>
   </div>
 </div></div>
 
 <!-- S4 УВЕДОМЛЕНИЯ -->
 <div class="slide" id="s4">
 <div class="box">
-  <div class="chip up" id="e00"><div class="cdot"></div>УВЕДОМЛЕНИЯ</div>
-  <div class="h2 up" id="e01">Менеджер <span class="gr">в курсе сразу</span></div>
-  <div class="notif-wrap">
-    <div class="notif up" id="e02">
-      <div class="notif-h"><div class="notif-av">🤖</div><span class="notif-app">WebForge AI</span><span class="notif-time">сейчас</span></div>
-      <div class="notif-txt">📩 Новая заявка с сайта!</div>
-      <div class="notif-sub">Никита · Сайт + бот · 10–20 тыс ₽</div>
-    </div>
-    <div class="notif up" id="e03" style="transition-delay:.35s">
-      <div class="notif-h"><div class="notif-av">🤖</div><span class="notif-app">WebForge AI</span><span class="notif-time">сейчас</span></div>
-      <div class="notif-txt">📋 Новое ТЗ готово!</div>
-      <div class="notif-sub">Мария · Салон красоты · Кисловодск</div>
-    </div>
+  <div class="chip fade" id="e0"><div class="cdot"></div>УВЕДОМЛЕНИЯ</div>
+  <div class="h2 fade" id="e1">Менеджер <span class="gr">в курсе сразу</span></div>
+  <div class="notif fade" id="e2">
+    <div class="n-h"><div class="n-av">🤖</div><span class="n-app">WebForge AI</span><span class="n-tm">сейчас</span></div>
+    <div class="n-txt">📩 Новая заявка с сайта!</div>
+    <div class="n-sub">Никита · Сайт + бот · 10–20 тыс ₽</div>
   </div>
-  <div class="flist up" id="e04" style="transition-delay:.5s">
-    <div class="frow"><span>✓</span>Имя, контакт, услуга и бюджет</div>
-    <div class="frow"><span>✓</span>Ссылка на клиента — один тап и ответил</div>
-    <div class="frow"><span>✓</span>Приходит мгновенно в Telegram</div>
+  <div class="notif fade" id="e3" style="transition-delay:.3s">
+    <div class="n-h"><div class="n-av">🤖</div><span class="n-app">WebForge AI</span><span class="n-tm">сейчас</span></div>
+    <div class="n-txt">📋 Новое ТЗ готово!</div>
+    <div class="n-sub">Мария · Салон красоты · Кисловодск</div>
+  </div>
+  <div class="flist fade" id="e4" style="transition-delay:.5s">
+    <div class="fr"><span>✓</span>Имя, контакт и детали заявки</div>
+    <div class="fr"><span>✓</span>Один тап — и отвечаешь клиенту</div>
   </div>
 </div></div>
 
-<!-- S5 ВСЕ ВОЗМОЖНОСТИ -->
+<!-- S5 ФИЧИ -->
 <div class="slide" id="s5">
 <div class="box">
-  <div class="chip up" id="f00"><div class="cdot"></div>ВСЕ ВОЗМОЖНОСТИ</div>
-  <div class="h2 up" id="f01">Что умеет <span class="gr">бот</span></div>
-  <div class="feat-grid up" id="f02">
-    <div class="feat-card"><div class="feat-icon">💬</div><div class="feat-title">Свободный диалог</div><div class="feat-desc">Отвечает на любые вопросы об услугах и ценах</div></div>
-    <div class="feat-card"><div class="feat-icon">📋</div><div class="feat-title">Составление ТЗ</div><div class="feat-desc">11 вопросов — готовый документ</div></div>
-    <div class="feat-card"><div class="feat-icon">📩</div><div class="feat-title">Приём заявок</div><div class="feat-desc">Имя, телефон, услуга — мгновенно менеджеру</div></div>
-    <div class="feat-card"><div class="feat-icon">🖼</div><div class="feat-title">Примеры работ</div><div class="feat-desc">Показывает сайты прямо в чате</div></div>
-    <div class="feat-card"><div class="feat-icon">⏰</div><div class="feat-title">Работа 24/7</div><div class="feat-desc">Не спит и не уходит на обед</div></div>
-    <div class="feat-card"><div class="feat-icon">🔔</div><div class="feat-title">Уведомления</div><div class="feat-desc">Каждая заявка сразу в Telegram</div></div>
+  <div class="chip fade" id="f0"><div class="cdot"></div>ВСЕ ВОЗМОЖНОСТИ</div>
+  <div class="h2 fade" id="f1">Что умеет <span class="gr">бот</span></div>
+  <div class="feat-grid fade" id="f2">
+    <div class="fc"><div class="fi">💬</div><div class="ft">Свободный диалог</div><div class="fd">Отвечает на вопросы об услугах и ценах</div></div>
+    <div class="fc"><div class="fi">📋</div><div class="ft">Составление ТЗ</div><div class="fd">11 вопросов — готовый документ</div></div>
+    <div class="fc"><div class="fi">📩</div><div class="ft">Приём заявок</div><div class="fd">Имя, телефон — мгновенно менеджеру</div></div>
+    <div class="fc"><div class="fi">🖼</div><div class="ft">Примеры работ</div><div class="fd">Показывает сайты прямо в чате</div></div>
+    <div class="fc"><div class="fi">⏰</div><div class="ft">Работа 24/7</div><div class="fd">Не спит и не уходит на обед</div></div>
+    <div class="fc"><div class="fi">🔔</div><div class="ft">Уведомления</div><div class="fd">Каждая заявка сразу в Telegram</div></div>
   </div>
 </div></div>
 
 <!-- S6 СТАТЫ -->
 <div class="slide" id="s6">
 <div class="box">
-  <div class="chip up" id="g00"><div class="cdot"></div>В ЦИФРАХ</div>
-  <div class="h2 up" id="g01">Почему это <span class="gr">работает</span></div>
-  <div class="stats-row up" id="g02">
-    <div class="stat"><div class="stat-n">24/7</div><div class="stat-l">Без перерывов</div></div>
-    <div class="stat"><div class="stat-n">&lt;1с</div><div class="stat-l">Время ответа</div></div>
-    <div class="stat"><div class="stat-n">11</div><div class="stat-l">Вопросов в ТЗ</div></div>
-    <div class="stat"><div class="stat-n">∞</div><div class="stat-l">Клиентов сразу</div></div>
+  <div class="chip fade" id="g0"><div class="cdot"></div>В ЦИФРАХ</div>
+  <div class="h2 fade" id="g1">Почему это <span class="gr">работает</span></div>
+  <div class="stats fade" id="g2">
+    <div class="stat"><div class="sn">24/7</div><div class="sl">Без перерывов</div></div>
+    <div class="stat"><div class="sn">&lt;1с</div><div class="sl">Время ответа</div></div>
+    <div class="stat"><div class="sn">11</div><div class="sl">Вопросов в ТЗ</div></div>
+    <div class="stat"><div class="sn">∞</div><div class="sl">Клиентов сразу</div></div>
   </div>
-  <div class="sub up" id="g03" style="transition-delay:.3s">Пока вы занимаетесь делами — бот принимает клиентов и отправляет заявки.</div>
+  <div class="sub fade" id="g3" style="transition-delay:.25s">Пока вы занимаетесь делами — бот работает за вас.</div>
 </div></div>
 
 <!-- S7 CTA -->
 <div class="slide" id="s7">
 <div class="box">
-  <div class="chip up" id="h00"><div class="cdot"></div>WEBFORGE AI · КИСЛОВОДСК</div>
-  <div class="h1 up" id="h01">Подключите<br><span class="gr">уже сегодня</span></div>
-  <div class="sub up" id="h02">Telegram-бот с ИИ — от 10 000 ₽<br>Первая консультация бесплатно</div>
-  <div class="cta up" id="h03">Написать менеджеру →</div>
-  <div class="dev up" id="h04">@LyudmilaVadimovna1 · Telegram<br><br>Разработано · <a href="https://t.me/samurai9q">@samurai9q</a></div>
+  <div class="chip fade" id="h0"><div class="cdot"></div>WEBFORGE AI · КИСЛОВОДСК</div>
+  <div class="h1 fade" id="h1">Подключите<br><span class="gr">уже сегодня</span></div>
+  <div class="sub fade" id="h2">Telegram-бот с ИИ — от 10 000 ₽<br>Первая консультация бесплатно</div>
+  <div class="cta-btn fade" id="h3">Написать менеджеру →</div>
+  <div class="dev-tag fade" id="h4">@LyudmilaVadimovna1 · Telegram<br><br>Разработано · <a href="https://t.me/samurai9q">@samurai9q</a></div>
 </div></div>
 
 </div>
@@ -356,118 +370,123 @@ canvas{position:absolute;inset:0;opacity:.22;pointer-events:none}
 // ЧАСТИЦЫ
 const cv=document.getElementById('cv');
 const cx=cv.getContext('2d');
-function rsz(){cv.width=window.innerWidth;cv.height=window.innerHeight}rsz();
+function rsz(){cv.width=window.innerWidth;cv.height=window.innerHeight;pts&&pts.forEach(p=>{p.x*=cv.width/pw;p.y*=cv.height/ph});pw=cv.width;ph=cv.height}
+let pw=window.innerWidth,ph=window.innerHeight;
+cv.width=pw;cv.height=ph;
 window.addEventListener('resize',rsz);
-const pts=Array.from({length:40},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,r:Math.random()*.9+.3,o:Math.random()*.18+.05}));
+const pts=Array.from({length:40},()=>({x:Math.random()*pw,y:Math.random()*ph,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,r:Math.random()*.9+.3,o:Math.random()*.16+.05}));
 (function loop(){
   cx.clearRect(0,0,cv.width,cv.height);
-  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=cv.width;if(p.x>cv.width)p.x=0;if(p.y<0)p.y=cv.height;if(p.y>cv.height)p.y=0;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fillStyle=`rgba(108,99,255,${p.o})`;cx.fill();});
-  pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{const dd=Math.hypot(a.x-b.x,a.y-b.y);if(dd<80){cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.strokeStyle=`rgba(108,99,255,${.04*(1-dd/80)})`;cx.stroke();}}));
+  pts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=cv.width;if(p.x>cv.width)p.x=0;
+    if(p.y<0)p.y=cv.height;if(p.y>cv.height)p.y=0;
+    cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    cx.fillStyle=`rgba(108,99,255,${p.o})`;cx.fill();
+  });
+  pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{
+    const dd=Math.hypot(a.x-b.x,a.y-b.y);
+    if(dd<80){cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.strokeStyle=`rgba(108,99,255,${.04*(1-dd/80)})`;cx.stroke();}
+  }));
   requestAnimationFrame(loop);
 })();
 
 let cur=0;
 const TOTAL=8;
-const DUR=[4500,5500,7000,6000,6000,5500,5000,99999];
-const sh=el=>{if(el)el.classList.add('s','on')};
+const DUR=[5000,5500,7500,6500,6000,5500,5000,99999];
+const go=el=>{if(el){el.classList.add('go');if(el.classList.contains('ln'))setTimeout(()=>el.classList.add('go'),10);}};
 const d=ms=>new Promise(r=>setTimeout(r,ms));
+const eid=id=>document.getElementById(id);
+
+// ИНТРО АНИМАЦИЯ — точка разворачивается
+async function introAnim(){
+  const dot=eid('dot');
+  await d(200);
+  // Пульсация
+  dot.style.transform='scale(1.5)';dot.style.transition='transform .3s ease';
+  await d(300);dot.style.transform='scale(.8)';
+  await d(200);dot.style.transform='scale(1.2)';
+  await d(150);
+  // Взрыв
+  dot.classList.add('expand');
+  await d(900);
+  eid('intro-dot').style.display='none';
+}
 
 async function r0(){
-  await d(200);sh(document.getElementById('a00'));
-  await d(350);sh(document.getElementById('a01'));
-  await d(300);const l=document.getElementById('a02');l.classList.add('on');setTimeout(()=>l.classList.add('s'),50);
-  await d(350);sh(document.getElementById('a03'));
+  await introAnim();
+  await d(100);go(eid('a0'));await d(320);go(eid('a1'));
+  await d(280);const l=eid('a2');l.style.transition='width 1s ease';setTimeout(()=>l.classList.add('go'),10);
+  await d(320);go(eid('a3'));
 }
 async function r1(){
-  await d(200);sh(document.getElementById('b00'));
-  await d(300);sh(document.getElementById('b01'));
-  await d(280);sh(document.getElementById('b02'));
-  await d(350);sh(document.getElementById('b03'));
-  await d(600);['mi0','mi1','mi2','mi3','mi4'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('on'),i*120));
-  await d(900);sh(document.getElementById('b04'));
+  go(eid('b0'));await d(300);go(eid('b1'));await d(280);go(eid('b2'));
+  await d(350);go(eid('b3'));
+  await d(600);['mi0','mi1','mi2','mi3','mi4'].forEach((id,i)=>setTimeout(()=>eid(id).classList.add('go'),i*110));
+  await d(900);go(eid('b4'));
 }
 async function r2(){
-  await d(200);sh(document.getElementById('c00'));
-  await d(300);sh(document.getElementById('c01'));
-  await d(350);sh(document.getElementById('c02'));
-  const body=document.getElementById('s2body');
-  body.innerHTML='';
-  await d(900); // ждём появления телефона
-  // Показываем сообщения по одному
-  const addMsg=(cls,txt)=>{
-    const el=document.createElement('div');
-    el.className=cls;el.textContent=txt;
-    body.appendChild(el);
-    requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('on')));
+  go(eid('c0'));await d(300);go(eid('c1'));
+  await d(350);go(eid('c2'));
+  const body=eid('s2b');body.innerHTML='';
+  await d(900);
+  const add=(cls,txt)=>{
+    const el=document.createElement('div');el.className=cls;el.textContent=txt;
+    body.appendChild(el);requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('go')));
     return el;
   };
-  const showTyp=async()=>{
-    const ty=document.createElement('div');ty.className='ptyp';
-    ty.innerHTML='<div class="tyd"></div><div class="tyd"></div><div class="tyd"></div>';
-    body.appendChild(ty);await d(40);ty.classList.add('on');
-    await d(650);ty.classList.remove('on');await d(200);if(ty.parentNode)ty.remove();
+  const typ=async()=>{
+    const t=document.createElement('div');t.className='ptyp';
+    t.innerHTML='<div class="tyd"></div><div class="tyd"></div><div class="tyd"></div>';
+    body.appendChild(t);await d(40);t.classList.add('go');
+    await d(680);t.classList.remove('go');await d(220);if(t.parentNode)t.remove();
   };
-
-  await d(300);addMsg('pb','Привет! Задайте любой вопрос 😊');
-  await d(700);addMsg('pu','Сколько стоит сайт для кафе?');
-  await d(500);await showTyp();
-  addMsg('pb','Лендинг от 5 000 ₽, за 3 дня. Адаптив, форма, карты.');
-  await d(700);addMsg('pu','А быстрее можно?');
-  await d(500);await showTyp();
-  addMsg('pb','Если материалы готовы — сделаем за 2 дня 🔥');
-  // Показываем карточку и инпут
-  await d(400);
-  const sc=document.getElementById('s2card');
-  sc.style.opacity='1';sc.style.transform='translateY(0)';
-  const si=document.getElementById('s2inp');
-  si.style.opacity='1';
-  await d(300);sh(document.getElementById('c03'));
+  add('pb','Привет! Задайте любой вопрос 😊');
+  await d(650);add('pu','Сколько стоит сайт для кафе?');
+  await d(500);await typ();
+  add('pb','Лендинг от 5 000 ₽ за 3 дня.');
+  await d(600);add('pu','Вот блин... 😔 дорого');
+  await d(500);await typ();
+  add('pb','Хаха 😄 Но это меньше одного потерянного клиента!');
+  await d(500);
+  const sc=eid('s2card');sc.style.opacity='1';sc.style.transform='translateY(0)';
+  eid('s2inp').classList.add('go');
+  await d(350);go(eid('c3'));
 }
 async function r3(){
-  await d(200);sh(document.getElementById('d00'));
-  await d(300);sh(document.getElementById('d01'));
-  await d(350);sh(document.getElementById('d02'));
-  await d(700);document.getElementById('s3bar').classList.add('on');
-  await d(500);sh(document.getElementById('d03'));
+  go(eid('d0'));await d(300);go(eid('d1'));
+  await d(350);go(eid('d2'));
+  await d(700);eid('s3bar').classList.add('go');
+  await d(500);go(eid('d3'));
 }
 async function r4(){
-  await d(200);sh(document.getElementById('e00'));
-  await d(300);sh(document.getElementById('e01'));
-  await d(500);sh(document.getElementById('e02'));
-  await d(600);sh(document.getElementById('e03'));
-  await d(500);sh(document.getElementById('e04'));
+  go(eid('e0'));await d(300);go(eid('e1'));
+  await d(500);go(eid('e2'));await d(550);go(eid('e3'));
+  await d(450);go(eid('e4'));
 }
 async function r5(){
-  await d(200);sh(document.getElementById('f00'));
-  await d(300);sh(document.getElementById('f01'));
-  await d(350);sh(document.getElementById('f02'));
+  go(eid('f0'));await d(300);go(eid('f1'));await d(320);go(eid('f2'));
 }
 async function r6(){
-  await d(200);sh(document.getElementById('g00'));
-  await d(300);sh(document.getElementById('g01'));
-  await d(300);sh(document.getElementById('g02'));
-  await d(300);sh(document.getElementById('g03'));
+  go(eid('g0'));await d(300);go(eid('g1'));await d(280);go(eid('g2'));await d(280);go(eid('g3'));
 }
 async function r7(){
-  await d(200);sh(document.getElementById('h00'));
-  await d(350);sh(document.getElementById('h01'));
-  await d(300);sh(document.getElementById('h02'));
-  await d(280);sh(document.getElementById('h03'));
-  await d(200);sh(document.getElementById('h04'));
+  go(eid('h0'));await d(350);go(eid('h1'));await d(300);go(eid('h2'));
+  await d(280);go(eid('h3'));await d(200);go(eid('h4'));
 }
 
 const runners=[r0,r1,r2,r3,r4,r5,r6,r7];
 
 async function goTo(n){
   if(n<0||n>=TOTAL)return;
-  const prev=document.getElementById('s'+cur);
-  prev.style.transition='opacity .35s';prev.style.opacity='0';
-  await d(350);prev.classList.remove('on');prev.style.cssText='';
-  cur=n;const next=document.getElementById('s'+n);next.classList.add('on');
+  const prev=eid('s'+cur);
+  prev.style.transition='opacity .38s ease';prev.style.opacity='0';
+  await d(380);prev.classList.remove('on');prev.style.cssText='';
+  cur=n;eid('s'+n).classList.add('on');
   runners[n]();
 }
 
-(async()=>{runners[0]();for(let i=1;i<TOTAL;i++){await d(DUR[i-1]);await goTo(i);}})();
+(async()=>{eid('s0').classList.add('on');runners[0]();for(let i=1;i<TOTAL;i++){await d(DUR[i-1]);await goTo(i);}})();
 
 document.addEventListener('click',e=>e.clientX>window.innerWidth/2?goTo(Math.min(cur+1,TOTAL-1)):goTo(Math.max(cur-1,0)));
 document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')goTo(Math.min(cur+1,TOTAL-1));if(e.key==='ArrowLeft')goTo(Math.max(cur-1,0));});
