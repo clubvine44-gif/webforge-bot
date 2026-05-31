@@ -21,6 +21,7 @@ canvas{position:absolute;inset:0;opacity:.25}
 
 /* СЦЕНЫ */
 .scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;padding:clamp(.5rem,2vw,1.5rem);overflow:hidden}
+@media(max-width:640px){.scene{justify-content:flex-start;padding-top:clamp(1.5rem,8vw,3rem)}}
 .scene.active{opacity:1;pointer-events:all}
 
 /* АНИМИРОВАННЫЕ ЭЛЕМЕНТЫ */
@@ -51,14 +52,40 @@ canvas{position:absolute;inset:0;opacity:.25}
 /* SPLIT */
 .split{display:flex;align-items:center;gap:clamp(.875rem,3.5vw,3rem);justify-content:center;flex-wrap:wrap;width:100%;max-width:900px}
 .sleft{flex:1;min-width:min(200px,85vw);max-width:360px;text-align:left}
-@media(max-width:600px){
-  .sleft{text-align:center;max-width:100%}
-  .txts{max-width:100%}
-  .split{gap:.5rem}
+@media(max-width:640px){
+  /* Мобильный — вертикально, компактно */
+  .split{flex-direction:column;gap:.5rem;align-items:center}
+  .sleft{text-align:center;max-width:94vw;min-width:0}
+  .txts{max-width:94vw;font-size:.75rem}
+  .sleft .lf,.sleft .rt{display:flex;flex-direction:column;align-items:center}
+  /* Текст списка — горизонтально на мобиле */
+  .sleft > div:last-child{flex-direction:row!important;flex-wrap:wrap;justify-content:center;gap:.3rem .75rem;margin-top:.5rem}
+  /* Телефон меньше на мобиле */
+  .phone{width:clamp(110px,40vw,160px)!important}
+  .pscr{height:clamp(210px,35vw,320px)!important}
+  .pw{margin:0}
+  /* Фичи */
   .feat-grid{gap:.35rem}
-  .feat-card{padding:.55rem .65rem}
+  .feat-card{padding:.5rem .6rem;border-radius:12px}
+  .feat-icon{font-size:1.1rem;margin-bottom:.2rem}
+  .feat-title{font-size:.72rem}
+  .feat-desc{font-size:.6rem}
+  /* Статы */
   .stats{gap:.5rem}
-  .stat-num{font-size:clamp(1.3rem,4.5vw,2.5rem)}
+  .stat-num{font-size:clamp(1.4rem,5vw,2.5rem)}
+  .stat-lbl{font-size:.6rem}
+  /* Заголовки */
+  .h1{font-size:clamp(1.5rem,7.5vw,3.5rem);margin:.25rem 0}
+  .h2{font-size:clamp(1.2rem,5.5vw,2.2rem);margin:.2rem 0}
+  .chip{margin-bottom:.35rem}
+  .ln{margin:.4rem auto}
+  .txt{font-size:.75rem;line-height:1.55}
+  /* Notif */
+  .notif{padding:.55rem .75rem;border-radius:12px;max-width:88vw}
+  .notif-text{font-size:.7rem}
+  .notif-sub{font-size:.6rem}
+  /* CTA */
+  .cta-btn{font-size:.78rem;padding:.6rem 1.4rem;margin-top:.75rem}
 }
 
 /* ТЕЛЕФОН */
@@ -342,7 +369,7 @@ canvas{position:absolute;inset:0;opacity:.25}
 <div style="text-align:center;z-index:2;position:relative;width:100%;max-width:min(760px,94vw)">
   <div class="chip up" id="s5c"><div class="chipdot"></div><div class="chiptxt">ВСЕ ВОЗМОЖНОСТИ</div></div>
   <div class="h2 up" id="s5h">Что умеет <span class="gr">бот</span></div>
-  <div class="feat-grid" id="s5g">
+  <div class="feat-grid" id="s5g" style="margin-top:.5rem">
     <div class="feat-card" id="fc0"><div class="feat-icon">💬</div><div class="feat-title">Свободный диалог</div><div class="feat-desc">Отвечает на любые вопросы об услугах, ценах и сроках</div></div>
     <div class="feat-card" id="fc1" style="transition-delay:.08s"><div class="feat-icon">📋</div><div class="feat-title">Составление ТЗ</div><div class="feat-desc">11 вопросов — готовый документ для разработки</div></div>
     <div class="feat-card" id="fc2" style="transition-delay:.16s"><div class="feat-icon">📩</div><div class="feat-title">Приём заявок</div><div class="feat-desc">Имя, телефон, услуга — мгновенно менеджеру</div></div>
