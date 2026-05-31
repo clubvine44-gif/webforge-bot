@@ -601,7 +601,12 @@ function renderHistory(){
       chatHistory.appendChild(wrap);
     }
   });
-  chatHistory.scrollTop=chatHistory.scrollHeight;
+  // Принудительный скролл — несколько раз для надёжности
+  const doScroll=()=>{ chatHistory.scrollTop=chatHistory.scrollHeight+9999; };
+  doScroll();
+  requestAnimationFrame(doScroll);
+  setTimeout(doScroll, 50);
+  setTimeout(doScroll, 200);
 }
 
 // ===== AI =====
@@ -740,6 +745,8 @@ function tzNext(){
   if(tzStep>=TZ.length){tzFinish();return;}
   const q=TZ[tzStep];
   showCard(`Вопрос ${tzStep+1} из ${TZ.length}: ${q.q.split('\n')[0]}`,[]);
+  // Скролл истории вниз после добавления сообщений
+  setTimeout(()=>{ chatHistory.scrollTop=chatHistory.scrollHeight+9999; }, 100);
   setTimeout(tzAsk,500);
 }
 
