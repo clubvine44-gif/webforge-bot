@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>WebForge AI — Умный бот для бизнеса</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Inter',sans-serif}
+#stage{width:100vw;height:100vh;background:#04040a;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+
+canvas{position:absolute;inset:0;opacity:.25}
+.glow{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none}
+.g1{width:70vw;height:70vw;max-width:600px;max-height:600px;background:radial-gradient(circle,rgba(108,99,255,.28) 0%,transparent 70%);top:-20%;left:-20%;animation:d1 10s ease-in-out infinite}
+.g2{width:50vw;height:50vw;max-width:450px;max-height:450px;background:radial-gradient(circle,rgba(255,107,157,.18) 0%,transparent 70%);bottom:-15%;right:-15%;animation:d2 12s ease-in-out infinite}
+.g3{width:40vw;height:40vw;max-width:350px;max-height:350px;background:radial-gradient(circle,rgba(29,200,150,.12) 0%,transparent 70%);top:40%;left:60%;animation:d3 8s ease-in-out infinite}
+@keyframes d1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
+@keyframes d2{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-40px)}}
+@keyframes d3{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-45%,-55%)}}
+
+/* СЦЕНЫ */
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;padding:clamp(.75rem,3vw,2rem)}
+.scene.active{opacity:1;pointer-events:all}
+
+/* АНИМИРОВАННЫЕ ЭЛЕМЕНТЫ */
+.up{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.up.s{opacity:1;transform:none}
+.sc{opacity:0;transform:scale(.93);transition:opacity .6s ease,transform .6s ease}
+.sc.s{opacity:1;transform:none}
+.lf{opacity:0;transform:translateX(-20px);transition:opacity .5s ease,transform .5s ease}
+.lf.s{opacity:1;transform:none}
+.rt{opacity:0;transform:translateX(20px);transition:opacity .5s ease,transform .5s ease}
+.rt.s{opacity:1;transform:none}
+
+/* ТИПОГРАФИКА */
+.chip{display:inline-flex;align-items:center;gap:.4rem;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.22);border-radius:100px;padding:.3rem .85rem;margin-bottom:.75rem}
+.chipdot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
+.chiptxt{font-size:clamp(.55rem,1.8vw,.7rem);color:rgba(255,255,255,.6);letter-spacing:.07em}
+.h1{font-family:'Unbounded',sans-serif;font-size:clamp(1.8rem,7.5vw,5rem);font-weight:700;line-height:1.07;text-align:center;color:#fff;margin:.5rem 0}
+.h1 .gr{background:linear-gradient(135deg,#6c63ff,#ff6b9d,#6c63ff);background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gs 3s infinite}
+@keyframes gs{0%{background-position:0%}50%{background-position:100%}100%{background-position:0%}}
+.h2{font-family:'Unbounded',sans-serif;font-size:clamp(1.3rem,4.5vw,3rem);font-weight:600;line-height:1.1;color:#fff;margin:.5rem 0}
+.h2 .gr{background:linear-gradient(135deg,#6c63ff,#ff6b9d,#6c63ff);background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gs 3s infinite}
+.txt{font-size:clamp(.78rem,2.5vw,1.1rem);color:rgba(255,255,255,.42);line-height:1.65;max-width:min(500px,88vw)}
+.txts{font-size:clamp(.72rem,2.2vw,.95rem);color:rgba(255,255,255,.42);line-height:1.6;max-width:min(340px,85vw)}
+.ln{width:0;height:1px;background:linear-gradient(90deg,transparent,rgba(108,99,255,.5),transparent);margin:.65rem auto;transition:width .85s}
+.ln.s{width:min(160px,40vw)}
+
+/* SPLIT */
+.split{display:flex;align-items:center;gap:clamp(1.5rem,5vw,4rem);justify-content:center;flex-wrap:wrap;width:100%;max-width:900px}
+.sleft{flex:1;min-width:min(220px,85vw);max-width:380px;text-align:left}
+@media(max-width:600px){.sleft{text-align:center;max-width:100%}.txts{max-width:100%}}
+
+/* ТЕЛЕФОН */
+.pw{filter:drop-shadow(0 0 40px rgba(108,99,255,.2))}
+.phone{
+  width:clamp(148px,24vw,215px);
+  background:linear-gradient(180deg,#0e0e1c 0%,#07070f 100%);
+  border-radius:clamp(30px,5.5vw,44px);
+  border:1.5px solid rgba(255,255,255,.08);
+  position:relative;
+  box-shadow:0 0 0 1px rgba(108,99,255,.12),0 clamp(24px,5vw,44px) clamp(60px,10vw,100px) rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.05);
+  overflow:hidden;
+}
+.island{position:absolute;top:clamp(8px,1.5vw,12px);left:50%;transform:translateX(-50%);width:clamp(52px,9.5vw,76px);height:clamp(6px,1.1vw,9px);background:#060610;border-radius:100px;z-index:30;display:flex;align-items:center;justify-content:flex-end;padding-right:clamp(5px,1vw,8px);gap:3px}
+.cam{width:clamp(4px,.75vw,6px);height:clamp(4px,.75vw,6px);border-radius:50%;background:rgba(255,255,255,.07)}
+.cam.lg{width:clamp(5px,.9vw,7px);height:clamp(5px,.9vw,7px)}
+.vl{position:absolute;left:-2px;border-radius:2px 0 0 2px;background:rgba(255,255,255,.06);width:2px}
+.vl1{top:22%;height:8%}.vl2{top:33%;height:13%}
+.pw-btn{position:absolute;right:-2px;top:27%;height:12%;border-radius:0 2px 2px 0;background:rgba(255,255,255,.06);width:2px}
+.pscr{height:clamp(295px,48vw,445px);overflow:hidden;position:relative;display:flex;flex-direction:column;padding-top:clamp(22px,4vw,30px)}
+.shine{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.035) 0%,transparent 50%);z-index:20;pointer-events:none}
+.pbot{position:absolute;bottom:clamp(7px,1.3vw,10px);left:50%;transform:translateX(-50%);width:clamp(38px,7.5vw,56px);height:clamp(3px,.55vw,4px);background:rgba(255,255,255,.1);border-radius:100px;z-index:30}
+
+/* ЭКРАНЫ */
+.ps{position:absolute;top:clamp(22px,4vw,30px);left:0;right:0;bottom:0;opacity:0;transition:opacity .4s;display:flex;flex-direction:column}
+.ps.on{opacity:1}
+.pnav{background:rgba(12,12,22,.97);padding:clamp(6px,1.2vw,9px) clamp(8px,1.5vw,11px);border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:5px;flex-shrink:0}
+.pav{width:clamp(20px,3.8vw,27px);height:clamp(20px,3.8vw,27px);border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d);display:flex;align-items:center;justify-content:center;font-size:clamp(.5rem,1vw,.65rem);flex-shrink:0;box-shadow:0 0 10px rgba(108,99,255,.5)}
+.ptitle{font-size:clamp(.48rem,.95vw,.63rem);font-weight:500;color:#eeeef5}
+.pstatus{font-size:clamp(.4rem,.8vw,.52rem);color:rgba(255,255,255,.35);display:flex;align-items:center;gap:2px}
+.sdot{width:4px;height:4px;border-radius:50%;background:#4ade80;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.pbk{font-size:clamp(.4rem,.8vw,.52rem);color:rgba(255,255,255,.38);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:2px 6px}
+
+/* ЧАТБАБЛЫ */
+.pbody{flex:1;padding:clamp(5px,1vw,7px);display:flex;flex-direction:column;gap:clamp(4px,.75vw,5px);overflow:hidden;background:#06060e}
+.pb{background:linear-gradient(135deg,#111122,#0d0d1e);border:1px solid rgba(255,255,255,.05);border-radius:clamp(8px,1.5vw,12px) clamp(8px,1.5vw,12px) clamp(8px,1.5vw,12px) 2px;padding:clamp(5px,.9vw,7px) clamp(7px,1.3vw,10px);font-size:clamp(.46rem,.9vw,.62rem);color:#ddddf0;max-width:88%;line-height:1.45;opacity:0;transform:translateX(-8px);transition:opacity .32s,transform .32s}
+.pu{background:linear-gradient(135deg,#4a43c8,#6c63ff);border-radius:clamp(8px,1.5vw,12px) clamp(8px,1.5vw,12px) 2px clamp(8px,1.5vw,12px);padding:clamp(5px,.9vw,7px) clamp(7px,1.3vw,10px);font-size:clamp(.46rem,.9vw,.62rem);color:#fff;max-width:80%;align-self:flex-end;line-height:1.45;opacity:0;transform:translateX(8px);transition:opacity .32s,transform .32s;box-shadow:0 2px 14px rgba(108,99,255,.35)}
+.pb.on,.pu.on{opacity:1;transform:none}
+.ptime{font-size:clamp(.36rem,.7vw,.46rem);opacity:.32;margin-top:1px}
+.ptr{text-align:right}
+
+/* TYPING */
+.ptyp{display:flex;gap:3px;align-items:center;padding:clamp(5px,.9vw,7px) clamp(7px,1.3vw,10px);background:linear-gradient(135deg,#111122,#0d0d1e);border:1px solid rgba(255,255,255,.05);border-radius:clamp(8px,1.5vw,12px) clamp(8px,1.5vw,12px) clamp(8px,1.5vw,12px) 2px;max-width:52px;opacity:0;transition:opacity .3s;flex-shrink:0}
+.ptyp.on{opacity:1}
+.tyd{width:clamp(3px,.55vw,4px);height:clamp(3px,.55vw,4px);border-radius:50%;background:#6b6b80;animation:ty 1.1s infinite}
+.tyd:nth-child(2){animation-delay:.18s}.tyd:nth-child(3){animation-delay:.36s}
+@keyframes ty{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-3px);opacity:1}}
+
+/* МЕНЮ */
+.pmenu{flex:1;padding:clamp(5px,1vw,7px);display:flex;flex-direction:column;gap:clamp(3px,.6vw,4px);background:#06060e}
+.pitem{background:linear-gradient(135deg,rgba(15,15,26,.9),rgba(11,11,20,.9));border:1px solid rgba(255,255,255,.05);border-radius:clamp(8px,1.5vw,11px);padding:clamp(6px,1.1vw,8px) clamp(8px,1.5vw,10px);display:flex;align-items:center;justify-content:space-between;font-size:clamp(.46rem,.9vw,.61rem);color:#ddddf0;opacity:0;transform:translateX(-10px);transition:opacity .28s,transform .28s}
+.pitem.on{opacity:1;transform:none}
+.pitem.ac{border-color:rgba(108,99,255,.3);background:rgba(108,99,255,.09);color:#b0abff}
+.pill{display:flex;align-items:center;gap:4px}
+.parr{color:rgba(255,255,255,.18);font-size:.75rem}
+
+/* КАРТОЧКА */
+.pcard{background:linear-gradient(135deg,rgba(15,15,26,.97),rgba(10,10,20,.97));border:1px solid rgba(108,99,255,.22);border-radius:clamp(9px,1.7vw,13px);padding:clamp(6px,1.2vw,9px);margin:0 clamp(4px,.8vw,6px) clamp(4px,.75vw,5px);font-size:clamp(.44rem,.88vw,.58rem);color:#ddddf0;line-height:1.42;opacity:0;transform:translateY(8px);transition:opacity .35s,transform .35s;box-shadow:0 -4px 16px rgba(108,99,255,.1);flex-shrink:0}
+.pcard.on{opacity:1;transform:none}
+.pcbtns{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap}
+.pcbtn{font-size:clamp(.38rem,.75vw,.5rem);padding:2px 5px;border:1px solid rgba(108,99,255,.25);border-radius:6px;color:#8884ff}
+
+/* ПРОГРЕСС ТЗ */
+.pbar{height:clamp(2px,.45vw,3px);background:linear-gradient(90deg,#6c63ff,#ff6b9d);margin:3px clamp(4px,.8vw,6px);border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform 1s ease;flex-shrink:0}
+.pbar.on{transform:scaleX(.55)}
+.pprog{display:flex;justify-content:space-between;padding:1px clamp(4px,.8vw,6px) 2px;font-size:clamp(.38rem,.76vw,.5rem);color:rgba(255,255,255,.28);flex-shrink:0}
+.pprog span:last-child{color:#8884ff}
+
+/* ИНПУТ */
+.pinp{margin:0 clamp(4px,.8vw,6px) clamp(4px,.75vw,6px);display:flex;gap:3px;opacity:0;transition:opacity .3s;flex-shrink:0}
+.pinp.on{opacity:1}
+.pinpf{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(108,99,255,.2);border-radius:14px;padding:3px 8px;font-size:clamp(.4rem,.78vw,.52rem);color:rgba(255,255,255,.22)}
+.pinps{width:clamp(19px,3.5vw,24px);height:clamp(19px,3.5vw,24px);border-radius:50%;background:linear-gradient(135deg,#6c63ff,#8b85ff);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ФИЧИ-КАРТОЧКИ */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,40vw),1fr));gap:clamp(.6rem,2vw,1rem);margin-top:1.25rem;width:100%;max-width:min(700px,94vw)}
+.feat-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:clamp(.875rem,2.5vw,1.25rem);opacity:0;transform:translateY(14px);transition:opacity .45s,transform .45s}
+.feat-card.s{opacity:1;transform:none}
+.feat-icon{font-size:clamp(1.3rem,3.5vw,1.8rem);margin-bottom:.5rem}
+.feat-title{font-size:clamp(.72rem,2vw,.9rem);font-weight:500;color:#fff;margin-bottom:.25rem}
+.feat-desc{font-size:clamp(.62rem,1.7vw,.78rem);color:rgba(255,255,255,.38);line-height:1.5}
+
+/* НОТИФ */
+.notif{background:linear-gradient(135deg,rgba(15,15,26,.97),rgba(10,10,20,.97));border:1px solid rgba(108,99,255,.22);border-radius:14px;padding:clamp(.65rem,2vw,.9rem);max-width:min(340px,85vw);opacity:0;transform:translateY(-12px) scale(.96);transition:opacity .4s,transform .4s;box-shadow:0 4px 24px rgba(0,0,0,.6),0 0 30px rgba(108,99,255,.1)}
+.notif.s{opacity:1;transform:none}
+.notif-header{display:flex;align-items:center;gap:.4rem;margin-bottom:.4rem}
+.notif-av{width:clamp(18px,3.5vw,24px);height:clamp(18px,3.5vw,24px);border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d);display:flex;align-items:center;justify-content:center;font-size:clamp(.45rem,.9vw,.6rem);flex-shrink:0}
+.notif-app{font-size:clamp(.52rem,1.2vw,.65rem);color:rgba(255,255,255,.45);letter-spacing:.04em}
+.notif-time{font-size:clamp(.48rem,1.1vw,.62rem);color:rgba(255,255,255,.22);margin-left:auto}
+.notif-text{font-size:clamp(.6rem,1.6vw,.78rem);color:#e8e8f5;line-height:1.45}
+.notif-sub{font-size:clamp(.52rem,1.3vw,.65rem);color:rgba(255,255,255,.35);margin-top:.2rem}
+
+/* СТАТЫ */
+.stats{display:flex;gap:clamp(.75rem,3vw,1.5rem);margin-top:1.25rem;flex-wrap:wrap;justify-content:center}
+.stat{text-align:center;opacity:0;transform:translateY(12px);transition:opacity .45s,transform .45s}
+.stat.s{opacity:1;transform:none}
+.stat-num{font-family:'Unbounded',sans-serif;font-size:clamp(1.5rem,5vw,3rem);font-weight:700;background:linear-gradient(135deg,#6c63ff,#ff6b9d);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-lbl{font-size:clamp(.6rem,1.8vw,.78rem);color:rgba(255,255,255,.38);margin-top:.2rem}
+
+/* CTA */
+.cta-btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#6c63ff,#8b85ff);color:#fff;font-size:clamp(.72rem,2.2vw,.9rem);font-weight:500;padding:clamp(.6rem,2vw,.85rem) clamp(1.1rem,3.5vw,1.85rem);border-radius:12px;margin-top:1.1rem;opacity:0;transform:translateY(14px);transition:opacity .45s .2s,transform .45s .2s;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 4px 20px rgba(108,99,255,.35)}
+.cta-btn.s{opacity:1;transform:none}
+.tag{font-size:clamp(.55rem,1.8vw,.7rem);color:rgba(255,255,255,.22);margin-top:.65rem;opacity:0;transition:opacity .4s .35s}
+.tag.s{opacity:1}
+</style>
+</head>
+<body>
+<div id="stage">
+<canvas id="cv"></canvas>
+<div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
+
+<!-- S0: INTRO -->
+<div class="scene active" id="s0">
+<div style="text-align:center;z-index:2;position:relative">
+  <div class="chip up" id="s0c"><div class="chipdot"></div><div class="chiptxt">WEBFORGE AI · КИСЛОВОДСК</div></div>
+  <div class="h1 up" id="s0h">ИИ-бот для<br><span class="gr">вашего бизнеса</span></div>
+  <div class="ln up" id="s0l"></div>
+  <div class="txt up" id="s0t" style="text-align:center;margin:0 auto">Работает 24/7. Отвечает мгновенно.<br>Принимает заявки пока вы спите.</div>
+</div></div>
+
+<!-- S1: МЕНЮ -->
+<div class="scene" id="s1">
+<div class="split" style="z-index:2;position:relative">
+  <div class="sleft">
+    <div class="chip lf" id="s1c"><div class="chipdot"></div><div class="chiptxt">ГЛАВНОЕ МЕНЮ</div></div>
+    <div class="h2 lf" id="s1h">Всё в одном<br><span class="gr">месте</span></div>
+    <div class="txts lf" id="s1t">Клиент открывает сайт — и сразу видит структурированное меню. Никаких лишних слов. Нажал — получил.</div>
+    <div style="margin-top:1rem;display:flex;flex-direction:column;gap:.4rem">
+      <div class="lf" id="s1f1" style="font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.4rem"><span style="color:#6c63ff">✓</span> Цены и услуги</div>
+      <div class="lf" id="s1f2" style="font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.4rem;transition-delay:.08s"><span style="color:#6c63ff">✓</span> Примеры работ</div>
+      <div class="lf" id="s1f3" style="font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.4rem;transition-delay:.16s"><span style="color:#6c63ff">✓</span> Составить ТЗ</div>
+      <div class="lf" id="s1f4" style="font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.4rem;transition-delay:.24s"><span style="color:#6c63ff">✓</span> Оставить заявку</div>
+    </div>
+  </div>
+  <div class="pw rt" id="s1ph">
+    <div class="phone">
+      <div class="island"><div class="cam"></div><div class="cam lg"></div></div>
+      <div class="vl vl1"></div><div class="vl vl2"></div><div class="pw-btn"></div>
+      <div class="pscr"><div class="shine"></div>
+        <div class="ps on">
+          <div class="pnav"><div class="pav">🤖</div><div><div class="ptitle">WebForge AI</div><div class="pstatus"><span class="sdot"></span> онлайн</div></div></div>
+          <div class="pmenu">
+            <div class="pitem" id="m0"><div class="pill"><span>💬</span>Свободный вопрос</div><span class="parr">›</span></div>
+            <div class="pitem ac" id="m1"><div class="pill"><span>📋</span>Составить ТЗ</div><span class="parr" style="color:#8884ff">›</span></div>
+            <div class="pitem" id="m2"><div class="pill"><span>💰</span>Цены и услуги</div><span class="parr">›</span></div>
+            <div class="pitem" id="m3"><div class="pill"><span>🖼</span>Примеры работ</div><span class="parr">›</span></div>
+            <div class="pitem" id="m4"><div class="pill"><span>📝</span>Оставить заявку</div><span class="parr">›</span></div>
+          </div>
+        </div>
+      </div><div class="pbot"></div>
+    </div>
+  </div>
+</div></div>
+
+<!-- S2: ИИ КОНСУЛЬТАНТ -->
+<div class="scene" id="s2">
+<div class="split" style="z-index:2;position:relative">
+  <div class="pw lf" id="s2ph">
+    <div class="phone">
+      <div class="island"><div class="cam"></div><div class="cam lg"></div></div>
+      <div class="vl vl1"></div><div class="vl vl2"></div><div class="pw-btn"></div>
+      <div class="pscr"><div class="shine"></div>
+        <div class="ps on">
+          <div class="pnav"><div class="pbk">‹ Меню</div><div style="flex:1;text-align:center"><div class="ptitle">Свободный вопрос</div></div><div style="width:24px"></div></div>
+          <div class="pbody" id="s2body" style="flex:1"></div>
+          <div class="pcard" id="s2card">
+            <div>Лендинг — от 5 000 ₽, за 3 дня. Включает адаптив, форму записи и размещение на картах.</div>
+            <div class="pcbtns"><div class="pcbtn">📝 Заказать</div><div class="pcbtn">💰 Все цены</div></div>
+          </div>
+          <div class="pinp" id="s2inp"><div class="pinpf">Написать вопрос...</div><div class="pinps"><svg width="7" height="7" viewBox="0 0 24 24" fill="#fff"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></div></div>
+        </div>
+      </div><div class="pbot"></div>
+    </div>
+  </div>
+  <div class="sleft">
+    <div class="chip rt" id="s2c"><div class="chipdot"></div><div class="chiptxt">ИИ-КОНСУЛЬТАНТ</div></div>
+    <div class="h2 rt" id="s2h">Отвечает<br><span class="gr">как человек</span></div>
+    <div class="txts rt" id="s2t">Клиент пишет вопрос — ИИ отвечает за секунды. Без скриптов. Понимает контекст и ведёт диалог.</div>
+    <div style="margin-top:1rem;display:flex;flex-direction:column;gap:.4rem">
+      <div class="rt" id="s2f1" style="font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.4rem"><span style="color:#ff6b9d">✓</span> Понимает вопросы на русском</div>
+      <div class="rt" id="s2f2" style="font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.4rem;transition-delay:.08s"><span style="color:#ff6b9d">✓</span> Отвечает мгновенно 24/7</div>
+      <div class="rt" id="s2f3" style="font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.4rem;transition-delay:.16s"><span style="color:#ff6b9d">✓</span> Не выдумывает лишнего</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- S3: ТЗ -->
+<div class="scene" id="s3">
+<div class="split" style="z-index:2;position:relative">
+  <div class="sleft">
+    <div class="chip lf" id="s3c"><div class="chipdot"></div><div class="chiptxt">СОСТАВЛЕНИЕ ТЗ</div></div>
+    <div class="h2 lf" id="s3h">11 вопросов —<br><span class="gr">готовое ТЗ</span></div>
+    <div class="txts lf" id="s3t">Клиент отвечает на вопросы прямо в чате. Бот собирает ответы и формирует полное техзадание — менеджер получает его мгновенно.</div>
+    <div style="margin-top:1rem;display:flex;flex-direction:column;gap:.4rem">
+      <div class="lf" id="s3f1" style="font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.4rem"><span style="color:#6c63ff">✓</span> Кнопки быстрого ответа</div>
+      <div class="lf" id="s3f2" style="font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.4rem;transition-delay:.08s"><span style="color:#6c63ff">✓</span> Прогресс-бар — видно сколько осталось</div>
+      <div class="lf" id="s3f3" style="font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.4rem;transition-delay:.16s"><span style="color:#6c63ff">✓</span> ИИ структурирует ответы в документ</div>
+    </div>
+  </div>
+  <div class="pw rt" id="s3ph">
+    <div class="phone">
+      <div class="island"><div class="cam"></div><div class="cam lg"></div></div>
+      <div class="vl vl1"></div><div class="vl vl2"></div><div class="pw-btn"></div>
+      <div class="pscr"><div class="shine"></div>
+        <div class="ps on">
+          <div class="pnav"><div class="pbk">‹ Меню</div><div style="flex:1;text-align:center"><div class="ptitle">Составление ТЗ</div></div></div>
+          <div class="pbar" id="s3bar"></div>
+          <div class="pprog"><span>Вопрос 5 из 11</span><span>45%</span></div>
+          <div class="pbody" style="flex:1;justify-content:flex-end">
+            <div class="pb on" style="opacity:.1;font-size:.48rem">О вашем бизнесе?</div>
+            <div class="pu on" style="opacity:.2;font-size:.48rem">Салон красоты, Кисловодск</div>
+            <div class="pb on" style="opacity:.38;font-size:.48rem">Что разработать?</div>
+            <div class="pu on" style="opacity:.55;font-size:.48rem">🌐 Сайт + 🤖 Бот</div>
+            <div class="pb on" style="opacity:.72;font-size:.48rem">Какие функции нужны?</div>
+            <div class="pu on" style="opacity:.88;font-size:.48rem">✅ Всё из перечисленного</div>
+          </div>
+          <div style="margin:0 5px 4px;background:rgba(14,14,26,.97);border:1px solid rgba(108,99,255,.25);border-radius:11px;padding:6px;flex-shrink:0">
+            <div style="font-size:.48rem;color:#8884ff;font-weight:500;margin-bottom:3px">Нужна онлайн-оплата?</div>
+            <div style="display:flex;gap:3px">
+              <div class="pcbtn">✅ Да</div>
+              <div class="pcbtn">❌ Нет</div>
+              <div class="pcbtn">🤔 Обсудим</div>
+            </div>
+          </div>
+        </div>
+      </div><div class="pbot"></div>
+    </div>
+  </div>
+</div></div>
+
+<!-- S4: УВЕДОМЛЕНИЕ МЕНЕДЖЕРУ -->
+<div class="scene" id="s4">
+<div class="split" style="z-index:2;position:relative">
+  <div class="pw lf" id="s4ph">
+    <div class="phone">
+      <div class="island"><div class="cam"></div><div class="cam lg"></div></div>
+      <div class="vl vl1"></div><div class="vl vl2"></div><div class="pw-btn"></div>
+      <div class="pscr"><div class="shine"></div>
+        <div class="ps on" style="background:#06060e">
+          <!-- Локскрин уведомление -->
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;gap:8px">
+            <div style="font-size:clamp(.9rem,1.8vw,1.2rem);color:rgba(255,255,255,.6);text-align:center;font-family:'Unbounded',sans-serif;font-size:.7rem;margin-bottom:4px">07:24</div>
+            <div class="notif" id="n1">
+              <div class="notif-header">
+                <div class="notif-av">🤖</div>
+                <span class="notif-app">WebForge AI</span>
+                <span class="notif-time">сейчас</span>
+              </div>
+              <div class="notif-text">📩 Новая заявка с сайта!</div>
+              <div class="notif-sub">Никита · Сайт + бот · 10–20 тыс ₽</div>
+            </div>
+            <div class="notif" id="n2" style="transition-delay:.3s">
+              <div class="notif-header">
+                <div class="notif-av">🤖</div>
+                <span class="notif-app">WebForge AI</span>
+                <span class="notif-time">сейчас</span>
+              </div>
+              <div class="notif-text">📋 Новое ТЗ от клиента!</div>
+              <div class="notif-sub">Мария · Салон красоты · Кисловодск</div>
+            </div>
+          </div>
+        </div>
+      </div><div class="pbot"></div>
+    </div>
+  </div>
+  <div class="sleft">
+    <div class="chip rt" id="s4c"><div class="chipdot"></div><div class="chiptxt">УВЕДОМЛЕНИЯ</div></div>
+    <div class="h2 rt" id="s4h">Менеджер<br><span class="gr">в курсе сразу</span></div>
+    <div class="txts rt" id="s4t">Каждая заявка и каждое ТЗ мгновенно уходят менеджеру в Telegram. С именем, контактом и деталями — одним нажатием можно ответить.</div>
+    <div style="margin-top:1rem;display:flex;flex-direction:column;gap:.4rem">
+      <div class="rt" id="s4f1" style="font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.4rem"><span style="color:#4ade80">✓</span> Имя и контакт клиента</div>
+      <div class="rt" id="s4f2" style="font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.4rem;transition-delay:.08s"><span style="color:#4ade80">✓</span> Ссылка — нажал и написал</div>
+      <div class="rt" id="s4f3" style="font-size:clamp(.62rem,1.8vw,.78rem);color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.4rem;transition-delay:.16s"><span style="color:#4ade80">✓</span> Детали услуги и бюджет</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- S5: ВОЗМОЖНОСТИ -->
+<div class="scene" id="s5">
+<div style="text-align:center;z-index:2;position:relative;width:100%;max-width:min(760px,94vw)">
+  <div class="chip up" id="s5c"><div class="chipdot"></div><div class="chiptxt">ВСЕ ВОЗМОЖНОСТИ</div></div>
+  <div class="h2 up" id="s5h">Что умеет <span class="gr">бот</span></div>
+  <div class="feat-grid" id="s5g">
+    <div class="feat-card" id="fc0"><div class="feat-icon">💬</div><div class="feat-title">Свободный диалог</div><div class="feat-desc">Отвечает на любые вопросы об услугах, ценах и сроках</div></div>
+    <div class="feat-card" id="fc1" style="transition-delay:.08s"><div class="feat-icon">📋</div><div class="feat-title">Составление ТЗ</div><div class="feat-desc">11 вопросов — готовый документ для разработки</div></div>
+    <div class="feat-card" id="fc2" style="transition-delay:.16s"><div class="feat-icon">📩</div><div class="feat-title">Приём заявок</div><div class="feat-desc">Имя, телефон, услуга — мгновенно менеджеру</div></div>
+    <div class="feat-card" id="fc3" style="transition-delay:.24s"><div class="feat-icon">🖼</div><div class="feat-title">Примеры работ</div><div class="feat-desc">Показывает реальные сайты прямо в чате</div></div>
+    <div class="feat-card" id="fc4" style="transition-delay:.32s"><div class="feat-icon">⏰</div><div class="feat-title">Работа 24/7</div><div class="feat-desc">Не спит, не болеет, не уходит на обед</div></div>
+    <div class="feat-card" id="fc5" style="transition-delay:.4s"><div class="feat-icon">🔔</div><div class="feat-title">Уведомления</div><div class="feat-desc">Каждая заявка сразу в Telegram менеджера</div></div>
+  </div>
+</div></div>
+
+<!-- S6: СТАТИСТИКА -->
+<div class="scene" id="s6">
+<div style="text-align:center;z-index:2;position:relative;max-width:min(600px,92vw)">
+  <div class="chip up" id="s6c"><div class="chipdot"></div><div class="chiptxt">В ЦИФРАХ</div></div>
+  <div class="h2 up" id="s6h">Почему это <span class="gr">работает</span></div>
+  <div class="stats">
+    <div class="stat" id="st1"><div class="stat-num">24/7</div><div class="stat-lbl">Работает без перерывов</div></div>
+    <div class="stat" id="st2" style="transition-delay:.1s"><div class="stat-num">&lt;1с</div><div class="stat-lbl">Время ответа</div></div>
+    <div class="stat" id="st3" style="transition-delay:.2s"><div class="stat-num">11</div><div class="stat-lbl">Вопросов для ТЗ</div></div>
+    <div class="stat" id="st4" style="transition-delay:.3s"><div class="stat-num">∞</div><div class="stat-lbl">Клиентов одновременно</div></div>
+  </div>
+  <div class="txt up" id="s6t" style="text-align:center;margin:.875rem auto 0;transition-delay:.4s">Пока вы занимаетесь бизнесом — бот принимает клиентов,<br>отвечает на вопросы и отправляет заявки менеджеру.</div>
+</div></div>
+
+<!-- S7: CTA -->
+<div class="scene" id="s7">
+<div style="text-align:center;z-index:2;position:relative;max-width:min(580px,92vw)">
+  <div class="chip up" id="s7c"><div class="chipdot"></div><div class="chiptxt">WEBFORGE AI · КИСЛОВОДСК</div></div>
+  <div class="h1 up" id="s7h">Подключите бота<br><span class="gr">уже сегодня</span></div>
+  <div class="txt up" id="s7t" style="text-align:center;margin:0 auto">Telegram-бот с ИИ — от 10 000 ₽.<br>Первая консультация бесплатно.</div>
+  <div class="cta-btn up" id="s7btn">Написать менеджеру →</div>
+  <div class="tag up" id="s7tag">@LyudmilaVadimovna1 · Telegram</div>
+</div></div>
+
+</div>
+<script>
+// ЧАСТИЦЫ
+const cv=document.getElementById('cv');
+const cx=cv.getContext('2d');
+function rsz(){cv.width=window.innerWidth;cv.height=window.innerHeight}rsz();window.addEventListener('resize',rsz);
+const pts=Array.from({length:50},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.2,r:Math.random()*1.1+.35,o:Math.random()*.22+.06}));
+(function loop(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=cv.width;if(p.x>cv.width)p.x=0;if(p.y<0)p.y=cv.height;if(p.y>cv.height)p.y=0;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fillStyle=`rgba(108,99,255,${p.o})`;cx.fill();});
+  pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{const dd=Math.hypot(a.x-b.x,a.y-b.y);if(dd<90){cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.strokeStyle=`rgba(108,99,255,${.045*(1-dd/90)})`;cx.stroke();}}));
+  requestAnimationFrame(loop);
+})();
+
+let cur=0;
+const TOTAL=8;
+const DUR=[4500,6000,6500,6500,6000,6000,5500,99999];
+const sh=el=>{if(el)el.classList.add('s')};
+const d=ms=>new Promise(r=>setTimeout(r,ms));
+
+async function r0(){
+  await d(300);sh(document.getElementById('s0c'));
+  await d(350);sh(document.getElementById('s0h'));
+  await d(300);sh(document.getElementById('s0l'));
+  await d(350);sh(document.getElementById('s0t'));
+}
+
+async function r1(){
+  await d(250);sh(document.getElementById('s1c'));
+  await d(280);sh(document.getElementById('s1h'));
+  await d(280);sh(document.getElementById('s1t'));
+  await d(350);sh(document.getElementById('s1ph'));
+  await d(500);['m0','m1','m2','m3','m4'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('on'),i*120));
+  await d(600);
+  sh(document.getElementById('s1f1'));await d(100);sh(document.getElementById('s1f2'));await d(100);sh(document.getElementById('s1f3'));await d(100);sh(document.getElementById('s1f4'));
+}
+
+async function r2(){
+  await d(250);sh(document.getElementById('s2c'));
+  await d(280);sh(document.getElementById('s2h'));
+  await d(280);sh(document.getElementById('s2t'));
+  await d(380);sh(document.getElementById('s2ph'));
+  const body=document.getElementById('s2body');
+  body.innerHTML='';
+  const msgs=[
+    {r:'bot',t:'Привет! Задайте любой вопрос 😊',dl:500},
+    {r:'user',t:'Сколько стоит сайт для кафе?',dl:700},
+    {r:'typ',dl:700},
+    {r:'bot',t:'Лендинг от 5 000 ₽, делаем за 3 дня. Адаптив, форма, карты.',dl:0},
+    {r:'user',t:'А быстрее можно?',dl:600},
+    {r:'typ',dl:600},
+    {r:'bot',t:'Если материалы готовы — сделаем за 2 дня 🔥',dl:0},
+  ];
+  let ty=null;
+  for(const m of msgs){
+    await d(m.dl||0);
+    if(m.r==='typ'){
+      ty=document.createElement('div');ty.className='ptyp';
+      ty.innerHTML='<div class="tyd"></div><div class="tyd"></div><div class="tyd"></div>';
+      body.appendChild(ty);await d(40);ty.classList.add('on');
+      await d(m.dl||600);ty.classList.remove('on');await d(250);ty.remove();ty=null;
+    } else {
+      const el=document.createElement('div');
+      el.className=m.r==='bot'?'pb':'pu';el.textContent=m.t;body.appendChild(el);
+      await d(40);el.classList.add('on');body.scrollTop=body.scrollHeight;
+    }
+  }
+  await d(300);sh(document.getElementById('s2f1'));await d(80);sh(document.getElementById('s2f2'));await d(80);sh(document.getElementById('s2f3'));
+  await d(300);document.getElementById('s2card').classList.add('on');document.getElementById('s2inp').classList.add('on');
+}
+
+async function r3(){
+  await d(250);sh(document.getElementById('s3c'));
+  await d(280);sh(document.getElementById('s3h'));
+  await d(280);sh(document.getElementById('s3t'));
+  await d(380);sh(document.getElementById('s3ph'));
+  await d(600);document.getElementById('s3bar').classList.add('on');
+  await d(400);sh(document.getElementById('s3f1'));await d(80);sh(document.getElementById('s3f2'));await d(80);sh(document.getElementById('s3f3'));
+}
+
+async function r4(){
+  await d(250);sh(document.getElementById('s4c'));
+  await d(280);sh(document.getElementById('s4h'));
+  await d(280);sh(document.getElementById('s4t'));
+  await d(380);sh(document.getElementById('s4ph'));
+  await d(600);sh(document.getElementById('n1'));
+  await d(500);sh(document.getElementById('n2'));
+  await d(400);sh(document.getElementById('s4f1'));await d(80);sh(document.getElementById('s4f2'));await d(80);sh(document.getElementById('s4f3'));
+}
+
+async function r5(){
+  await d(250);sh(document.getElementById('s5c'));
+  await d(280);sh(document.getElementById('s5h'));
+  await d(300);
+  ['fc0','fc1','fc2','fc3','fc4','fc5'].forEach((id,i)=>setTimeout(()=>sh(document.getElementById(id)),i*100));
+}
+
+async function r6(){
+  await d(250);sh(document.getElementById('s6c'));
+  await d(280);sh(document.getElementById('s6h'));
+  await d(200);
+  sh(document.getElementById('st1'));await d(100);sh(document.getElementById('st2'));await d(100);sh(document.getElementById('st3'));await d(100);sh(document.getElementById('st4'));
+  await d(200);sh(document.getElementById('s6t'));
+}
+
+async function r7(){
+  await d(280);sh(document.getElementById('s7c'));
+  await d(350);sh(document.getElementById('s7h'));
+  await d(300);sh(document.getElementById('s7t'));
+  await d(280);sh(document.getElementById('s7btn'));
+  await d(200);sh(document.getElementById('s7tag'));
+}
+
+const runners=[r0,r1,r2,r3,r4,r5,r6,r7];
+
+async function goTo(n){
+  if(n<0||n>=TOTAL)return;
+  const prev=document.getElementById('s'+cur);
+  prev.style.transition='opacity .38s ease';prev.style.opacity='0';
+  await d(380);prev.classList.remove('active');prev.style.cssText='';
+  cur=n;document.getElementById('s'+n).classList.add('active');
+  runners[n]();
+}
+
+(async()=>{
+  runners[0]();
+  for(let i=1;i<TOTAL;i++){await d(DUR[i-1]);await goTo(i);}
+})();
+
+document.addEventListener('click',e=>e.clientX>window.innerWidth/2?goTo(Math.min(cur+1,TOTAL-1)):goTo(Math.max(cur-1,0)));
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ')goTo(Math.min(cur+1,TOTAL-1));
+  if(e.key==='ArrowLeft')goTo(Math.max(cur-1,0));
+});
+</script>
+</body>
+</html>
