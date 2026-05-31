@@ -20,7 +20,7 @@ canvas{position:absolute;inset:0;opacity:.25}
 @keyframes d3{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-45%,-55%)}}
 
 /* СЦЕНЫ */
-.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;padding:clamp(.75rem,3vw,2rem)}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;padding:clamp(.5rem,2vw,1.5rem);overflow:hidden}
 .scene.active{opacity:1;pointer-events:all}
 
 /* АНИМИРОВАННЫЕ ЭЛЕМЕНТЫ */
@@ -34,24 +34,32 @@ canvas{position:absolute;inset:0;opacity:.25}
 .rt.s{opacity:1;transform:none}
 
 /* ТИПОГРАФИКА */
-.chip{display:inline-flex;align-items:center;gap:.4rem;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.22);border-radius:100px;padding:.3rem .85rem;margin-bottom:.75rem}
+.chip{display:inline-flex;align-items:center;gap:.4rem;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.22);border-radius:100px;padding:.25rem .75rem;margin-bottom:.45rem}
 .chipdot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#ff6b9d);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
 .chiptxt{font-size:clamp(.55rem,1.8vw,.7rem);color:rgba(255,255,255,.6);letter-spacing:.07em}
-.h1{font-family:'Unbounded',sans-serif;font-size:clamp(1.8rem,7.5vw,5rem);font-weight:700;line-height:1.07;text-align:center;color:#fff;margin:.5rem 0}
+.h1{font-family:'Unbounded',sans-serif;font-size:clamp(1.6rem,7vw,4.5rem);font-weight:700;line-height:1.07;text-align:center;color:#fff;margin:.35rem 0}
 .h1 .gr{background:linear-gradient(135deg,#6c63ff,#ff6b9d,#6c63ff);background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gs 3s infinite}
 @keyframes gs{0%{background-position:0%}50%{background-position:100%}100%{background-position:0%}}
-.h2{font-family:'Unbounded',sans-serif;font-size:clamp(1.3rem,4.5vw,3rem);font-weight:600;line-height:1.1;color:#fff;margin:.5rem 0}
+.h2{font-family:'Unbounded',sans-serif;font-size:clamp(1.15rem,4vw,2.8rem);font-weight:600;line-height:1.1;color:#fff;margin:.3rem 0}
 .h2 .gr{background:linear-gradient(135deg,#6c63ff,#ff6b9d,#6c63ff);background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gs 3s infinite}
-.txt{font-size:clamp(.78rem,2.5vw,1.1rem);color:rgba(255,255,255,.42);line-height:1.65;max-width:min(500px,88vw)}
+.txt{font-size:clamp(.75rem,2.2vw,1rem);color:rgba(255,255,255,.42);line-height:1.6;max-width:min(500px,88vw)}
 .txts{font-size:clamp(.72rem,2.2vw,.95rem);color:rgba(255,255,255,.42);line-height:1.6;max-width:min(340px,85vw)}
 .ln{width:0;height:1px;background:linear-gradient(90deg,transparent,rgba(108,99,255,.5),transparent);margin:.65rem auto;transition:width .85s}
 .ln.s{width:min(160px,40vw)}
 
 /* SPLIT */
-.split{display:flex;align-items:center;gap:clamp(1.5rem,5vw,4rem);justify-content:center;flex-wrap:wrap;width:100%;max-width:900px}
-.sleft{flex:1;min-width:min(220px,85vw);max-width:380px;text-align:left}
-@media(max-width:600px){.sleft{text-align:center;max-width:100%}.txts{max-width:100%}}
+.split{display:flex;align-items:center;gap:clamp(.875rem,3.5vw,3rem);justify-content:center;flex-wrap:wrap;width:100%;max-width:900px}
+.sleft{flex:1;min-width:min(200px,85vw);max-width:360px;text-align:left}
+@media(max-width:600px){
+  .sleft{text-align:center;max-width:100%}
+  .txts{max-width:100%}
+  .split{gap:.5rem}
+  .feat-grid{gap:.35rem}
+  .feat-card{padding:.55rem .65rem}
+  .stats{gap:.5rem}
+  .stat-num{font-size:clamp(1.3rem,4.5vw,2.5rem)}
+}
 
 /* ТЕЛЕФОН */
 .pw{filter:drop-shadow(0 0 40px rgba(108,99,255,.2))}
@@ -127,10 +135,10 @@ canvas{position:absolute;inset:0;opacity:.25}
 .pinps{width:clamp(19px,3.5vw,24px);height:clamp(19px,3.5vw,24px);border-radius:50%;background:linear-gradient(135deg,#6c63ff,#8b85ff);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
 /* ФИЧИ-КАРТОЧКИ */
-.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,40vw),1fr));gap:clamp(.6rem,2vw,1rem);margin-top:1.25rem;width:100%;max-width:min(700px,94vw)}
-.feat-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:clamp(.875rem,2.5vw,1.25rem);opacity:0;transform:translateY(14px);transition:opacity .45s,transform .45s}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(.4rem,1.5vw,.75rem);margin-top:.75rem;width:100%;max-width:min(700px,94vw)}
+.feat-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:clamp(.6rem,1.8vw,.95rem);opacity:0;transform:translateY(14px);transition:opacity .45s,transform .45s}
 .feat-card.s{opacity:1;transform:none}
-.feat-icon{font-size:clamp(1.3rem,3.5vw,1.8rem);margin-bottom:.5rem}
+.feat-icon{font-size:clamp(1.1rem,3vw,1.6rem);margin-bottom:.3rem}
 .feat-title{font-size:clamp(.72rem,2vw,.9rem);font-weight:500;color:#fff;margin-bottom:.25rem}
 .feat-desc{font-size:clamp(.62rem,1.7vw,.78rem);color:rgba(255,255,255,.38);line-height:1.5}
 
@@ -145,7 +153,7 @@ canvas{position:absolute;inset:0;opacity:.25}
 .notif-sub{font-size:clamp(.52rem,1.3vw,.65rem);color:rgba(255,255,255,.35);margin-top:.2rem}
 
 /* СТАТЫ */
-.stats{display:flex;gap:clamp(.75rem,3vw,1.5rem);margin-top:1.25rem;flex-wrap:wrap;justify-content:center}
+.stats{display:flex;gap:clamp(.6rem,2.5vw,1.25rem);margin-top:.75rem;flex-wrap:wrap;justify-content:center}
 .stat{text-align:center;opacity:0;transform:translateY(12px);transition:opacity .45s,transform .45s}
 .stat.s{opacity:1;transform:none}
 .stat-num{font-family:'Unbounded',sans-serif;font-size:clamp(1.5rem,5vw,3rem);font-weight:700;background:linear-gradient(135deg,#6c63ff,#ff6b9d);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -366,6 +374,7 @@ canvas{position:absolute;inset:0;opacity:.25}
   <div class="txt up" id="s7t" style="text-align:center;margin:0 auto">Telegram-бот с ИИ — от 10 000 ₽.<br>Первая консультация бесплатно.</div>
   <div class="cta-btn up" id="s7btn">Написать менеджеру →</div>
   <div class="tag up" id="s7tag">@LyudmilaVadimovna1 · Telegram</div>
+  <div class="tag up" id="s7dev" style="margin-top:1.25rem;font-size:clamp(.5rem,1.5vw,.65rem);color:rgba(255,255,255,.15);border-top:1px solid rgba(255,255,255,.06);padding-top:.75rem;transition-delay:.5s">Разработано · <a href="https://t.me/samurai9q" style="color:rgba(108,99,255,.6);text-decoration:none">@samurai9q</a></div>
 </div></div>
 
 </div>
@@ -479,6 +488,7 @@ async function r7(){
   await d(300);sh(document.getElementById('s7t'));
   await d(280);sh(document.getElementById('s7btn'));
   await d(200);sh(document.getElementById('s7tag'));
+  await d(200);sh(document.getElementById('s7dev'));
 }
 
 const runners=[r0,r1,r2,r3,r4,r5,r6,r7];
