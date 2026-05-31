@@ -103,7 +103,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:.875rem 1.25rem;displ
 
 /* ПОЛЕ ВВОДА */
 .inp-area{display:flex;gap:.5rem;align-items:flex-end;padding:.5rem .875rem;padding-bottom:calc(.75rem + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid rgba(255,255,255,.06)}
-.inp-area textarea{flex:1;background:rgba(255,255,255,.05);border:1.5px solid var(--b);border-radius:20px;padding:.6rem 1rem;color:var(--t);font-size:.95rem;outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;transition:border-color .2s;resize:none;min-height:42px;max-height:100px;line-height:1.4}
+.inp-area textarea{flex:1;background:rgba(255,255,255,.05);border:1.5px solid var(--b);border-radius:20px;padding:.6rem 1rem;color:var(--t);font-size:.95rem;outline:none;font-family:'Inter',sans-serif;-webkit-appearance:none;transition:border-color .2s;resize:none;min-height:42px;max-height:100px;line-height:1.4;overflow:hidden}
+textarea::-webkit-scrollbar{display:none}
 .inp-area textarea:focus{border-color:var(--a)}
 .inp-area textarea::placeholder{color:var(--m);font-size:.85rem}
 .send-btn{width:42px;height:42px;border-radius:50%;background:var(--a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
