@@ -44,8 +44,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:.875rem 1.25rem;displ
 .entry-item.accent .entry-item-left{color:var(--a)}
 
 /* ПОЛНОЭКРАННЫЙ ИНТЕРФЕЙС */
-#APP{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.4,0,.2,1);will-change:transform;height:100dvh}
-#APP.open{transform:translateY(0)}
+#APP{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.4,0,.2,1);will-change:transform;height:100dvh;visibility:hidden}
+#APP.open{transform:translateY(0);visibility:visible}
 
 .app-header{padding:.75rem 1rem;padding-top:calc(.75rem + env(safe-area-inset-top,0px));border-bottom:1px solid var(--b);display:flex;align-items:center;gap:.75rem;background:var(--s);flex-shrink:0}
 .back-btn{display:flex;align-items:center;gap:.35rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:.35rem .7rem .35rem .45rem;color:var(--t);font-size:.75rem;font-weight:500;cursor:pointer;flex-shrink:0;transition:background .15s}
@@ -601,12 +601,7 @@ function renderHistory(){
       chatHistory.appendChild(wrap);
     }
   });
-  // Принудительный скролл — несколько раз для надёжности
-  const doScroll=()=>{ chatHistory.scrollTop=chatHistory.scrollHeight+9999; };
-  doScroll();
-  requestAnimationFrame(doScroll);
-  setTimeout(doScroll, 50);
-  setTimeout(doScroll, 200);
+  chatHistory.scrollTop=chatHistory.scrollHeight;
 }
 
 // ===== AI =====
@@ -745,8 +740,6 @@ function tzNext(){
   if(tzStep>=TZ.length){tzFinish();return;}
   const q=TZ[tzStep];
   showCard(`Вопрос ${tzStep+1} из ${TZ.length}: ${q.q.split('\n')[0]}`,[]);
-  // Скролл истории вниз после добавления сообщений
-  setTimeout(()=>{ chatHistory.scrollTop=chatHistory.scrollHeight+9999; }, 100);
   setTimeout(tzAsk,500);
 }
 
