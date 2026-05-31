@@ -21,7 +21,11 @@ canvas{position:absolute;inset:0;opacity:.25}
 
 /* СЦЕНЫ */
 .scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;padding:clamp(.5rem,2vw,1.5rem);overflow:hidden}
-@media(max-width:640px){.scene{justify-content:flex-start;padding-top:clamp(1.5rem,8vw,3rem)}}
+@media(max-width:640px){
+  .scene{justify-content:center;padding-top:clamp(.75rem,4vw,1.5rem);padding-bottom:clamp(.75rem,4vw,1.5rem)}
+  /* Сцены с split — чуть выше центра */
+  .scene-split-mob{justify-content:flex-start;padding-top:clamp(1rem,5vw,2rem)}
+}
 .scene.active{opacity:1;pointer-events:all}
 
 /* АНИМИРОВАННЫЕ ЭЛЕМЕНТЫ */
@@ -106,6 +110,7 @@ canvas{position:absolute;inset:0;opacity:.25}
 .vl1{top:22%;height:8%}.vl2{top:33%;height:13%}
 .pw-btn{position:absolute;right:-2px;top:27%;height:12%;border-radius:0 2px 2px 0;background:rgba(255,255,255,.06);width:2px}
 .pscr{height:clamp(295px,48vw,445px);overflow:hidden;position:relative;display:flex;flex-direction:column;padding-top:clamp(22px,4vw,30px)}
+@media(max-width:640px){.pscr{height:clamp(200px,38vw,295px);padding-top:clamp(16px,3.5vw,22px)}}
 .shine{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.035) 0%,transparent 50%);z-index:20;pointer-events:none}
 .pbot{position:absolute;bottom:clamp(7px,1.3vw,10px);left:50%;transform:translateX(-50%);width:clamp(38px,7.5vw,56px);height:clamp(3px,.55vw,4px);background:rgba(255,255,255,.1);border-radius:100px;z-index:30}
 
@@ -121,7 +126,7 @@ canvas{position:absolute;inset:0;opacity:.25}
 .pbk{font-size:clamp(.4rem,.8vw,.52rem);color:rgba(255,255,255,.38);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:2px 6px}
 
 /* ЧАТБАБЛЫ */
-.pbody{flex:1;padding:clamp(5px,1vw,7px);display:flex;flex-direction:column;gap:clamp(4px,.75vw,5px);overflow:hidden;background:#06060e}
+.pbody{flex:1;min-height:0;padding:clamp(5px,1vw,7px);display:flex;flex-direction:column;gap:clamp(4px,.75vw,5px);overflow:hidden;background:#06060e}
 .pb{background:linear-gradient(135deg,#111122,#0d0d1e);border:1px solid rgba(255,255,255,.05);border-radius:clamp(8px,1.5vw,12px) clamp(8px,1.5vw,12px) clamp(8px,1.5vw,12px) 2px;padding:clamp(5px,.9vw,7px) clamp(7px,1.3vw,10px);font-size:clamp(.46rem,.9vw,.62rem);color:#ddddf0;max-width:88%;line-height:1.45;opacity:0;transform:translateX(-8px);transition:opacity .32s,transform .32s}
 .pu{background:linear-gradient(135deg,#4a43c8,#6c63ff);border-radius:clamp(8px,1.5vw,12px) clamp(8px,1.5vw,12px) 2px clamp(8px,1.5vw,12px);padding:clamp(5px,.9vw,7px) clamp(7px,1.3vw,10px);font-size:clamp(.46rem,.9vw,.62rem);color:#fff;max-width:80%;align-self:flex-end;line-height:1.45;opacity:0;transform:translateX(8px);transition:opacity .32s,transform .32s;box-shadow:0 2px 14px rgba(108,99,255,.35)}
 .pb.on,.pu.on{opacity:1;transform:none}
@@ -448,6 +453,8 @@ async function r2(){
   await d(380);sh(document.getElementById('s2ph'));
   const body=document.getElementById('s2body');
   body.innerHTML='';
+  // Ждём пока телефон появится
+  await d(900);
   const msgs=[
     {r:'bot',t:'Привет! Задайте любой вопрос 😊',dl:500},
     {r:'user',t:'Сколько стоит сайт для кафе?',dl:700},
@@ -468,11 +475,12 @@ async function r2(){
     } else {
       const el=document.createElement('div');
       el.className=m.r==='bot'?'pb':'pu';el.textContent=m.t;body.appendChild(el);
-      await d(40);el.classList.add('on');body.scrollTop=body.scrollHeight;
+      await d(40);el.classList.add('on');
+      requestAnimationFrame(()=>body.scrollTop=body.scrollHeight+999);
     }
   }
-  await d(300);sh(document.getElementById('s2f1'));await d(80);sh(document.getElementById('s2f2'));await d(80);sh(document.getElementById('s2f3'));
-  await d(300);document.getElementById('s2card').classList.add('on');document.getElementById('s2inp').classList.add('on');
+  await d(200);document.getElementById('s2card').classList.add('on');document.getElementById('s2inp').classList.add('on');
+  await d(400);sh(document.getElementById('s2f1'));await d(80);sh(document.getElementById('s2f2'));await d(80);sh(document.getElementById('s2f3'));
 }
 
 async function r3(){
@@ -489,7 +497,7 @@ async function r4(){
   await d(280);sh(document.getElementById('s4h'));
   await d(280);sh(document.getElementById('s4t'));
   await d(380);sh(document.getElementById('s4ph'));
-  await d(600);sh(document.getElementById('n1'));
+  await d(1000);sh(document.getElementById('n1'));
   await d(500);sh(document.getElementById('n2'));
   await d(400);sh(document.getElementById('s4f1'));await d(80);sh(document.getElementById('s4f2'));await d(80);sh(document.getElementById('s4f3'));
 }
