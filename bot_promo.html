@@ -237,8 +237,8 @@ canvas{position:absolute;inset:0;opacity:.22;pointer-events:none}
       <div class="p-screen"><div class="p-shine"></div>
         <div class="p-nav"><div class="p-back">‹ Меню</div><div style="flex:1;text-align:center"><div class="p-title">Свободный вопрос</div></div><div style="width:15%"></div></div>
         <div class="p-body" id="s2body"></div>
-        <div class="p-card" id="s2card"><div>Лендинг от 5 000 ₽, за 3 дня. Адаптив, форма, карты.</div><div class="p-cbtns"><div class="p-cbtn">📝 Заказать</div><div class="p-cbtn">💰 Цены</div></div></div>
-        <div class="p-inp" id="s2inp"><div class="p-inpf">Написать вопрос...</div><div class="p-inps"><svg width="7" height="7" viewBox="0 0 24 24" fill="#fff"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></div></div>
+        <div class="p-card" id="s2card" style="opacity:0;transform:translateY(5px);transition:opacity .35s,transform .35s"><div>Если материалы готовы — сделаем за 2 дня 🔥</div><div class="p-cbtns"><div class="p-cbtn">📝 Заказать</div><div class="p-cbtn">💰 Цены</div></div></div>
+        <div class="p-inp" id="s2inp" style="opacity:0;transition:opacity .3s"><div class="p-inpf">Написать вопрос...</div><div class="p-inps"><svg width="7" height="7" viewBox="0 0 24 24" fill="#fff"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></div></div>
       </div><div class="p-home"></div>
     </div>
   </div>
@@ -393,32 +393,34 @@ async function r2(){
   const body=document.getElementById('s2body');
   body.innerHTML='';
   await d(900); // ждём появления телефона
-  const msgs=[
-    {r:'bot',t:'Привет! Задайте любой вопрос 😊',dl:400},
-    {r:'user',t:'Сколько стоит сайт для кафе?',dl:600},
-    {r:'typ',dl:700},
-    {r:'bot',t:'Лендинг от 5 000 ₽, за 3 дня. Адаптив, форма, карты.',dl:0},
-    {r:'user',t:'А быстрее можно?',dl:600},
-    {r:'typ',dl:600},
-    {r:'bot',t:'Если материалы готовы — за 2 дня 🔥',dl:0},
-  ];
-  let ty=null;
-  for(const m of msgs){
-    await d(m.dl||0);
-    if(m.r==='typ'){
-      ty=document.createElement('div');ty.className='ptyp';
-      ty.innerHTML='<div class="tyd"></div><div class="tyd"></div><div class="tyd"></div>';
-      body.appendChild(ty);await d(40);ty.classList.add('on');
-      await d(600);ty.classList.remove('on');await d(220);if(ty.parentNode)ty.remove();
-    } else {
-      const el=document.createElement('div');
-      el.className=m.r==='bot'?'pb':'pu';el.textContent=m.t;
-      body.appendChild(el);await d(40);el.classList.add('on');
-      // flex-end сам держит сообщения внизу
-    }
-  }
-  await d(200);document.getElementById('s2card').classList.add('on');
-  document.getElementById('s2inp').classList.add('on');
+  // Показываем сообщения по одному
+  const addMsg=(cls,txt)=>{
+    const el=document.createElement('div');
+    el.className=cls;el.textContent=txt;
+    body.appendChild(el);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('on')));
+    return el;
+  };
+  const showTyp=async()=>{
+    const ty=document.createElement('div');ty.className='ptyp';
+    ty.innerHTML='<div class="tyd"></div><div class="tyd"></div><div class="tyd"></div>';
+    body.appendChild(ty);await d(40);ty.classList.add('on');
+    await d(650);ty.classList.remove('on');await d(200);if(ty.parentNode)ty.remove();
+  };
+
+  await d(300);addMsg('pb','Привет! Задайте любой вопрос 😊');
+  await d(700);addMsg('pu','Сколько стоит сайт для кафе?');
+  await d(500);await showTyp();
+  addMsg('pb','Лендинг от 5 000 ₽, за 3 дня. Адаптив, форма, карты.');
+  await d(700);addMsg('pu','А быстрее можно?');
+  await d(500);await showTyp();
+  addMsg('pb','Если материалы готовы — сделаем за 2 дня 🔥');
+  // Показываем карточку и инпут
+  await d(400);
+  const sc=document.getElementById('s2card');
+  sc.style.opacity='1';sc.style.transform='translateY(0)';
+  const si=document.getElementById('s2inp');
+  si.style.opacity='1';
   await d(300);sh(document.getElementById('c03'));
 }
 async function r3(){
