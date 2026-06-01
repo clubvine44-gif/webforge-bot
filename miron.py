@@ -353,6 +353,23 @@ class Settings(StatesGroup):
     waiting_custom_time = State()
 
 # ─── ХЭНДЛЕРЫ: ОНБОРДИНГ ──────────────────────────────────
+
+@dp.message(Command("reset"))
+async def cmd_reset(msg: Message, state: FSMContext):
+    """Сброс профиля — начать заново"""
+    with get_conn() as conn:
+        conn.execute("DELETE FROM users WHERE user_id=?", (msg.from_user.id,))
+    await state.clear()
+    await msg.answer(
+        "Профиль сброшен. Начнём заново!\n\n"
+        "Привет. Я Мирон.\n\n"
+        "Буду писать тебе каждый вечер — спрашивать как прошёл день, "
+        "слушать, иногда шутить. Не коуч и не психолог — просто друг.\n\n"
+        "Как тебя зовут?",
+        reply_markup=ReplyKeyboardRemove()
+    )
+    await state.set_state(Onboarding.waiting_name)
+
 @dp.message(Command("start"))
 async def cmd_start(msg: Message, state: FSMContext):
     user = get_user(msg.from_user.id)
