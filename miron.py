@@ -301,6 +301,7 @@ async def miron_reply(user_id: int, user_text: str) -> str:
     user = get_user(user_id)
     today_msgs = get_today_messages(user_id)
     recent = get_recent_summaries(user_id, 7)
+    current_time = datetime.now().strftime("%H:%M")
 
     memory_block = ""
     if recent:
@@ -308,7 +309,7 @@ async def miron_reply(user_id: int, user_text: str) -> str:
         for r in recent:
             memory_block += f"- {r['date']}: настроение {r['mood']}/10, темы: {r['topics']}. {r['summary']}\n"
 
-    system = build_system_prompt(user) + memory_block
+    system = build_system_prompt(user, current_time) + memory_block
     history = today_msgs.copy()
     history.append({"role": "user", "content": user_text})
 
@@ -541,7 +542,14 @@ async def btn_stats(msg: Message):
 
 @dp.message(F.text == "😊 Оценить день")
 async def btn_mood(msg: Message):
-    await msg.answer("Как день в целом, по ощущениям?", reply_markup=mood_kb())
+    hour = datetime.now().hour
+    if hour < 14:
+        prefix = f"Сейчас только {datetime.now().strftime('%H:%M')}, день ещё не закончился — но ладно, как настроение пока?"
+    elif hour < 18:
+        prefix = "День ещё идёт, но уже можно прикинуть — как ощущения?"
+    else:
+        prefix = "Как день в целом?"
+    await msg.answer(prefix, reply_markup=mood_kb())
 
 @dp.message(F.text == "⏰ Время уведомлений")
 async def btn_time(msg: Message):
@@ -671,7 +679,7 @@ async def handle_message(msg: Message, state: FSMContext):
         reply = "Что-то у меня завис мозг. Повтори?"
 
     save_message(msg.from_user.id, "assistant", reply)
-    await msg.answer(reply, reply_markup=main_kb())
+    await msg.answer(reply)
 
 # ─── ВЕЧЕРНИЙ ПЛАНИРОВЩИК ─────────────────────────────────
 async def evening_notifier():
