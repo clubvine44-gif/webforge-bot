@@ -35,6 +35,7 @@ def main_kb():
         keyboard=[
             [KeyboardButton(text="📊 Статистика"), KeyboardButton(text="😊 Оценить день")],
             [KeyboardButton(text="⏰ Время уведомлений"), KeyboardButton(text="⏸ Пауза")],
+            [KeyboardButton(text="🔞 Режим 18+")],
         ],
         resize_keyboard=True,
         input_field_placeholder="Напиши что-нибудь..."
@@ -116,6 +117,10 @@ def init_db():
         pass
     try:
         conn.execute("ALTER TABLE users ADD COLUMN gender TEXT")
+    except:
+        pass
+    try:
+        conn.execute("ALTER TABLE users ADD COLUMN adult_mode INTEGER DEFAULT 0")
     except:
         pass
     conn.commit()
@@ -229,6 +234,8 @@ def build_system_prompt(user: dict) -> str:
     age = user.get("age") or 0
     gender = user.get("gender") or "none"
     name = user.get("name", "")
+    adult_mode = user.get("adult_mode", 0)
+    mat_rule = "иногда используй матерные слова — только по ситуации, не в каждом сообщении. Как нормальный друг в неформальной обстановке." if adult_mode else "мат не используй никогда."
 
     # Стиль по возрасту
     if age <= 17:
@@ -283,7 +290,9 @@ def build_system_prompt(user: dict) -> str:
 - Помни что говорил раньше и упоминай естественно
 - Не используй эмодзи чаще одного на сообщение
 - Не начинай ответ со слова "Привет" если уже общались сегодня
-- Пиши на русском, разговорно"""
+- Пиши на русском, разговорно
+- Мат: {mat_rule}"""
+
 
     return base
 
@@ -582,6 +591,45 @@ async def pause_cb(cb: CallbackQuery):
     with get_conn() as conn:
         conn.execute("UPDATE users SET paused_until=? WHERE user_id=?", (until, cb.from_user.id))
     await cb.message.edit_text(f"Хорошо, {days} дней не беспокою. Если захочешь раньше — просто напиши.")
+    await cb.answer()
+
+
+# ─── РЕЖИМ 18+ ────────────────────────────────────────────
+def adult_confirm_kb():
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="✅ Да, мне есть 18 лет", callback_data="adult_confirm"),
+            InlineKeyboardButton(text="❌ Нет", callback_data="adult_cancel"),
+        ]
+    ])
+
+@dp.message(F.text == "🔞 Режим 18+")
+async def btn_adult(msg: Message):
+    user = get_user(msg.from_user.id)
+    if not user:
+        return
+    if user.get("adult_mode"):
+        # Выключаем без подтверждения
+        with get_conn() as conn:
+            conn.execute("UPDATE users SET adult_mode=0 WHERE user_id=?", (msg.from_user.id,))
+        await msg.answer("Режим 18+ выключен. Мат убран.")
+    else:
+        await msg.answer(
+            "Режим 18+ добавляет нецензурную лексику в общение — по ситуации, не в каждом сообщении.\n\n"
+            "Подтверди что тебе есть 18 лет:",
+            reply_markup=adult_confirm_kb()
+        )
+
+@dp.callback_query(F.data == "adult_confirm")
+async def adult_confirm_cb(cb: CallbackQuery):
+    with get_conn() as conn:
+        conn.execute("UPDATE users SET adult_mode=1 WHERE user_id=?", (cb.from_user.id,))
+    await cb.message.edit_text("Режим 18+ включён. Мирон будет материться иногда, как нормальный друг 😄")
+    await cb.answer()
+
+@dp.callback_query(F.data == "adult_cancel")
+async def adult_cancel_cb(cb: CallbackQuery):
+    await cb.message.edit_text("Понял, режим не включаем.")
     await cb.answer()
 
 # ─── ОСНОВНОЙ ХЭНДЛЕР ─────────────────────────────────────
