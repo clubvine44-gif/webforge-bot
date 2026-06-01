@@ -67,6 +67,13 @@ def pause_kb():
         [InlineKeyboardButton(text="❌ Отмена", callback_data="pause_cancel")],
     ])
 
+def gender_kb():
+    return InlineKeyboardMarkup(inline_keyboard=[[
+        InlineKeyboardButton(text="Парень", callback_data="gender_male"),
+        InlineKeyboardButton(text="Девушка", callback_data="gender_female"),
+        InlineKeyboardButton(text="Не скажу", callback_data="gender_none"),
+    ]])
+
 # ─── БАЗА ДАННЫХ ───────────────────────────────────────────
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -76,6 +83,8 @@ def init_db():
             user_id      INTEGER PRIMARY KEY,
             username     TEXT,
             name         TEXT,
+            age          INTEGER,
+            gender       TEXT,
             notify_time  TEXT DEFAULT '21:00',
             is_active    INTEGER DEFAULT 1,
             paused_until TEXT,
@@ -100,6 +109,15 @@ def init_db():
             UNIQUE(user_id, session_date)
         );
     """)
+    # Добавляем колонки если их нет (для старых баз)
+    try:
+        conn.execute("ALTER TABLE users ADD COLUMN age INTEGER")
+    except:
+        pass
+    try:
+        conn.execute("ALTER TABLE users ADD COLUMN gender TEXT")
+    except:
+        pass
     conn.commit()
     conn.close()
 
@@ -115,13 +133,15 @@ def get_user(user_id: int):
             return dict(zip(cols, row))
     return None
 
-def upsert_user(user_id: int, username: str, name: str, notify_time: str = "21:00"):
+def upsert_user(user_id: int, username: str, name: str, age: int, gender: str, notify_time: str = "21:00"):
     with get_conn() as conn:
         conn.execute("""
-            INSERT INTO users (user_id, username, name, notify_time)
-            VALUES (?, ?, ?, ?)
-            ON CONFLICT(user_id) DO UPDATE SET username=excluded.username, name=excluded.name
-        """, (user_id, username or "", name, notify_time))
+            INSERT INTO users (user_id, username, name, age, gender, notify_time)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON CONFLICT(user_id) DO UPDATE SET
+                username=excluded.username, name=excluded.name,
+                age=excluded.age, gender=excluded.gender
+        """, (user_id, username or "", name, age, gender, notify_time))
 
 def save_message(user_id: int, role: str, content: str, session_date: str = None):
     if session_date is None:
@@ -204,10 +224,58 @@ def days_since_last_message(user_id: int) -> Optional[int]:
         return (date.today() - date.fromisoformat(row[0])).days
     return None
 
-# ─── ИИ ───────────────────────────────────────────────────
-MIRON_SYSTEM = """Ты — Мирон, друг пользователя в Telegram. Не психолог и не коуч — просто близкий друг.
+# ─── СТИЛЬ ОБЩЕНИЯ ПО ВОЗРАСТУ/ПОЛУ ──────────────────────
+def build_system_prompt(user: dict) -> str:
+    age = user.get("age") or 0
+    gender = user.get("gender") or "none"
+    name = user.get("name", "")
 
-Правила:
+    # Стиль по возрасту
+    if age <= 17:
+        age_style = (
+            "Пользователь подросток. Общайся на молодёжном языке, можно слэнг. "
+            "Короткие фразы, понимаешь тему учёбы, родителей, первых отношений. "
+            "Не поучай и не занудствуй ни в коем случае."
+        )
+    elif age <= 25:
+        age_style = (
+            "Пользователь молодой человек (студент/начало карьеры). "
+            "Общайся как ровесник — по-простому, с юмором, понимаешь темы универа, "
+            "тусовок, первой работы, отношений. Можно немного слэнга."
+        )
+    elif age <= 35:
+        age_style = (
+            "Пользователь взрослый (работает, возможно семья). "
+            "Общайся уважительно но без официоза. Понимаешь темы карьеры, "
+            "денег, отношений, усталости. Юмор уместен."
+        )
+    elif age <= 50:
+        age_style = (
+            "Пользователь зрелый человек. Общайся спокойно и по-человечески. "
+            "Понимаешь темы семьи, здоровья, работы, детей. "
+            "Без молодёжного слэнга, но и без занудства."
+        )
+    else:
+        age_style = (
+            "Пользователь старшего возраста. Общайся уважительно, тепло, без сленга. "
+            "Понимаешь темы здоровья, детей/внуков, воспоминаний. "
+            "Будь особенно внимателен и терпелив."
+        )
+
+    # Стиль по полу
+    if gender == "male":
+        gender_style = "Пользователь — парень/мужчина. Общайся как друг с другом, по-мужски."
+    elif gender == "female":
+        gender_style = "Пользователь — девушка/женщина. Будь внимательным и чутким, но не слащавым."
+    else:
+        gender_style = "Пол неизвестен — общайся нейтрально."
+
+    base = f"""Ты — Мирон, друг пользователя {name} в Telegram. Не психолог и не коуч — просто близкий друг.
+
+{age_style}
+{gender_style}
+
+Общие правила:
 - Отвечай коротко и по-человечески, без занудства
 - Юмор когда уместно, сарказм иногда — как настоящий друг
 - В конце каждого ответа задавай ОДИН уточняющий вопрос
@@ -217,7 +285,11 @@ MIRON_SYSTEM = """Ты — Мирон, друг пользователя в Tele
 - Не начинай ответ со слова "Привет" если уже общались сегодня
 - Пиши на русском, разговорно"""
 
+    return base
+
+# ─── ИИ ───────────────────────────────────────────────────
 async def miron_reply(user_id: int, user_text: str) -> str:
+    user = get_user(user_id)
     today_msgs = get_today_messages(user_id)
     recent = get_recent_summaries(user_id, 7)
 
@@ -227,7 +299,7 @@ async def miron_reply(user_id: int, user_text: str) -> str:
         for r in recent:
             memory_block += f"- {r['date']}: настроение {r['mood']}/10, темы: {r['topics']}. {r['summary']}\n"
 
-    system = MIRON_SYSTEM + memory_block
+    system = build_system_prompt(user) + memory_block
     history = today_msgs.copy()
     history.append({"role": "user", "content": user_text})
 
@@ -244,7 +316,7 @@ async def generate_summary(user_id: int, session_date: str):
     if len(msgs) < 2:
         return
     convo = "\n".join([f"{m['role'].upper()}: {m['content']}" for m in msgs])
-    prompt = f"""Проанализируй разговор и верни только JSON:
+    prompt = f"""Проанализируй разговор и верни только JSON без лишнего текста:
 {{"mood": <1-10>, "topics": "<темы через запятую>", "summary": "<резюме 50-70 слов>"}}
 
 Разговор:
@@ -264,6 +336,8 @@ async def generate_summary(user_id: int, session_date: str):
 # ─── FSM ───────────────────────────────────────────────────
 class Onboarding(StatesGroup):
     waiting_name = State()
+    waiting_age  = State()
+    waiting_gender = State()
     waiting_time = State()
 
 class Settings(StatesGroup):
@@ -280,8 +354,9 @@ async def cmd_start(msg: Message, state: FSMContext):
         )
         return
     await msg.answer(
-        "Привет. Я Мирон — буду писать тебе каждый вечер, спрашивать как прошёл день.\n\n"
-        "Не коуч, не психолог — просто друг.\n\n"
+        "Привет. Я Мирон.\n\n"
+        "Буду писать тебе каждый вечер — спрашивать как прошёл день, "
+        "слушать, иногда шутить. Не коуч и не психолог — просто друг.\n\n"
         "Как тебя зовут?",
         reply_markup=ReplyKeyboardRemove()
     )
@@ -291,30 +366,88 @@ async def cmd_start(msg: Message, state: FSMContext):
 async def onboarding_name(msg: Message, state: FSMContext):
     name = msg.text.strip()
     await state.update_data(name=name)
-    await msg.answer(
-        f"Хорошо, {name}. В какое время писать тебе вечером?",
-        reply_markup=time_kb()
+    await msg.answer(f"Хорошо, {name}. Сколько тебе лет?")
+    await state.set_state(Onboarding.waiting_age)
+
+@dp.message(Onboarding.waiting_age)
+async def onboarding_age(msg: Message, state: FSMContext):
+    text = msg.text.strip()
+    # Пробуем извлечь число
+    age = None
+    for word in text.split():
+        if word.isdigit():
+            age = int(word)
+            break
+
+    if not age or age < 10 or age > 100:
+        await msg.answer("Напиши просто число, например: 24")
+        return
+
+    await state.update_data(age=age)
+
+    # Подбираем приветствие под возраст
+    if age <= 17:
+        reaction = "Понял, молодой 😄"
+    elif age <= 25:
+        reaction = "Ок, свои люди."
+    elif age <= 35:
+        reaction = "Норм возраст."
+    else:
+        reaction = "Хорошо."
+
+    await msg.answer(f"{reaction}\n\nТы парень или девушка?", reply_markup=gender_kb())
+    await state.set_state(Onboarding.waiting_gender)
+
+@dp.callback_query(Onboarding.waiting_gender, F.data.startswith("gender_"))
+async def onboarding_gender(cb: CallbackQuery, state: FSMContext):
+    gender = cb.data.replace("gender_", "")
+    await state.update_data(gender=gender)
+    data = await state.get_data()
+
+    await cb.message.edit_text(
+        f"Отлично. В какое время писать тебе вечером?"
     )
+    await cb.message.answer("Выбери время:", reply_markup=time_kb())
     await state.set_state(Onboarding.waiting_time)
+    await cb.answer()
 
 @dp.callback_query(Onboarding.waiting_time, F.data.startswith("settime_"))
 async def onboarding_time_cb(cb: CallbackQuery, state: FSMContext):
     data = await state.get_data()
-    name = data["name"]
     val = cb.data.replace("settime_", "")
 
     if val == "custom":
-        await cb.message.edit_text(f"Напиши время в формате ЧЧ:ММ, например 22:30")
+        await cb.message.edit_text("Напиши время в формате ЧЧ:ММ, например 22:30")
         await state.set_state(Onboarding.waiting_time)
         await state.update_data(waiting_custom=True)
         await cb.answer()
         return
 
-    upsert_user(cb.from_user.id, cb.from_user.username, name, val)
+    upsert_user(
+        cb.from_user.id,
+        cb.from_user.username,
+        data["name"],
+        data["age"],
+        data["gender"],
+        val
+    )
     await state.clear()
-    await cb.message.edit_text(f"Договорились. Буду писать в {val}.")
+
+    name = data["name"]
+    age = data["age"]
+    gender = data["gender"]
+
+    if gender == "male":
+        g_text = "парень"
+    elif gender == "female":
+        g_text = "девушка"
+    else:
+        g_text = ""
+
+    await cb.message.edit_text(f"Буду писать в {val}. Всё запомнил.")
     await cb.message.answer(
-        f"Ну, {name}, как сегодня прошёл день?",
+        f"Ну и отлично, {name}. Теперь я знаю что тебе {age} лет{', ты ' + g_text if g_text else ''}.\n\n"
+        f"Как сегодня прошёл день?",
         reply_markup=main_kb()
     )
     await cb.answer()
@@ -322,16 +455,23 @@ async def onboarding_time_cb(cb: CallbackQuery, state: FSMContext):
 @dp.message(Onboarding.waiting_time)
 async def onboarding_time_text(msg: Message, state: FSMContext):
     data = await state.get_data()
-    name = data.get("name", "")
     text = msg.text.strip()
     if ":" not in text:
         await msg.answer("Формат: ЧЧ:ММ, например 22:30")
         return
     notify_time = text[:5]
-    upsert_user(msg.from_user.id, msg.from_user.username, name, notify_time)
+    upsert_user(
+        msg.from_user.id,
+        msg.from_user.username,
+        data.get("name", ""),
+        data.get("age", 0),
+        data.get("gender", "none"),
+        notify_time
+    )
     await state.clear()
+    name = data.get("name", "")
     await msg.answer(
-        f"Договорились, буду в {notify_time}.\n\nНу, {name}, как прошёл день?",
+        f"Буду в {notify_time}. Как сегодня прошёл день, {name}?",
         reply_markup=main_kb()
     )
 
@@ -444,7 +584,7 @@ async def pause_cb(cb: CallbackQuery):
     await cb.message.edit_text(f"Хорошо, {days} дней не беспокою. Если захочешь раньше — просто напиши.")
     await cb.answer()
 
-# ─── ОСНОВНОЙ ХЭНДЛЕР СООБЩЕНИЙ ───────────────────────────
+# ─── ОСНОВНОЙ ХЭНДЛЕР ─────────────────────────────────────
 @dp.message(F.text)
 async def handle_message(msg: Message, state: FSMContext):
     current_state = await state.get_state()
