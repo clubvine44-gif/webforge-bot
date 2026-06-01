@@ -230,7 +230,7 @@ def days_since_last_message(user_id: int) -> Optional[int]:
     return None
 
 # ─── СТИЛЬ ОБЩЕНИЯ ПО ВОЗРАСТУ/ПОЛУ ──────────────────────
-def build_system_prompt(user: dict) -> str:
+def build_system_prompt(user: dict, current_time: str = "") -> str:
     age = user.get("age") or 0
     gender = user.get("gender") or "none"
     name = user.get("name", "")
